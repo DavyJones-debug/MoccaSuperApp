@@ -496,70 +496,15 @@ window.jepretDanKirim = async () => {
         alert("Error Database: " + e.message);
     }
 };
-        const today = new Date().toLocaleDateString('id-ID');
-        const q = query(collection(db, "absensi"), where("uid", "==", user.uid), where("tanggal", "==" today), orderBy("timestamp", "desc"), limit(50)); onSnapshot(q, (snapshot) => { allData = []; snapshot.forEach(doc => allData.push(doc.data())); renderTabel(); }); window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
+        const q = query(collection(db, "absensi"), orderBy("timestamp", "desc"), limit(50)); onSnapshot(q, (snapshot) => { allData = []; snapshot.forEach(doc => allData.push(doc.data())); renderTabel(); }); window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
         function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; container.innerHTML += `<div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white" onclick="bukaFoto('${data.bukti_foto}')"><div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 px-1.5 rounded border border-amber-100">${data.waktu}</span></div><p class="text-xs text-amber-600 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 mt-2 italic bg-amber-50/50 p-2 rounded-lg border border-amber-100">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
         window.bukaFoto = (src) => { document.getElementById('modal-img').src = src; document.getElementById('image-modal').classList.remove('hidden'); }
         window.tutupModal = () => { document.getElementById('image-modal').classList.add('hidden'); }
         window.downloadLaporan = async () => { 
-            // SECURITY CHECK
-            if(userProfile.divisi !== "Management" && userProfile.divisi !== "HR/Admin") { 
-                return alert("AKSES DITOLAK! Hanya HR/Admin yang boleh download data."); 
-            }
-
-            // PILIHAN MENU DOWNLOAD
-            let choice = prompt("Ketik '1' untuk Rekap HARI INI\nKetik '2' untuk SEMUA DATA", "1");
-            if (!choice) return;
-
-            let q;
-            const today = new Date().toLocaleDateString('id-ID');
-
-            // LOGIC PILIHAN
-            if (choice === "1") {
-                // Ambil cuma hari ini
-                q = query(collection(db, "absensi"), where("tanggal", "==", today), orderBy("timestamp", "desc"));
-            } else if (choice === "2") {
-                // Ambil semua (buat backup bulanan)
-                q = query(collection(db, "absensi"), orderBy("timestamp", "desc"));
-            } else {
-                return;
-            }
-
-            // --- MULAI PERANGKAP ERROR ---
-            try {
-                const snap = await getDocs(q); // <--- DI SINI MELEDAKNYA BIASANYA
-
-                if (snap.empty) {
-                    return alert(`Data kosong, Jon! \n(Tanggal dicari: ${today})`);
-                }
-
-                let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Keterangan,Lokasi,Koordinat\n";
-        
-                snap.forEach(d => { 
-                    const data = d.data(); 
-                    const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-"; 
-                    const safeLokasi = data.lokasi ? data.lokasi.replace(/,/g, " - ") : "Lokasi tidak terdeteksi";
-                    csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${safeKet}","${safeLokasi}","${data.koordinat}"\n`; 
-                }); 
-
-                const link = document.createElement("a"); 
-                link.href = encodeURI(csv); 
-                const namaFile = (choice === "1") ? `Rekap_Harian_${today.replace(/\//g, "-")}.csv` : `Rekap_Full_Database.csv`;
-                link.download = namaFile; 
-                document.body.appendChild(link); 
-                link.click(); 
-                document.body.removeChild(link); 
-
-            } catch (error) {
-                // INI DIA YANG DITUNGGU
-                console.error("ERROR FIREBASE:", error);
-        
-                if (error.message.includes("index")) {
-                    alert("⚠️ ERROR INDEX TERDETEKSI! \n\nCek Console (F12) sekarang. Ada link panjang di tulisan merah, KLIK LINK ITU buat benerin otomatis.");
-                } else {
-                    alert("Error: " + error.message);
-                }
-            }
+            // SECURITY CHECK: Cuma Admin/HR/Management yang boleh
+            if(userProfile.divisi !== "Management" && userProfile.divisi !== "HR/Admin") { return alert("AKSES DITOLAK! Hanya HR/Admin yang boleh download data."); }
+            if (!confirm("Download Excel?")) return; 
+            const snap = await getDocs(query(collection(db, "absensi"), orderBy("timestamp", "desc"))); let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Keterangan,Lokasi\n"; snap.forEach(d => { const data = d.data(); const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-"; csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${safeKet}","${data.lokasi}"\n`; }); const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "Laporan_Absensi_Studio_Yellow.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link); 
         };
         setInterval(() => document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
     </script>
