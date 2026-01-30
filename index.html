@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - V8.4 Khodam Edition</title>
+    <title>Mocca Super App - V8.5 Full Version</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -93,7 +93,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.4</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.5</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -240,6 +240,31 @@
             <button onclick="prosesKhodam()" id="btn-check-khodam" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-purple-500/20 active:scale-95 transition">
                 <i class="fa-solid fa-eye mr-2"></i> TERAWANG SEKARANG
             </button>
+        </div>
+    </div>
+
+    <div id="leaderboard-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[98] flex items-center justify-center p-4 fade-in" onclick="document.getElementById('leaderboard-modal').classList.add('hidden')">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md h-[75vh] flex flex-col overflow-hidden relative border-t-4 border-amber-400" onclick="event.stopPropagation()">
+            
+            <div class="p-5 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-slate-800 dark:to-slate-800 flex justify-between items-center relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-xl font-black text-slate-800 dark:text-white italic tracking-tighter"><i class="fa-solid fa-bolt text-amber-500 mr-2 animate-pulse"></i>THE FLASH</h2>
+                    <p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold tracking-widest uppercase ml-7">Top 10 Absen Paling Pagi</p>
+                </div>
+                <button onclick="document.getElementById('leaderboard-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center shadow-sm relative z-10"><i class="fa-solid fa-xmark"></i></button>
+                <i class="fa-solid fa-stopwatch absolute -right-4 -bottom-4 text-6xl text-amber-500/10"></i>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-800" id="leaderboard-list">
+                <div class="text-center py-10">
+                    <i class="fa-solid fa-spinner fa-spin text-3xl text-amber-500 mb-2"></i>
+                    <p class="text-xs text-gray-400">Sedang mencari yang paling rajin...</p>
+                </div>
+            </div>
+            
+            <div class="p-3 bg-gray-50 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-700 text-center">
+                <p class="text-[10px] text-gray-400 italic">Data diperbarui otomatis hari ini</p>
+            </div>
         </div>
     </div>
 
@@ -491,7 +516,11 @@
                             <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Cek Khodam</p>
                         </div>
 
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 opacity-60"><i class="fa-solid fa-trophy text-2xl text-gray-300"></i><p class="text-[10px] font-bold text-gray-400 uppercase">Leaderboard</p><span class="text-[8px] bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-gray-500">Coming Soon</span></div>
+                        <div onclick="bukaLeaderboard()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-amber-500/10 opacity-0 group-hover:opacity-100 transition"></div>
+                            <i class="fa-solid fa-trophy text-2xl text-amber-500 group-hover:rotate-12 transition"></i>
+                            <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Leaderboard</p>
+                        </div>
                     </div>
                 </section>
 
@@ -748,22 +777,97 @@
                 document.getElementById('khodam-desc').innerText = `"${hasil.desc}"`;
                 
                 document.getElementById('khodam-result-box').classList.remove('hidden');
-                document.getElementById('khodam-result-box').classList.add('shake-element'); // Efek getar
-                btn.classList.add('hidden'); // Sembunyikan tombol
+                document.getElementById('khodam-result-box').classList.add('shake-element'); 
+                btn.classList.add('hidden'); 
                 btn.innerHTML = `<i class="fa-solid fa-eye mr-2"></i> TERAWANG SEKARANG`;
                 btn.disabled = false;
                 
                 setTimeout(() => document.getElementById('khodam-result-box').classList.remove('shake-element'), 500);
 
-                // Reset tombol setelah 5 detik biar bisa main lagi
                 setTimeout(() => {
                     btn.innerHTML = "MAIN LAGI?";
                     btn.classList.remove('hidden');
                 }, 3000);
 
-            }, 2000); // Durasi loading 2 detik
+            }, 2000); 
         };
         // --- END KHODAM LOGIC ---
+
+        // --- LEADERBOARD LOGIC (BARU V8.5) ---
+        window.bukaLeaderboard = async () => {
+            document.getElementById('leaderboard-modal').classList.remove('hidden');
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-spinner fa-spin text-3xl text-amber-500"></i><p class="text-xs text-gray-400 mt-2">Mencari yang paling rajin...</p></div>`;
+
+            const today = new Date().toLocaleDateString('id-ID');
+            
+            try {
+                // Query Top 10 Tercepat Hari Ini
+                // NOTE: Jika error "index", klik link di Console Log
+                const q = query(
+                    collection(db, "absensi"),
+                    where("tanggal", "==", today),
+                    where("kategori", "==", "Masuk"),
+                    orderBy("timestamp", "asc"),
+                    limit(10)
+                );
+                
+                const snap = await getDocs(q);
+                list.innerHTML = "";
+
+                if (snap.empty) {
+                    list.innerHTML = `<div class="text-center py-10 text-gray-400 italic">Belum ada yang absen hari ini.<br>Jadilah yang pertama! 🚀</div>`;
+                    return;
+                }
+
+                let rank = 1;
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    let rankStyle = "bg-white dark:bg-slate-700/50 border-gray-100 dark:border-slate-700";
+                    let trophy = `<span class="font-black text-gray-300 w-8 text-center text-lg italic">#${rank}</span>`;
+                    let textName = "text-slate-700 dark:text-slate-200";
+
+                    if(rank === 1) {
+                        rankStyle = "bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/40 dark:to-amber-900/40 border-amber-300 shadow-md transform scale-105";
+                        trophy = "<span class='text-2xl w-8 text-center'>🥇</span>";
+                        textName = "text-amber-700 dark:text-amber-400";
+                    } else if(rank === 2) {
+                        rankStyle = "bg-gray-100 dark:bg-slate-700 border-gray-300";
+                        trophy = "<span class='text-xl w-8 text-center'>🥈</span>";
+                    } else if(rank === 3) {
+                        rankStyle = "bg-orange-50 dark:bg-orange-900/20 border-orange-200";
+                        trophy = "<span class='text-xl w-8 text-center'>🥉</span>";
+                    }
+
+                    list.innerHTML += `
+                    <div class="flex items-center gap-3 p-3 mb-2 rounded-xl border ${rankStyle} transition hover:scale-[1.02]">
+                        ${trophy}
+                        <img src="${data.foto_profil || 'icon.png'}" class="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-slate-600 shadow-sm">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-sm ${textName} truncate leading-tight">${data.nama}</h4>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-[10px] font-mono bg-slate-900 text-white px-1.5 rounded">${data.waktu}</span>
+                                <span class="text-[9px] text-gray-500 dark:text-gray-400 truncate">${data.divisi}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                    rank++;
+                });
+
+            } catch (e) {
+                if(e.message.includes("index")) {
+                    list.innerHTML = `<div class="p-4 bg-red-100 text-red-600 text-xs rounded-xl border border-red-200">
+                        <p class="font-bold mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> SETUP DATABASE DIPERLUKAN</p>
+                        <p>Fitur ini butuh "Index Firestore".</p>
+                        <p class="mt-2">Silakan buka <b>Console (F12)</b> di browser ini, lalu klik link error yang muncul dari Firebase untuk membuat index otomatis.</p>
+                    </div>`;
+                    console.error("⚠️ KLIK LINK INI UNTUK BUAT INDEX: ", e);
+                } else {
+                    list.innerHTML = `<div class="text-center py-5 text-red-500 text-xs">Error: ${e.message}</div>`;
+                }
+            }
+        }
+        // --- END LEADERBOARD LOGIC ---
 
         window.bukaAdminPanel = () => { document.getElementById('admin-modal').classList.remove('hidden'); }
         window.tambahKaryawan = async () => {
