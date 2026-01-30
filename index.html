@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - V8.2 Clean</title>
+    <title>Mocca Super App - V8.3 Emergency</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -43,6 +43,8 @@
         /* Birthday Gradient */
         @keyframes rainbow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
         .birthday-gradient { background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #ffd1ff, #fbc2eb, #a18cd1); background-size: 400% 400%; animation: rainbow 10s ease infinite; }
+        
+        .video-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
     </style>
 </head>
 <body class="bg-gray-50 text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900 transition-colors duration-300">
@@ -64,7 +66,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/30 text-[10px] uppercase tracking-[0.3em]">V8.2 Clean Edition</p>
+            <p class="text-white/30 text-[10px] uppercase tracking-[0.3em]">V8.3 Emergency Fix</p>
         </div>
     </div>
 
@@ -78,32 +80,26 @@
                     <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-users"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Tim</span>
                 </div>
-                
                 <div onclick="bukaIDCard()" class="flex flex-col items-center gap-2 cursor-pointer group">
                     <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-id-card"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">ID Card</span>
                 </div>
-
                 <div onclick="toggleDarkMode()" class="flex flex-col items-center gap-2 cursor-pointer group">
                     <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-yellow-400 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i id="menu-icon-theme" class="fa-solid fa-moon"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Tema</span>
                 </div>
-
                 <div onclick="logoutGoogle()" class="flex flex-col items-center gap-2 cursor-pointer group">
                     <div class="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-power-off"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Keluar</span>
                 </div>
-
                 <div id="menu-admin-panel" class="hidden flex flex-col items-center gap-2 cursor-pointer group" onclick="bukaAdminPanel()">
                     <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-users-gear"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Admin</span>
                 </div>
-
                 <div id="menu-scan-qr" class="hidden flex flex-col items-center gap-2 cursor-pointer group" onclick="bukaScanner()">
                     <div class="w-12 h-12 rounded-2xl bg-slate-800 text-white flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-qrcode"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Scan</span>
                 </div>
-
                 <div id="menu-add-info" class="hidden flex flex-col items-center gap-2 cursor-pointer group" onclick="document.getElementById('info-modal').classList.remove('hidden'); tutupMainMenu()">
                     <div class="w-12 h-12 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-bullhorn"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Info</span>
@@ -132,16 +128,9 @@
                 <img id="detail-foto" src="" class="w-24 h-24 rounded-full border-4 border-white dark:border-slate-800 shadow-lg mx-auto bg-gray-200 object-cover">
                 <h2 id="detail-nama" class="text-xl font-black text-slate-800 dark:text-white mt-3 leading-tight">Nama User</h2>
                 <span id="detail-badge" class="inline-block bg-blue-100 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded mt-1 mb-4">Divisi</span>
-                
                 <div class="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 text-left border border-gray-100 dark:border-slate-700 space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-envelope mr-2"></i>Email</span>
-                        <span id="detail-email" class="text-xs font-bold text-slate-700 dark:text-white truncate max-w-[150px]">email@mocca.com</span>
-                    </div>
-                    <div class="flex justify-between items-center border-t border-gray-100 dark:border-slate-600 pt-2">
-                        <span class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-cake-candles mr-2"></i>Ultah</span>
-                        <span id="detail-ultah" class="text-xs font-bold text-slate-700 dark:text-white">-</span>
-                    </div>
+                    <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-envelope mr-2"></i>Email</span><span id="detail-email" class="text-xs font-bold text-slate-700 dark:text-white truncate max-w-[150px]">-</span></div>
+                    <div class="flex justify-between items-center border-t border-gray-100 dark:border-slate-600 pt-2"><span class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-cake-candles mr-2"></i>Ultah</span><span id="detail-ultah" class="text-xs font-bold text-slate-700 dark:text-white">-</span></div>
                 </div>
                 <button onclick="tutupDetailUser()" class="mt-6 w-full py-3 rounded-xl font-bold bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg hover:opacity-90 transition">Tutup Profil</button>
             </div>
@@ -154,11 +143,8 @@
                 <h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-users-gear text-purple-500 mr-2"></i>Admin Dashboard</h2>
                 <button onclick="document.getElementById('admin-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="p-5 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700">
-                <div class="flex gap-2 mb-4">
-                    <button onclick="downloadLaporan()" class="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-xs font-bold hover:bg-green-200 border border-green-200"><i class="fa-solid fa-file-excel mr-1"></i> Export Absen</button>
-                </div>
+                <div class="flex gap-2 mb-4"><button onclick="downloadLaporan()" class="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-xs font-bold hover:bg-green-200 border border-green-200"><i class="fa-solid fa-file-excel mr-1"></i> Export Absen</button></div>
                 <p class="text-xs text-gray-500 mb-2 font-bold uppercase">Tambah Karyawan Baru:</p>
                 <div class="grid grid-cols-2 gap-3 mb-3">
                     <input type="email" id="adm-email" placeholder="Email Google" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm outline-none dark:text-white">
@@ -201,6 +187,21 @@
         </div>
     </div>
 
+    <div id="info-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md p-6 text-slate-800 border-t-4 border-blue-500">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold dark:text-slate-800">Buat Pengumuman</h2>
+                <button onclick="document.getElementById('info-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-red-100 text-gray-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Judul</label><input type="text" id="info-judul" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"></div>
+                <div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Tipe</label><select id="info-tipe" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"><option value="Penting">🔴 PENTING</option><option value="Info">🔵 INFO</option><option value="Event">🟢 EVENT</option></select></div>
+                <div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Isi</label><textarea id="info-isi" rows="3" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"></textarea></div>
+                <button onclick="kirimPengumuman()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95">POSTING</button>
+            </div>
+        </div>
+    </div>
+
     <div id="app-screen" class="hidden flex h-screen overflow-hidden bg-amber-50/50 dark:bg-slate-900/95 transition-colors duration-300">
         <div class="flex-1 flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full bg-white/80 dark:bg-slate-900 shadow-2xl relative transition-colors duration-300">
             
@@ -209,10 +210,7 @@
                     <div class="relative"><img id="user-photo" src="" class="w-11 h-11 rounded-full border-2 border-amber-100 shadow-md object-cover"><div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div></div>
                     <div><p id="user-name-display" class="text-sm font-bold text-slate-900 leading-tight">Loading...</p><p id="user-divisi-display" class="text-[11px] text-amber-600 font-semibold tracking-wide">...</p></div>
                 </div>
-                
-                <button onclick="bukaMainMenu()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-white hover:bg-amber-100 transition flex items-center justify-center shadow-sm border border-transparent hover:border-amber-200">
-                    <i class="fa-solid fa-grid-2 text-lg"></i>
-                </button>
+                <button onclick="bukaMainMenu()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-white hover:bg-amber-100 transition flex items-center justify-center shadow-sm border border-transparent hover:border-amber-200"><i class="fa-solid fa-grid-2 text-lg"></i></button>
             </header>
 
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-5 scroll-smooth pb-24">
@@ -232,14 +230,12 @@
                     </div>
                     <div><div class="flex justify-between mb-2"><h3 class="font-bold text-slate-900 dark:text-white">Riwayat</h3><input type="date" id="input-filter-tanggal" onchange="gantiTanggalRiwayat()" class="text-xs bg-transparent border border-gray-300 rounded px-2"></div><div id="tabel-body" class="space-y-3"></div><p id="empty-msg" class="hidden text-center text-gray-400 py-10 text-sm">Belum ada data.</p></div>
                 </section>
-
                 <section id="view-games" class="hidden fade-in">
                     <div class="mb-6"><h2 class="text-2xl font-black text-slate-800 dark:text-white">Game Center</h2></div>
                     <div onclick="bukaGacha()" class="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl p-6 shadow-lg text-white relative cursor-pointer mb-4"><h3 class="font-black text-xl">GACHA MAKAN</h3><p class="text-xs">Bingung makan apa?</p><div class="absolute right-4 top-4 text-4xl">🎲</div></div>
                 </section>
                 <div class="h-20"></div>
             </main>
-
             <nav class="glass fixed bottom-0 left-0 w-full z-40 border-t border-gray-200 dark:border-slate-700 pb-safe">
                 <div class="max-w-md mx-auto flex justify-around items-center p-3">
                     <button onclick="switchView('home')" id="nav-home" class="nav-item active flex flex-col items-center gap-1 w-16"><i class="fa-solid fa-house text-xl"></i><span class="text-[9px] font-bold">Home</span></button>
@@ -256,17 +252,23 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // CONFIG (Ganti dengan config firebase lu)
+        // GANTI EMAIL LU DISINI BIAR BISA MASUK KALO KE-KUNCI
+        const SUPER_ADMIN_EMAIL = "dicky@mocca.studio"; 
+
         const firebaseConfig = { apiKey: "AIzaSyAcBFC_vOSHyJP89gGvguKPJ60G2BOoIvg", authDomain: "moccasuperapp.firebaseapp.com", projectId: "moccasuperapp", storageBucket: "moccasuperapp.firebasestorage.app", messagingSenderId: "966529708566", appId: "1:966529708566:web:7f7bb39e7c6811e9c93b37" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app); const provider = new GoogleAuthProvider();
-        
-        let currentUser = null, userProfile = {}, compressedProfileImage = "", videoStream = null, currentLat = null, currentLong = null, allData = [], selectedMood = "🙂";
+        let currentUser=null, userProfile={}, compressedProfileImage="", videoStream=null, currentLat=null, currentLong=null, allData=[], selectedMood="🙂";
 
-        // AUTH
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // EMERGENCY BYPASS
+                if(user.email === SUPER_ADMIN_EMAIL) {
+                    await setDoc(doc(db, "data_karyawan", "super_admin_bypass"), { email: user.email, nama: user.displayName, divisi: "Super Admin", role: "admin", timestamp: new Date() }, { merge: true });
+                }
+
                 const checkDb = await getDocs(collection(db, "data_karyawan"));
                 if(checkDb.empty) await addDoc(collection(db, "data_karyawan"), { nama: user.displayName, divisi: "IT/Developer", role: "admin", email: user.email, timestamp: new Date() });
+                
                 const q = query(collection(db, "data_karyawan"), where("email", "==", user.email));
                 const querySnapshot = await getDocs(q);
                 if (!querySnapshot.empty) {
@@ -285,26 +287,19 @@
             document.getElementById('user-photo').src = userProfile.photoURL || 'icon.png';
             document.getElementById('user-name-display').innerText = userProfile.nama;
             document.getElementById('user-divisi-display').innerText = userProfile.divisi;
-            
-            // MENU ADMIN VISIBILITY
             if(userProfile.role === 'admin') {
                 document.getElementById('menu-admin-panel').classList.remove('hidden');
                 document.getElementById('menu-scan-qr').classList.remove('hidden');
                 document.getElementById('menu-add-info').classList.remove('hidden');
-                document.getElementById('badge-admin').classList.remove('hidden');
                 loadDaftarKaryawan();
             }
-
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
             loadRiwayatData(); loadPengumuman(); cekUlangTahun();
         }
 
-        // --- NEW MENU LOGIC ---
         window.bukaMainMenu = () => document.getElementById('main-menu-modal').classList.remove('hidden');
         window.tutupMainMenu = () => document.getElementById('main-menu-modal').classList.add('hidden');
-
-        // --- TEAM & USER DETAIL ---
         window.bukaTim = () => { 
             tutupMainMenu();
             document.getElementById('team-modal').classList.remove('hidden');
@@ -314,7 +309,7 @@
                 container.innerHTML = "";
                 snap.forEach(doc => {
                     const data = doc.data();
-                    const dataString = JSON.stringify(data).replace(/"/g, '&quot;'); // Escape for HTML attribute
+                    const dataString = JSON.stringify(data).replace(/"/g, '&quot;'); 
                     container.innerHTML += `
                     <div onclick="lihatDetailUser(${dataString})" class="flex items-center gap-3 p-3 mb-2 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-700 cursor-pointer hover:bg-blue-50 transition">
                         <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold">${data.nama.charAt(0)}</div>
@@ -323,80 +318,43 @@
                 });
             });
         };
-
         window.lihatDetailUser = async (data) => {
             document.getElementById('detail-nama').innerText = data.nama;
             document.getElementById('detail-badge').innerText = data.divisi;
             document.getElementById('detail-email').innerText = data.email;
-            
-            // Cek Foto User Lain (fetch dari collection 'users' biar dapet foto terbaru)
-            // Note: Ini trik karena 'data_karyawan' ga nyimpen foto update.
-            // Kita pake default icon dulu, nanti kalau ada query complex baru load.
             document.getElementById('detail-foto').src = 'icon.png'; 
-            
-            // Logic Privasi Tanggal Lahir
+            // FETCH REAL PHOTO FROM USERS COLLECTION (BY EMAIL MATCH) - OPTIONAL ADVANCED
+            const q = query(collection(db, "users"), where("email", "==", data.email));
+            getDocs(q).then(snap => { if(!snap.empty) document.getElementById('detail-foto').src = snap.docs[0].data().photoURL || 'icon.png'; });
+
             const ultahEl = document.getElementById('detail-ultah');
             if (userProfile.role === 'admin') {
-                if(data.tgl_lahir) {
-                    const d = new Date(data.tgl_lahir);
-                    ultahEl.innerText = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-                } else { ultahEl.innerText = "-"; }
-            } else {
-                ultahEl.innerHTML = `<i class="fa-solid fa-lock mr-1"></i> Privasi`;
-            }
-
+                if(data.tgl_lahir) { const d = new Date(data.tgl_lahir); ultahEl.innerText = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); } else { ultahEl.innerText = "-"; }
+            } else { ultahEl.innerHTML = `<i class="fa-solid fa-lock mr-1"></i> Privasi`; }
             document.getElementById('user-detail-modal').classList.remove('hidden');
         };
         window.tutupDetailUser = () => document.getElementById('user-detail-modal').classList.add('hidden');
-
-        // --- OTHER LOGIC (Admin, Absen, Games) ---
         window.bukaAdminPanel = () => { tutupMainMenu(); document.getElementById('admin-modal').classList.remove('hidden'); }
-        window.tambahKaryawan = async () => { /* Logika sama kayak V.8.1 */ 
-            const email = document.getElementById('adm-email').value.trim(); const nama = document.getElementById('adm-nama').value.trim(); const divisi = document.getElementById('adm-divisi').value; const role = document.getElementById('adm-role').value; const tgl = document.getElementById('adm-tgl').value;
-            if(!email || !nama || !divisi) return alert("Lengkapi data!");
-            try { await addDoc(collection(db, "data_karyawan"), { email, nama, divisi, role, tgl_lahir: tgl }); alert("Saved!"); } catch(e) { alert(e.message); }
-        }
-        window.loadDaftarKaryawan = () => { /* Logika sama */ 
-             onSnapshot(query(collection(db, "data_karyawan"), orderBy("nama")), (snap) => {
-                const list = document.getElementById('list-karyawan'); list.innerHTML="";
-                snap.forEach(d => { const dt=d.data(); list.innerHTML += `<div class="bg-gray-50 p-2 rounded mb-1 flex justify-between"><div><b class="text-xs">${dt.nama}</b><br><span class="text-[10px]">${dt.divisi}</span></div><button onclick="hapusKaryawan('${d.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div>`; });
-             });
-        }
+        window.tambahKaryawan = async () => { const email = document.getElementById('adm-email').value.trim(); const nama = document.getElementById('adm-nama').value.trim(); const divisi = document.getElementById('adm-divisi').value; const role = document.getElementById('adm-role').value; const tgl = document.getElementById('adm-tgl').value; if(!email || !nama || !divisi) return alert("Lengkapi data!"); try { await addDoc(collection(db, "data_karyawan"), { email, nama, divisi, role, tgl_lahir: tgl }); alert("Saved!"); } catch(e) { alert(e.message); } }
+        window.loadDaftarKaryawan = () => { onSnapshot(query(collection(db, "data_karyawan"), orderBy("nama")), (snap) => { const list = document.getElementById('list-karyawan'); list.innerHTML=""; snap.forEach(d => { const dt=d.data(); list.innerHTML += `<div class="bg-gray-50 p-2 rounded mb-1 flex justify-between"><div><b class="text-xs">${dt.nama}</b><br><span class="text-[10px]">${dt.divisi}</span></div><button onclick="hapusKaryawan('${d.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div>`; }); }); }
         window.hapusKaryawan = async (id) => { if(confirm("Hapus?")) await deleteDoc(doc(db, "data_karyawan", id)); }
-        
-        // UTILS
         window.switchView = (v) => { document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-games').classList.add('hidden'); document.getElementById('nav-home').classList.remove('active'); document.getElementById('nav-games').classList.remove('active'); document.getElementById(`view-${v}`).classList.remove('hidden'); document.getElementById(`nav-${v}`).classList.add('active'); };
         window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); tutupMainMenu(); };
         window.bukaProfile = () => { document.getElementById('profile-modal').classList.remove('hidden'); document.getElementById('edit-nama').value = userProfile.nama; document.getElementById('edit-divisi').value = userProfile.divisi; }
         window.tutupProfile = () => document.getElementById('profile-modal').classList.add('hidden');
         window.updateProfileData = async () => { if(compressedProfileImage) { await setDoc(doc(db,"users",currentUser.uid),{photoURL:compressedProfileImage},{merge:true}); alert("Foto update!"); window.location.reload(); } }
         window.previewImage = (input) => { if(input.files[0]) { const r = new FileReader(); r.onload=(e)=>{ const img=new Image(); img.src=e.target.result; img.onload=()=>{ const c=document.createElement('canvas'); const ctx=c.getContext('2d'); c.width=300; c.height=img.height*(300/img.width); ctx.drawImage(img,0,0,c.width,c.height); compressedProfileImage=c.toDataURL('image/jpeg',0.7); document.getElementById('preview-foto-profil').src=compressedProfileImage; }}; r.readAsDataURL(input.files[0]); } }
-        
-        // ABSENSI & GEO
         window.aturForm = () => { const j = document.getElementById('jenis-absen').value; const s = document.getElementById('status-absen'); const k = document.getElementById('container-keterangan'); s.innerHTML=""; if(j==='Masuk') { k.classList.add('hidden'); s.innerHTML=`<option>WFO (Kantor)</option><option>WFH (Rumah)</option>`; } else if(j==='Pulang'){ k.classList.add('hidden'); } else { k.classList.remove('hidden'); s.innerHTML=`<option>Sakit</option><option>Izin</option><option>Cuti</option>`; } }
         window.bukaKamera = async () => { try { const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}}); videoStream=s; document.getElementById('video-preview').srcObject=s; document.getElementById('camera-container').classList.remove('hidden'); document.getElementById('btn-open-camera').classList.add('hidden'); document.getElementById('btn-capture').classList.remove('hidden'); if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(p=>{ currentLat=p.coords.latitude; currentLong=p.coords.longitude; document.getElementById('gps-status').innerText="GPS OK"; }); } } catch(e){alert("Camera Error");} }
         window.jepretDanKirim = async () => { if(!videoStream) return; const c=document.createElement('canvas'); c.width=640; c.height=480; c.getContext('2d').drawImage(document.getElementById('video-preview'),0,0,640,480); const foto=c.toDataURL('image/jpeg',0.7); try { await addDoc(collection(db,"absensi"),{ uid:userProfile.uid, nama:userProfile.nama, divisi:userProfile.divisi, foto_profil:userProfile.photoURL, kategori:document.getElementById('jenis-absen').value, status:document.getElementById('status-absen').value, keterangan:document.getElementById('input-keterangan').value, mood:selectedMood, bukti_foto:foto, timestamp:new Date(), waktu:new Date().toLocaleTimeString('id-ID'), tanggal:new Date().toLocaleDateString('id-ID') }); alert("Absen Sukses!"); window.location.reload(); } catch(e){ alert(e.message); } }
-        
         window.loadRiwayatData = () => { const t = new Date().toLocaleDateString('id-ID'); onSnapshot(query(collection(db,"absensi"),where("tanggal","==",t),orderBy("timestamp","desc")), (s)=>{ const c=document.getElementById('tabel-body'); c.innerHTML=""; s.forEach(d=>{ const dt=d.data(); c.innerHTML+=`<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-gray-100 dark:border-slate-700 flex gap-3"><img src="${dt.bukti_foto}" class="w-12 h-12 rounded bg-gray-200 object-cover" onclick="bukaFoto('${dt.bukti_foto}')"><div><b class="text-sm dark:text-white">${dt.nama}</b><br><span class="text-xs text-gray-500">${dt.status} • ${dt.waktu}</span></div><div class="ml-auto text-xl">${dt.mood||''}</div></div>`; }); }); }
-        
-        // EXTRAS
         window.bukaFoto = (s) => { document.getElementById('modal-img').src=s; document.getElementById('image-modal').classList.remove('hidden'); }
         window.tutupModal = () => document.getElementById('image-modal').classList.add('hidden');
         window.pilihMood = (m) => { selectedMood=m; document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected')); if(m==='🔥')document.getElementById('mood-fire').classList.add('selected'); if(m==='🙂')document.getElementById('mood-smile').classList.add('selected'); if(m==='🤯')document.getElementById('mood-stress').classList.add('selected'); }
         window.bukaGacha = () => { tutupMainMenu(); document.getElementById('gacha-modal').classList.remove('hidden'); }
         window.tutupGacha = () => document.getElementById('gacha-modal').classList.add('hidden');
         window.putarGacha = () => { const f=["Soto","Bakso","Padang","Warteg","Gado2","Mie Ayam"]; let i=0; const t=setInterval(()=>{ document.getElementById('gacha-result').innerText=f[Math.floor(Math.random()*f.length)]; i++; if(i>20){clearInterval(t);} },100); }
-        window.cekUlangTahun = async () => {
-            const today = new Date(); const d = today.getDate(); const m = today.getMonth() + 1;
-            const snap = await getDocs(query(collection(db, "data_karyawan")));
-            let kids = [];
-            snap.forEach(doc => { const data = doc.data(); if(data.tgl_lahir) { const b = new Date(data.tgl_lahir); if(b.getDate()===d && (b.getMonth()+1)===m) kids.push(data.nama); } });
-            if(kids.length > 0) {
-                document.getElementById('birthday-section').classList.remove('hidden');
-                document.getElementById('birthday-names').innerText = kids.join(" & ");
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            }
-        }
+        window.cekUlangTahun = async () => { const today = new Date(); const d = today.getDate(); const m = today.getMonth() + 1; const snap = await getDocs(query(collection(db, "data_karyawan"))); let kids = []; snap.forEach(doc => { const data = doc.data(); if(data.tgl_lahir) { const b = new Date(data.tgl_lahir); if(b.getDate()===d && (b.getMonth()+1)===m) kids.push(data.nama); } }); if(kids.length > 0) { document.getElementById('birthday-section').classList.remove('hidden'); document.getElementById('birthday-names').innerText = kids.join(" & "); confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } }
         window.loginGoogle = () => signInWithPopup(auth, provider); window.logoutGoogle = () => signOut(auth);
         setInterval(() => document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
     </script>
