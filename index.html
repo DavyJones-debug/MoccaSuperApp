@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - V8.4 Clean</title>
+    <title>Mocca Super App - V8.4 Super Menu</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -66,7 +66,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/30 text-[10px] uppercase tracking-[0.3em]">V8.4 Clean Edition</p>
+            <p class="text-white/30 text-[10px] uppercase tracking-[0.3em]">V8.4 Super Menu</p>
         </div>
     </div>
 
@@ -257,7 +257,10 @@
         </div>
     </div>
 
-    <div id="image-modal" class="fixed inset-0 bg-slate-900/95 hidden z-[120] flex items-center justify-center p-4 backdrop-blur-sm" onclick="tutupModal()"><img id="modal-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl ring-4 ring-amber-500/30"></div>
+    <div id="image-modal" class="fixed inset-0 bg-slate-900/95 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm" onclick="tutupModal()">
+        <img id="modal-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl ring-4 ring-amber-500/30">
+        <button class="absolute top-6 right-6 text-white text-xl opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
+    </div>
 
     <div id="app-screen" class="hidden flex h-screen overflow-hidden bg-amber-50/50 dark:bg-slate-900/95 transition-colors duration-300">
         <div class="flex-1 flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full bg-white/80 dark:bg-slate-900 shadow-2xl relative transition-colors duration-300">
@@ -311,7 +314,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // GANTI EMAIL INI DENGAN EMAIL KAMU BIAR BISA LOGIN DARURAT
-        const SUPER_ADMIN_EMAIL = "EMAIL_LU_DISINI@gmail.com"; 
+        const SUPER_ADMIN_EMAIL = "dicky@mocca.studio"; 
 
         const firebaseConfig = { apiKey: "AIzaSyAcBFC_vOSHyJP89gGvguKPJ60G2BOoIvg", authDomain: "moccasuperapp.firebaseapp.com", projectId: "moccasuperapp", storageBucket: "moccasuperapp.firebasestorage.app", messagingSenderId: "966529708566", appId: "1:966529708566:web:7f7bb39e7c6811e9c93b37" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app); const provider = new GoogleAuthProvider();
