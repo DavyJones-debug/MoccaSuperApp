@@ -40,13 +40,10 @@
 <body class="text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900">
 
     <div id="login-screen" class="flex flex-col items-center justify-center h-screen w-full relative overflow-hidden text-white p-6">
-        
         <video autoplay muted loop playsinline class="video-bg">
             <source src="background.mp4" type="video/mp4">
             <div class="bg-slate-900 w-full h-full absolute inset-0"></div> </video>
-
         <div class="video-overlay"></div>
-
         <div class="relative z-10 text-center glass p-8 rounded-3xl shadow-2xl border border-white/20 max-w-sm w-full backdrop-blur-md">
             <div class="mb-6 inline-block p-4 rounded-2xl bg-white/20 shadow-inner">
                 <img src="icon.png" class="w-16 h-16 rounded-xl shadow-lg mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
@@ -215,7 +212,7 @@
 
                 <div>
                     <div class="flex justify-between items-center mb-4 px-1">
-                        <h3 class="font-bold text-slate-900 text-lg">Riwayat</h3>
+                        <h3 class="font-bold text-slate-900 text-lg">Riwayat Hari Ini</h3>
                         <button id="btn-download-excel" onclick="downloadLaporan()" class="hidden bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2"><i class="fa-solid fa-file-excel"></i> Export</button>
                     </div>
                     <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
@@ -241,12 +238,12 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // ================= SETTING =================
-        const KANTOR_LAT = -7.988571; // <--- GANTI
-        const KANTOR_LONG = 112.652931; // <--- GANTI
+        const KANTOR_LAT = -7.988571; // <--- GANTI SESUAI KANTOR
+        const KANTOR_LONG = 112.652931; // <--- GANTI SESUAI KANTOR
         const MAX_JARAK_METER = 100;
         const JAM_MASUK_KANTOR = 10; 
         const MENIT_MASUK_KANTOR = 0; 
@@ -270,6 +267,7 @@
         let currentLat = null, currentLong = null, allData = [], currentTab = 'all';
         let html5QrCode = null;
 
+        // AUTH LISTENER
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -292,11 +290,10 @@
 
         function setupUI() {
             renderHeader();
-            // LOGIC ADMIN (Management / HR)
             if(userProfile.divisi === "Management" || userProfile.divisi === "HR/Admin") {
                 document.getElementById('btn-add-info').classList.remove('hidden');
                 document.getElementById('btn-scan-qr').classList.remove('hidden');
-                document.getElementById('btn-download-excel').classList.remove('hidden'); // SEKARANG TOMBOL INI UDAH ADA DI HTML
+                document.getElementById('btn-download-excel').classList.remove('hidden');
             }
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
@@ -309,6 +306,7 @@
             document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Divisi Belum Diisi";
         }
 
+        // --- FITUR SCANNER & ID CARD ---
         window.bukaScanner = async () => {
             document.getElementById('scanner-modal').classList.remove('hidden');
             if (!html5QrCode) { html5QrCode = new Html5Qrcode("reader"); }
@@ -356,6 +354,7 @@
         }
         window.tutupIDCard = () => { document.getElementById('idcard-modal').classList.add('hidden'); }
 
+        // --- FITUR PENGUMUMAN ---
         window.kirimPengumuman = async () => {
             const judul = document.getElementById('info-judul').value; const tipe = document.getElementById('info-tipe').value; const isi = document.getElementById('info-isi').value;
             if(!judul || !isi) return alert("Judul dan Isi wajib diisi!");
@@ -366,146 +365,184 @@
             if(snapshot.empty) { section.classList.add('hidden'); } else { section.classList.remove('hidden'); snapshot.forEach(doc => { const data = doc.data(); let border = "border-l-4 border-blue-500"; let icon = "fa-circle-info text-blue-500"; if(data.tipe === "Penting") { border = "border-l-4 border-red-500"; icon="fa-triangle-exclamation text-red-500"; } if(data.tipe === "Event") { border = "border-l-4 border-green-500"; icon="fa-calendar-check text-green-500"; } container.innerHTML += `<div class="snap-center shrink-0 w-72 bg-white rounded-xl p-4 shadow-sm border border-gray-100 ${border} flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><i class="fa-solid ${icon}"></i><span class="text-xs font-bold uppercase text-slate-500">${data.tipe}</span></div><span class="text-[10px] text-gray-400">${data.tanggal}</span></div><h4 class="font-bold text-slate-800 text-sm mb-1 leading-tight">${data.judul}</h4><p class="text-xs text-gray-500 line-clamp-2">${data.isi}</p></div><div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center"><span class="text-[10px] text-gray-400 italic">Oleh: ${data.penulis}</span></div></div>`; }); }
         });
 
+        // --- FITUR PROFIL ---
         window.bukaProfile = () => { document.getElementById('profile-modal').classList.remove('hidden'); document.getElementById('preview-foto-profil').src = userProfile.photoURL || currentUser.photoURL; document.getElementById('edit-nama').value = userProfile.nama_lengkap || ""; document.getElementById('edit-divisi').value = userProfile.divisi || ""; document.getElementById('edit-tgl-lahir').value = userProfile.tgl_lahir || ""; }
         window.tutupProfile = () => { if(!userProfile.divisi) return alert("Divisi wajib diisi!"); document.getElementById('profile-modal').classList.add('hidden'); }
         window.previewImage = (input) => { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const maxWidth = 300; const scaleSize = maxWidth / img.width; canvas.width = maxWidth; canvas.height = img.height * scaleSize; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); compressedProfileImage = canvas.toDataURL('image/jpeg', 0.7); document.getElementById('preview-foto-profil').src = compressedProfileImage; } }; reader.readAsDataURL(input.files[0]); } }
         window.updateProfileData = async () => { const nama = document.getElementById('edit-nama').value; const divisi = document.getElementById('edit-divisi').value; const tgl = document.getElementById('edit-tgl-lahir').value; const finalPhoto = compressedProfileImage || userProfile.photoURL; if(!nama || !divisi) return alert("Wajib diisi!"); if (finalPhoto.length > 1000000) return alert("Foto terlalu besar!"); try { const newData = { nama_lengkap: nama, divisi: divisi, tgl_lahir: tgl, photoURL: finalPhoto, email: currentUser.email }; await setDoc(doc(db, "users", currentUser.uid), newData, { merge: true }); userProfile = newData; setupUI(); tutupProfile(); compressedProfileImage = ""; alert("Profil Tersimpan!"); window.location.reload(); } catch (e) { alert("Gagal: " + e.message); } }
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
         window.logoutGoogle = () => { if(confirm("Keluar?")) signOut(auth); };
+        
+        // --- FITUR ABSENSI & GEOLOCATION ---
         window.aturForm = () => { const jenis = document.getElementById('jenis-absen').value; const selectStatus = document.getElementById('status-absen'); const boxStatus = document.getElementById('container-status'); const boxKet = document.getElementById('container-keterangan'); selectStatus.innerHTML = ""; if (jenis === 'Masuk') { boxStatus.classList.remove('hidden'); boxKet.classList.add('hidden'); selectStatus.innerHTML += `<option value="Hadir (WFO)">🏢 Hadir (WFO - Kantor)</option><option value="Hadir (WFH)">🏠 Hadir (WFH - Rumah)</option>`; } else if (jenis === 'Pulang') { boxStatus.classList.add('hidden'); boxKet.classList.add('hidden'); } else if (jenis === 'IzinSakit') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Sakit">🤒 Sakit</option><option value="Izin">⚠️ Izin</option>`; } else if (jenis === 'Cuti') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Cuti">🏖️ Cuti</option>`; } }
         function hitungJarak(lat1, lon1, lat2, lon2) { const R = 6371e3; const φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180; const Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180; const a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
+        
         window.bukaKamera = async () => { if(!userProfile.divisi) return bukaProfile(); try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }); videoStream = stream; document.getElementById('video-preview').srcObject = stream; document.getElementById('camera-container').classList.remove('hidden'); document.getElementById('btn-open-camera').classList.add('hidden'); document.getElementById('btn-capture').classList.remove('hidden'); document.getElementById('gps-status').innerText = "Mencari GPS..."; if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((pos) => { currentLat = pos.coords.latitude; currentLong = pos.coords.longitude; const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG)); document.getElementById('gps-status').innerHTML = `<span class="text-slate-900 font-bold">GPS Terkunci</span>`; const info = document.getElementById('jarak-status'); info.innerText = `${jarak}m dari kantor`; info.classList.remove('hidden'); info.className = (jarak > MAX_JARAK_METER) ? "text-[10px] font-bold bg-red-500 text-white rounded px-2 mt-1" : "text-[10px] font-bold bg-green-600 text-white rounded px-2 mt-1"; }); } } catch (err) { alert("Gagal kamera: " + err.message); } };
-        // FUNGSI BARU: Ubah Koordinat jadi Alamat (Reverse Geocoding)
+        
+        // --- API ALAMAT LENGKAP ---
         async function getAlamatLengkap(lat, long) {
             try {
-                // Pakai API Gratis OpenStreetMap (Nominatim)
                 const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${long}&zoom=18&addressdetails=1`);
                 const data = await response.json();
-        
-                // Kita ambil bagian jalan, kota, atau nama gedung
                 let alamat = data.display_name;
-        
-                // Biar gak kepanjangan, kita potong dikit
-                if (alamat.length > 60) {
-                    alamat = alamat.substring(0, 60) + "...";
-                }
+                if (alamat.length > 60) { alamat = alamat.substring(0, 60) + "..."; }
                 return alamat;
-            } catch (error) {
-                console.log("Gagal cari alamat:", error);
-                return "Lokasi Terdeteksi (Alamat tidak dimuat)";
+            } catch (error) { return "Lokasi Terdeteksi (Alamat tidak dimuat)"; }
+        }
+
+        window.jepretDanKirim = async () => {
+            if (!videoStream || !currentLat) return alert("Tunggu GPS terkunci dulu ya!");
+            
+            const jenis = document.getElementById('jenis-absen').value;
+            let status = (jenis === 'Pulang') ? "Pulang" : document.getElementById('status-absen').value;
+            const keterangan = document.getElementById('input-keterangan').value;
+
+            if (jenis === 'Masuk' && status === 'Hadir (WFO)') {
+                const jarak = hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG);
+                if (jarak > MAX_JARAK_METER) return alert(`Kejauhan! (${Math.round(jarak)}m). Harap mendekat ke kantor.`);
             }
-        }
-window.jepretDanKirim = async () => {
-    if (!videoStream || !currentLat) return alert("Tunggu GPS terkunci dulu ya!");
-    
-    // 1. Ambil Data Form
-    const jenis = document.getElementById('jenis-absen').value;
-    let status = (jenis === 'Pulang') ? "Pulang" : document.getElementById('status-absen').value;
-    const keterangan = document.getElementById('input-keterangan').value;
+            if ((jenis === 'IzinSakit' || jenis === 'Cuti') && !keterangan.trim()) return alert("Wajib isi keterangan!");
 
-    // 2. Validasi Jarak & Jam
-    if (jenis === 'Masuk' && status === 'Hadir (WFO)') {
-        const jarak = hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG);
-        if (jarak > MAX_JARAK_METER) return alert(`Kejauhan! (${Math.round(jarak)}m). Harap mendekat ke kantor.`);
-    }
-    
-    if ((jenis === 'IzinSakit' || jenis === 'Cuti') && !keterangan.trim()) return alert("Wajib isi keterangan!");
+            const now = new Date();
+            if (jenis === 'Masuk') {
+                if (now.getHours() > JAM_MASUK_KANTOR || (now.getHours() === JAM_MASUK_KANTOR && now.getMinutes() > MENIT_MASUK_KANTOR)) {
+                    status += " (TERLAMBAT)";
+                }
+            }
 
-    const now = new Date();
-    if (jenis === 'Masuk') {
-        if (now.getHours() > JAM_MASUK_KANTOR || (now.getHours() === JAM_MASUK_KANTOR && now.getMinutes() > MENIT_MASUK_KANTOR)) {
-            status += " (TERLAMBAT)";
-        }
-    }
+            const btnCapture = document.getElementById('btn-capture');
+            const originalText = btnCapture.innerHTML;
+            btnCapture.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> MELACAK ALAMAT...`;
+            btnCapture.disabled = true;
 
-    // 3. UI Loading (Biar user tau lagi proses)
-    const btnCapture = document.getElementById('btn-capture');
-    const originalText = btnCapture.innerHTML;
-    btnCapture.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> MELACAK ALAMAT...`;
-    btnCapture.disabled = true;
+            let alamatUser = "Lokasi Koordinat";
+            try { alamatUser = await getAlamatLengkap(currentLat, currentLong); } catch (e) { alamatUser = `${currentLat}, ${currentLong}`; }
 
-    // 4. CARI ALAMAT DULU (Tunggu sampai dapet)
-    let alamatUser = "Lokasi Koordinat";
-    try {
-        alamatUser = await getAlamatLengkap(currentLat, currentLong);
-    } catch (e) {
-        alamatUser = `${currentLat}, ${currentLong}`;
-    }
+            const video = document.getElementById('video-preview');
+            const canvas = document.createElement('canvas');
+            canvas.width = 640; canvas.height = 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
+            ctx.fillStyle = "white";
+            ctx.font = "bold 20px sans-serif";
+            ctx.fillText(`${userProfile.nama_lengkap} • ${status}`, 20, canvas.height - 70);
+            ctx.font = "14px sans-serif";
+            ctx.fillText(`📅 ${now.toLocaleString('id-ID')}`, 20, canvas.height - 45);
+            ctx.font = "12px sans-serif";
+            ctx.fillStyle = "#fbbf24";
+            ctx.fillText(`📍 ${alamatUser}`, 20, canvas.height - 20);
 
-    // 5. Setup Canvas (Tempat Gambar)
-    const video = document.getElementById('video-preview');
-    const canvas = document.createElement('canvas');
-    canvas.width = 640; 
-    canvas.height = 480;
-    const ctx = canvas.getContext('2d');
+            const fotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
 
-    // 6. Gambar Video ke Canvas
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            videoStream.getTracks().forEach(t => t.stop());
+            document.getElementById('camera-container').classList.add('hidden');
+            document.getElementById('btn-open-camera').classList.remove('hidden');
+            document.getElementById('btn-capture').classList.add('hidden');
+            btnCapture.innerHTML = originalText;
+            btnCapture.disabled = false;
+            document.getElementById('input-keterangan').value = "";
 
-    // 7. Bikin Kotak Hitam di Bawah (Footer) - DIBESARIN DIKIT BIAR MUAT ALAMAT
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-    ctx.fillRect(0, canvas.height - 100, canvas.width, 100); // Tinggi 100px
+            try {
+                await addDoc(collection(db, "absensi"), {
+                    uid: currentUser.uid,
+                    nama: userProfile.nama_lengkap,
+                    divisi: userProfile.divisi,
+                    foto_profil: userProfile.photoURL,
+                    bukti_foto: fotoBase64,
+                    kategori: jenis,
+                    status: status,
+                    keterangan: keterangan,
+                    lokasi: alamatUser,
+                    koordinat: `${currentLat}, ${currentLong}`,
+                    waktu: now.toLocaleTimeString('id-ID'),
+                    tanggal: now.toLocaleDateString('id-ID'),
+                    timestamp: now
+                });
+                alert("Absen Berhasil! Lokasi tercatat.");
+            } catch (e) { alert("Error Database: " + e.message); }
+        };
 
-    // 8. Tulis Data (Watermark)
-    ctx.fillStyle = "white";
-    
-    // Baris 1: Nama & Status
-    ctx.font = "bold 20px sans-serif";
-    ctx.fillText(`${userProfile.nama_lengkap} • ${status}`, 20, canvas.height - 70);
-    
-    // Baris 2: Tanggal & Jam
-    ctx.font = "14px sans-serif";
-    ctx.fillText(`📅 ${now.toLocaleString('id-ID')}`, 20, canvas.height - 45);
-
-    // Baris 3: ALAMAT LENGKAP (Pake Ikon Pin)
-    ctx.font = "12px sans-serif";
-    ctx.fillStyle = "#fbbf24"; // Warna Kuning Amber biar kebaca
-    ctx.fillText(`📍 ${alamatUser}`, 20, canvas.height - 20);
-
-    // 9. Konversi ke Gambar
-    const fotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
-
-    // 10. Matikan Kamera & Reset Tombol
-    videoStream.getTracks().forEach(t => t.stop());
-    document.getElementById('camera-container').classList.add('hidden');
-    document.getElementById('btn-open-camera').classList.remove('hidden');
-    document.getElementById('btn-capture').classList.add('hidden');
-    btnCapture.innerHTML = originalText;
-    btnCapture.disabled = false;
-    document.getElementById('input-keterangan').value = "";
-
-    // 11. Kirim ke Database
-    try {
-        await addDoc(collection(db, "absensi"), {
-            uid: currentUser.uid,
-            nama: userProfile.nama_lengkap,
-            divisi: userProfile.divisi,
-            foto_profil: userProfile.photoURL,
-            bukti_foto: fotoBase64,
-            kategori: jenis,
-            status: status,
-            keterangan: keterangan,
-            lokasi: alamatUser, // Simpan Alamat Teks juga di database
-            koordinat: `${currentLat}, ${currentLong}`, // Koordinat asli tetep disimpen
-            waktu: now.toLocaleTimeString('id-ID'),
-            tanggal: now.toLocaleDateString('id-ID'),
-            timestamp: now
+        // --- DASHBOARD: QUERY DATA HARIAN ---
+        // Kita ambil 100 data terakhir, tapi yang ditampilkan CUMA yang tanggalnya HARI INI
+        // Ini cara paling aman biar gak kena error "Missing Index" di dashboard
+        const q = query(collection(db, "absensi"), orderBy("timestamp", "desc"), limit(100)); 
+        onSnapshot(q, (snapshot) => { 
+            allData = []; 
+            const today = new Date().toLocaleDateString('id-ID'); // Ambil tanggal hari ini
+            
+            snapshot.forEach(doc => { 
+                const d = doc.data();
+                // FILTER: Masukkan ke list cuma kalau tanggalnya SAMA dengan hari ini
+                if (d.tanggal === today) {
+                    allData.push(d); 
+                }
+            }); 
+            renderTabel(); 
         });
-        alert("Absen Berhasil! Lokasi tercatat.");
-    } catch (e) {
-        alert("Error Database: " + e.message);
-    }
-};
-        const q = query(collection(db, "absensi"), orderBy("timestamp", "desc"), limit(50)); onSnapshot(q, (snapshot) => { allData = []; snapshot.forEach(doc => allData.push(doc.data())); renderTabel(); }); window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
+
+        window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
         function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; container.innerHTML += `<div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white" onclick="bukaFoto('${data.bukti_foto}')"><div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 px-1.5 rounded border border-amber-100">${data.waktu}</span></div><p class="text-xs text-amber-600 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 mt-2 italic bg-amber-50/50 p-2 rounded-lg border border-amber-100">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
         window.bukaFoto = (src) => { document.getElementById('modal-img').src = src; document.getElementById('image-modal').classList.remove('hidden'); }
         window.tutupModal = () => { document.getElementById('image-modal').classList.add('hidden'); }
+        
+        // --- DOWNLOAD LAPORAN (BARU) ---
         window.downloadLaporan = async () => { 
-            // SECURITY CHECK: Cuma Admin/HR/Management yang boleh
-            if(userProfile.divisi !== "Management" && userProfile.divisi !== "HR/Admin") { return alert("AKSES DITOLAK! Hanya HR/Admin yang boleh download data."); }
-            if (!confirm("Download Excel?")) return; 
-            const snap = await getDocs(query(collection(db, "absensi"), orderBy("timestamp", "desc"))); let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Keterangan,Lokasi\n"; snap.forEach(d => { const data = d.data(); const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-"; csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${safeKet}","${data.lokasi}"\n`; }); const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "Laporan_Absensi_Studio_Yellow.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link); 
+            if(userProfile.divisi !== "Management" && userProfile.divisi !== "HR/Admin") { 
+                return alert("AKSES DITOLAK! Hanya HR/Admin yang boleh download data."); 
+            }
+
+            let choice = prompt("Ketik '1' untuk Rekap HARI INI\nKetik '2' untuk SEMUA DATA", "1");
+            if (!choice) return;
+
+            let q;
+            const today = new Date().toLocaleDateString('id-ID'); // Format: d/m/yyyy
+
+            if (choice === "1") {
+                // FILTER HARIAN: Ini butuh Index di Firestore. Kalau error, cek console!
+                q = query(collection(db, "absensi"), where("tanggal", "==", today), orderBy("timestamp", "desc"));
+            } else if (choice === "2") {
+                // SEMUA DATA: Ini aman tanpa settingan macem-macem
+                q = query(collection(db, "absensi"), orderBy("timestamp", "desc"));
+            } else {
+                return;
+            }
+
+            try {
+                const snap = await getDocs(q);
+
+                if (snap.empty) {
+                    return alert(`Data kosong, Jon! \n(Tanggal dicari: ${today})`);
+                }
+
+                let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Keterangan,Lokasi,Koordinat\n";
+                
+                snap.forEach(d => { 
+                    const data = d.data(); 
+                    const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-"; 
+                    const safeLokasi = data.lokasi ? data.lokasi.replace(/,/g, " - ") : "Lokasi tidak terdeteksi";
+                    csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${safeKet}","${safeLokasi}","${data.koordinat}"\n`; 
+                }); 
+
+                const link = document.createElement("a"); 
+                link.href = encodeURI(csv); 
+                const namaFile = (choice === "1") ? `Rekap_Harian_${today.replace(/\//g, "-")}.csv` : `Rekap_Full_Database.csv`;
+                link.download = namaFile; 
+                document.body.appendChild(link); 
+                link.click(); 
+                document.body.removeChild(link); 
+
+            } catch (error) {
+                console.error("ERROR FIREBASE:", error);
+                if (error.message.includes("index")) {
+                    alert("⚠️ ERROR INDEX TERDETEKSI! \n\nCek Console (F12) sekarang. Klik link merah di sana buat benerin database.");
+                } else {
+                    alert("Error: " + error.message);
+                }
+            }
         };
+
         setInterval(() => document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
     </script>
     <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); </script>
