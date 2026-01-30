@@ -27,22 +27,14 @@
         .pattern-bg { background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 20px 20px; opacity: 0.1; }
         
         /* VIDEO STYLE */
-        .video-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: 0;
-        }
-        .video-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.65); z-index: 1;
-        }
+        .video-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); z-index: 1; }
     </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900">
 
     <div id="login-screen" class="flex flex-col items-center justify-center h-screen w-full relative overflow-hidden text-white p-6">
-        <video autoplay muted loop playsinline class="video-bg">
-            <source src="background.mp4" type="video/mp4">
-            <div class="bg-slate-900 w-full h-full absolute inset-0"></div> </video>
+        <video autoplay muted loop playsinline class="video-bg"> <source src="background.mp4" type="video/mp4"> <div class="bg-slate-900 w-full h-full absolute inset-0"></div> </video>
         <div class="video-overlay"></div>
         <div class="relative z-10 text-center glass p-8 rounded-3xl shadow-2xl border border-white/20 max-w-sm w-full backdrop-blur-md">
             <div class="mb-6 inline-block p-4 rounded-2xl bg-white/20 shadow-inner">
@@ -211,10 +203,18 @@
                 </div>
 
                 <div>
-                    <div class="flex justify-between items-center mb-4 px-1">
-                        <h3 class="font-bold text-slate-900 text-lg">Riwayat Hari Ini</h3>
-                        <button id="btn-download-excel" onclick="downloadLaporan()" class="hidden bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2"><i class="fa-solid fa-file-excel"></i> Export</button>
+                    <div class="flex flex-col mb-4 px-1 gap-2">
+                        <div class="flex justify-between items-center">
+                            <h3 id="label-riwayat" class="font-bold text-slate-900 text-lg">Riwayat Hari Ini</h3>
+                            <button id="btn-download-excel" onclick="downloadLaporan()" class="hidden bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2"><i class="fa-solid fa-file-excel"></i> Export</button>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
+                            <span class="text-xs font-bold text-gray-400 pl-2">Filter:</span>
+                            <input type="date" id="input-filter-tanggal" onchange="gantiTanggalRiwayat()" class="text-xs font-bold text-slate-700 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 focus:ring-1 focus:ring-amber-500 outline-none">
+                            <button onclick="resetTanggalRiwayat()" class="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-1.5 rounded-lg hover:bg-amber-100 hover:text-amber-600 transition">Hari Ini</button>
+                        </div>
                     </div>
+
                     <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
                         <button onclick="gantiTab('all')" id="tab-all" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent">Semua</button>
                         <button onclick="gantiTab('wfo')" id="tab-wfo" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition">WFO</button>
@@ -224,7 +224,7 @@
                         <button onclick="gantiTab('cuti')" id="tab-cuti" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition">Cuti</button>
                     </div>
                     <div id="tabel-body" class="space-y-3"></div>
-                    <p id="empty-msg" class="hidden text-center text-gray-400 py-10 text-sm italic">Belum ada data hari ini.</p>
+                    <p id="empty-msg" class="hidden text-center text-gray-400 py-10 text-sm italic">Belum ada data untuk tanggal ini.</p>
                 </div>
                 <div class="h-10"></div>
             </main>
@@ -242,8 +242,8 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // ================= SETTING =================
-        const KANTOR_LAT = -7.988571; // <--- GANTI SESUAI KANTOR
-        const KANTOR_LONG = 112.652931; // <--- GANTI SESUAI KANTOR
+        const KANTOR_LAT = -7.988571; 
+        const KANTOR_LONG = 112.652931; 
         const MAX_JARAK_METER = 100;
         const JAM_MASUK_KANTOR = 10; 
         const MENIT_MASUK_KANTOR = 0; 
@@ -266,6 +266,7 @@
         let currentUser = null, userProfile = {}, compressedProfileImage = "", videoStream = null;
         let currentLat = null, currentLong = null, allData = [], currentTab = 'all';
         let html5QrCode = null;
+        let unsubscribeRiwayat = null; // Variable buat nyimpen listener riwayat
 
         // AUTH LISTENER
         onAuthStateChanged(auth, async (user) => {
@@ -298,6 +299,9 @@
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
             aturForm();
+            
+            // JALANKAN RIWAYAT DEFAULT (HARI INI)
+            loadRiwayatData();
         }
 
         function renderHeader() {
@@ -464,30 +468,64 @@
             } catch (e) { alert("Error Database: " + e.message); }
         };
 
-        // --- DASHBOARD: QUERY DATA HARIAN ---
-        // Kita ambil 100 data terakhir, tapi yang ditampilkan CUMA yang tanggalnya HARI INI
-        // Ini cara paling aman biar gak kena error "Missing Index" di dashboard
-        const q = query(collection(db, "absensi"), orderBy("timestamp", "desc"), limit(100)); 
-        onSnapshot(q, (snapshot) => { 
-            allData = []; 
-            const today = new Date().toLocaleDateString('id-ID'); // Ambil tanggal hari ini
+        // --- QUERY DATA DINAMIS (BISA FILTER TANGGAL) ---
+        
+        window.loadRiwayatData = (filterTanggal = null) => {
+            // 1. Matikan listener lama kalau ada (Biar gak numpuk)
+            if (unsubscribeRiwayat) {
+                unsubscribeRiwayat();
+            }
+
+            const today = new Date().toLocaleDateString('id-ID'); // Format: d/m/yyyy atau dd/mm/yyyy
             
-            snapshot.forEach(doc => { 
-                const d = doc.data();
-                // FILTER: Masukkan ke list cuma kalau tanggalnya SAMA dengan hari ini
-                if (d.tanggal === today) {
-                    allData.push(d); 
-                }
-            }); 
-            renderTabel(); 
-        });
+            // Tentukan target tanggal (Default hari ini)
+            let targetDate = today;
+            if (filterTanggal) {
+                // Convert input date (YYYY-MM-DD) ke format DB (d/m/yyyy)
+                const parts = filterTanggal.split('-'); // [2026, 01, 30]
+                // Hapus 0 di depan bulan/tanggal biar cocok sama format localeString
+                const day = parseInt(parts[2]).toString();
+                const month = parseInt(parts[1]).toString();
+                const year = parts[0];
+                targetDate = `${day}/${month}/${year}`;
+            }
+
+            // Update UI Judul
+            const label = document.getElementById('label-riwayat');
+            label.innerText = (targetDate === today) ? "Riwayat Hari Ini" : `Riwayat: ${targetDate}`;
+
+            // 2. QUERY DATABASE (Pake Index)
+            const q = query(
+                collection(db, "absensi"), 
+                where("tanggal", "==", targetDate), // Filter tanggal dulu
+                orderBy("timestamp", "desc")        // Baru urutin jam
+            );
+            
+            // 3. PASANG LISTENER BARU
+            unsubscribeRiwayat = onSnapshot(q, (snapshot) => { 
+                allData = []; 
+                snapshot.forEach(doc => allData.push(doc.data())); 
+                renderTabel(); 
+            });
+        };
+
+        // Fungsi Trigger pas ganti tanggal di input
+        window.gantiTanggalRiwayat = () => {
+            const val = document.getElementById('input-filter-tanggal').value;
+            if(val) loadRiwayatData(val);
+        };
+
+        window.resetTanggalRiwayat = () => {
+            document.getElementById('input-filter-tanggal').value = "";
+            loadRiwayatData(null); // Balik ke hari ini
+        };
 
         window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
         function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; container.innerHTML += `<div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white" onclick="bukaFoto('${data.bukti_foto}')"><div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 px-1.5 rounded border border-amber-100">${data.waktu}</span></div><p class="text-xs text-amber-600 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 mt-2 italic bg-amber-50/50 p-2 rounded-lg border border-amber-100">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
         window.bukaFoto = (src) => { document.getElementById('modal-img').src = src; document.getElementById('image-modal').classList.remove('hidden'); }
         window.tutupModal = () => { document.getElementById('image-modal').classList.add('hidden'); }
         
-        // --- DOWNLOAD LAPORAN (BARU) ---
+        // --- DOWNLOAD LAPORAN ---
         window.downloadLaporan = async () => { 
             if(userProfile.divisi !== "Management" && userProfile.divisi !== "HR/Admin") { 
                 return alert("AKSES DITOLAK! Hanya HR/Admin yang boleh download data."); 
@@ -500,10 +538,8 @@
             const today = new Date().toLocaleDateString('id-ID'); // Format: d/m/yyyy
 
             if (choice === "1") {
-                // FILTER HARIAN: Ini butuh Index di Firestore. Kalau error, cek console!
                 q = query(collection(db, "absensi"), where("tanggal", "==", today), orderBy("timestamp", "desc"));
             } else if (choice === "2") {
-                // SEMUA DATA: Ini aman tanpa settingan macem-macem
                 q = query(collection(db, "absensi"), orderBy("timestamp", "desc"));
             } else {
                 return;
