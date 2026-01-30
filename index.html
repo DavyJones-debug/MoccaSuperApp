@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - V8.0 Community</title>
+    <title>Mocca Super App - V8.1 Privacy</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -14,7 +14,9 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script> <script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
         tailwind.config = {
             darkMode: 'class', 
             theme: { extend: { colors: { darkbg: '#0f172a', darkcard: '#1e293b' } } }
@@ -42,7 +44,6 @@
         .dark .nav-item { color: #64748b; }
         .dark .nav-item.active { color: #fbbf24; }
         
-        /* Birthday Card Animation */
         @keyframes rainbow { 
             0%{background-position:0% 50%}
             50%{background-position:100% 50%}
@@ -73,7 +74,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.0</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.1</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -152,6 +153,7 @@
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 text-center max-w-sm w-full relative overflow-hidden" onclick="event.stopPropagation()">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"></div>
             <h2 class="text-2xl font-black mb-2 dark:text-white">🎲 GACHA MAKAN</h2>
+            <p class="text-xs text-gray-500 mb-6">Bingung makan apa? Biar takdir yang menentukan!</p>
             <div id="gacha-result" class="text-4xl font-black text-amber-500 h-20 flex items-center justify-center border-4 border-dashed border-gray-200 rounded-2xl mb-6 bg-gray-50 dark:bg-slate-900 dark:border-slate-700 transition-all">???</div>
             <button onclick="putarGacha()" id="btn-spin" class="w-full bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 dark:hover:bg-amber-600 text-white dark:text-slate-900 font-bold py-4 rounded-xl shadow-xl active:scale-95 transition">PUTAR SEKARANG! 🚀</button>
         </div>
@@ -259,7 +261,7 @@
                             <div class="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/confetti.png')]"></div>
                             <h3 class="text-sm font-bold uppercase tracking-widest mb-1 text-slate-700">🎉 BIRTHDAY ALERT! 🎉</h3>
                             <p class="text-xs mb-3">Hari ini adalah hari spesial untuk:</p>
-                            <div id="birthday-names" class="text-2xl font-black mb-2">Budi & Siti</div>
+                            <div id="birthday-names" class="text-2xl font-black mb-2">...</div>
                             <p class="text-[10px] italic">Jangan lupa ucapin selamat ya! 🎂</p>
                         </div>
                     </div>
@@ -454,7 +456,7 @@
             aturForm();
             loadRiwayatData();
             loadPengumuman();
-            cekUlangTahun(); // Cek Ultah Pas Login
+            cekUlangTahun();
         }
 
         function renderHeader() {
@@ -463,30 +465,18 @@
             document.getElementById('user-divisi-display').innerText = userProfile.divisi;
         }
 
-        // --- FITUR ULANG TAHUN & DIREKTORI ---
+        // --- FITUR ULANG TAHUN & DIREKTORI (LOGIC PRIVASI) ---
         window.cekUlangTahun = async () => {
-            const today = new Date();
-            const todayDay = today.getDate();
-            const todayMonth = today.getMonth() + 1;
-            
-            const q = query(collection(db, "data_karyawan"));
-            const snap = await getDocs(q);
+            const today = new Date(); const todayDay = today.getDate(); const todayMonth = today.getMonth() + 1;
+            const q = query(collection(db, "data_karyawan")); const snap = await getDocs(q);
             let birthdayKids = [];
-
             snap.forEach(doc => {
                 const data = doc.data();
-                if (data.tgl_lahir) {
-                    const birthDate = new Date(data.tgl_lahir);
-                    if (birthDate.getDate() === todayDay && (birthDate.getMonth() + 1) === todayMonth) {
-                        birthdayKids.push(data.nama.split(' ')[0]); // Ambil nama depan
-                    }
-                }
+                if (data.tgl_lahir) { const birthDate = new Date(data.tgl_lahir); if (birthDate.getDate() === todayDay && (birthDate.getMonth() + 1) === todayMonth) { birthdayKids.push(data.nama.split(' ')[0]); } }
             });
-
             if (birthdayKids.length > 0) {
                 document.getElementById('birthday-section').classList.remove('hidden');
                 document.getElementById('birthday-names').innerText = birthdayKids.join(" & ");
-                // Fire confetti
                 var duration = 3 * 1000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
                 function random(min, max) { return Math.random() * (max - min) + min; }
                 var interval = setInterval(function() { var timeLeft = animationEnd - Date.now(); if (timeLeft <= 0) { return clearInterval(interval); } var particleCount = 50 * (timeLeft / duration); confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 } })); confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 } })); }, 250);
@@ -497,32 +487,30 @@
             document.getElementById('team-modal').classList.remove('hidden');
             const container = document.getElementById('team-list-container');
             container.innerHTML = `<div class="text-center text-gray-400 py-10"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</div>`;
-            
             const q = query(collection(db, "data_karyawan"), orderBy("nama", "asc"));
             const snap = await getDocs(q);
             container.innerHTML = "";
-            
             snap.forEach(doc => {
                 const data = doc.data();
-                let tglUltah = "-";
-                if(data.tgl_lahir) {
-                    const date = new Date(data.tgl_lahir);
-                    tglUltah = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' });
+                let tglUltahDisplay = "";
+                
+                // LOGIK PRIVASI: HANYA ADMIN YANG BISA LIHAT TANGGAL
+                if (userProfile.role === 'admin') {
+                    if(data.tgl_lahir) {
+                        const date = new Date(data.tgl_lahir);
+                        tglUltahDisplay = `<p class="text-xs font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-cake-candles text-pink-400 mr-1"></i>${date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}</p>`;
+                    } else {
+                        tglUltahDisplay = `<p class="text-[10px] text-gray-400">-</p>`;
+                    }
+                } else {
+                    tglUltahDisplay = `<p class="text-[10px] text-gray-400"><i class="fa-solid fa-lock text-gray-300 mr-1"></i>Privasi</p>`;
                 }
                 
                 container.innerHTML += `
                 <div class="flex items-center gap-3 p-3 mb-2 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-700">
-                    <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-slate-600 flex items-center justify-center text-amber-600 dark:text-white font-bold text-lg">
-                        ${data.nama.charAt(0)}
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.nama}</h4>
-                        <p class="text-xs text-amber-600 font-medium">${data.divisi}</p>
-                    </div>
-                    <div class="ml-auto text-right">
-                        <p class="text-[10px] text-gray-400 uppercase font-bold">Ultah</p>
-                        <p class="text-xs font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-cake-candles text-pink-400 mr-1"></i>${tglUltah}</p>
-                    </div>
+                    <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-slate-600 flex items-center justify-center text-amber-600 dark:text-white font-bold text-lg">${data.nama.charAt(0)}</div>
+                    <div><h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.nama}</h4><p class="text-xs text-amber-600 font-medium">${data.divisi}</p></div>
+                    <div class="ml-auto text-right"><p class="text-[10px] text-gray-400 uppercase font-bold">Ultah</p>${tglUltahDisplay}</div>
                 </div>`;
             });
         };
