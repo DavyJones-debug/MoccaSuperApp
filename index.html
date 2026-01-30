@@ -3,58 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - Corporate</title>
+    <title>Mocca Super App - Corporate V7.1</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
-    <link rel="apple-touch-icon" href="icon.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script>
         tailwind.config = {
             darkMode: 'class', 
             theme: { extend: { colors: { darkbg: '#0f172a', darkcard: '#1e293b' } } }
         }
     </script>
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style> 
-        body { font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
-        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .dark .glass { background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
-        .dark body { background-color: #0f172a; color: #f1f5f9; }
-        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); } 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } } 
-        .active-tab { background: #f59e0b; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.4); }
-        .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Mood & Nav Styles */
-        .mood-btn.selected { transform: scale(1.1); border-color: #f59e0b; background-color: #fffbeb; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3); }
-        .dark .mood-btn.selected { background-color: #334155; border-color: #f59e0b; }
+        body { font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .dark .glass { background: rgba(30, 41, 59, 0.95); border-bottom: 1px solid rgba(255,255,255,0.1); color: white; }
+        .fade-in { animation: fadeIn 0.4s ease-out; } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         .nav-item.active { color: #f59e0b; }
-        .nav-item.active i { transform: translateY(-2px); }
-        .nav-item { color: #94a3b8; transition: all 0.3s; }
+        .nav-item.active i { transform: translateY(-3px); }
+        .nav-item { transition: all 0.3s; color: #94a3b8; }
         
+        /* Video Background */
         .video-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
-        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); z-index: 1; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); z-index: 1; }
     </style>
 </head>
-<body class="bg-amber-50 text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900 transition-colors duration-300">
+<body class="bg-gray-50 text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900 transition-colors duration-300">
 
     <div id="login-screen" class="flex flex-col items-center justify-center h-screen w-full relative overflow-hidden text-white p-6">
         <video autoplay muted loop playsinline class="video-bg"> <source src="background.mp4" type="video/mp4"> <div class="bg-slate-900 w-full h-full absolute inset-0"></div> </video>
         <div class="video-overlay"></div>
-        <div class="relative z-10 text-center glass p-8 rounded-3xl shadow-2xl border border-white/20 max-w-sm w-full backdrop-blur-md">
+        
+        <div class="relative z-10 text-center glass p-8 rounded-3xl shadow-2xl border border-white/10 max-w-sm w-full backdrop-blur-xl">
             <div class="mb-6 inline-block p-4 rounded-2xl bg-white/20 shadow-inner">
                 <img src="icon.png" class="w-16 h-16 rounded-xl shadow-lg mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
             </div>
-            <h1 class="text-3xl font-black mb-1 text-white tracking-tight drop-shadow-md">MOCCA Studio</h1>
-            <p class="text-white/80 text-xs mb-8 font-medium bg-white/10 inline-block px-3 py-1 rounded-full border border-white/10">Corporate Employee System</p>
+            <h1 class="text-3xl font-black mb-1 text-white tracking-tight">MOCCA Studio</h1>
+            <p class="text-white/70 text-xs mb-8 font-medium bg-white/10 inline-block px-3 py-1 rounded-full border border-white/5">Internal Employee App V7.1</p>
+            
             <button onclick="loginGoogle()" class="w-full bg-white hover:bg-gray-100 text-slate-900 font-bold py-3.5 px-6 rounded-xl shadow-xl flex items-center justify-center gap-3 transition-all active:scale-95 group">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:rotate-12 transition">
                 <span>Login Karyawan</span>
@@ -62,157 +56,174 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/50 p-2 rounded border border-red-500/50"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/30 text-[10px] uppercase tracking-[0.3em]">Mocca V7.0 (Corp)</p>
+            <p class="text-white/30 text-[10px] uppercase tracking-[0.3em]">By Mocca IT Team</p>
         </div>
     </div>
 
-    <div id="admin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[95] flex items-center justify-center p-4 fade-in">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg h-[85vh] flex flex-col overflow-hidden relative border-t-4 border-purple-500">
-            <div class="p-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900">
-                <h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-users-gear text-purple-500 mr-2"></i>Database Karyawan</h2>
+    <div id="admin-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-4 fade-in">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg h-[90vh] flex flex-col overflow-hidden relative border-t-4 border-purple-500">
+            <div class="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900">
+                <h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-user-shield text-purple-500 mr-2"></i>Admin Dashboard</h2>
                 <button onclick="document.getElementById('admin-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="p-5 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700">
-                <p class="text-xs text-gray-500 mb-3">Input data karyawan agar mereka bisa login.</p>
-                <div class="grid grid-cols-2 gap-3 mb-3">
-                    <input type="email" id="adm-email" placeholder="Email Google (Wajib)" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
-                    <input type="text" id="adm-nama" placeholder="Nama Lengkap" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
-                    <select id="adm-divisi" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
-                        <option value="">Pilih Divisi...</option><option value="HR/Admin">HR / Admin</option><option value="Management">Management</option><option value="GameDev">GameDev</option><option value="3D Anim">3D Anim</option><option value="3D Asset">3D Asset</option><option value="Rigger">Rigger</option><option value="Layout">Layout</option><option value="Editor/LRC">Editor / LRC</option><option value="2D Anim">2D Anim</option><option value="2D Ilustrasi">2D Ilustrasi</option><option value="Lovy Merchandise">Lovy Merchandise</option><option value="Cafe/Kitchen">Cafe / Kitchen</option><option value="IT/Minebi">IT / Minebi</option>
-                    </select>
-                    <select id="adm-role" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
-                        <option value="user">Karyawan Biasa (User)</option>
-                        <option value="admin">HR / Management (Admin)</option>
-                    </select>
+            <div class="flex-1 overflow-y-auto p-5 space-y-6">
+                
+                <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-200 dark:border-green-800">
+                    <h3 class="font-bold text-green-700 dark:text-green-400 mb-2"><i class="fa-solid fa-file-excel mr-1"></i> Export Laporan</h3>
+                    <p class="text-xs text-gray-500 mb-3 dark:text-gray-400">Download rekap absensi semua karyawan ke Excel.</p>
+                    <button onclick="exportToExcel()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg text-sm shadow-md active:scale-95 transition">DOWNLOAD .CSV</button>
                 </div>
-                <button onclick="tambahKaryawan()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg shadow-md transition active:scale-95 text-sm"><i class="fa-solid fa-plus mr-1"></i> SIMPAN KE DATABASE</button>
-            </div>
 
-            <div class="flex-1 overflow-y-auto p-5 bg-gray-50 dark:bg-slate-900/50">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Daftar Karyawan Terdaftar</h3>
-                <div id="list-karyawan" class="space-y-2">
+                <div class="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl p-4 shadow-sm">
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-2"><i class="fa-solid fa-user-plus mr-1 text-blue-500"></i> Register Karyawan</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <input type="email" id="adm-email" placeholder="Email Google" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-800 rounded-lg p-2 text-xs">
+                        <input type="text" id="adm-nama" placeholder="Nama Lengkap" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-800 rounded-lg p-2 text-xs">
+                        <select id="adm-divisi" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-800 rounded-lg p-2 text-xs">
+                            <option value="">Divisi...</option><option value="HR/Admin">HR/Admin</option><option value="Management">Management</option><option value="GameDev">GameDev</option><option value="Art">Art/Design</option><option value="IT">IT Support</option>
+                        </select>
+                        <select id="adm-role" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-800 rounded-lg p-2 text-xs">
+                            <option value="user">User Biasa</option><option value="admin">Admin / HR</option>
+                        </select>
                     </div>
+                    <button onclick="tambahKaryawan()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg text-sm shadow-md active:scale-95 transition">SIMPAN DATA</button>
+                </div>
+
+                <div>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Database Karyawan</h3>
+                    <div id="list-karyawan" class="space-y-2"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="gacha-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[95] flex items-center justify-center p-6 fade-in" onclick="tutupGacha()">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 text-center max-w-sm w-full relative overflow-hidden" onclick="event.stopPropagation()">
-            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"></div>
-            <h2 class="text-2xl font-black mb-2 dark:text-white">🎲 GACHA MAKAN</h2>
-            <div id="gacha-result" class="text-3xl font-black text-amber-500 h-20 flex items-center justify-center border-4 border-dashed border-gray-200 rounded-2xl mb-6 bg-gray-50 dark:bg-slate-900 transition-all">???</div>
-            <button onclick="putarGacha()" id="btn-spin" class="w-full bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 text-white dark:text-slate-900 font-bold py-3 rounded-xl shadow-xl active:scale-95 transition">PUTAR! 🚀</button>
-        </div>
-    </div>
-
-    <div id="app-screen" class="hidden flex h-screen overflow-hidden bg-amber-50/50 dark:bg-slate-900/95 transition-colors duration-300">
-        <div class="flex-1 flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full bg-white/80 dark:bg-slate-900 shadow-2xl relative transition-colors duration-300">
+    <div id="app-screen" class="hidden flex h-screen overflow-hidden bg-amber-50/50 dark:bg-slate-900 transition-colors duration-300">
+        <div class="flex-1 flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full bg-white dark:bg-slate-900 shadow-2xl relative">
             
-            <header class="glass sticky top-0 z-20 px-5 py-4 flex justify-between items-center shadow-sm">
-                <div class="flex items-center gap-3 group">
-                    <div class="relative"><img id="user-photo" src="" class="w-11 h-11 rounded-full border-2 border-amber-100 shadow-md object-cover"><div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div></div>
+            <header class="glass sticky top-0 z-20 px-5 py-3 flex justify-between items-center shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="relative group cursor-pointer" onclick="document.getElementById('upload-foto').click()">
+                        <img id="user-photo" src="" class="w-10 h-10 rounded-full border-2 border-amber-100 shadow-md object-cover group-hover:opacity-80 transition">
+                        <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-camera text-white text-[10px] drop-shadow-md"></i></div>
+                    </div>
+                    <input type="file" id="upload-foto" class="hidden" accept="image/*" onchange="gantiFotoProfil(this)">
+                    
                     <div>
-                        <p id="user-name-display" class="text-sm font-bold text-slate-900 leading-tight">Loading...</p>
+                        <p id="user-name-display" class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Loading...</p>
                         <div class="flex items-center gap-1">
-                            <p id="user-divisi-display" class="text-[11px] text-amber-600 font-semibold tracking-wide">...</p>
+                            <p id="user-divisi-display" class="text-[10px] text-amber-600 font-semibold tracking-wide">...</p>
                             <span id="badge-admin" class="hidden bg-purple-100 text-purple-700 text-[9px] font-bold px-1.5 rounded border border-purple-200">ADMIN</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="flex gap-2">
-                    <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-yellow-400 hover:bg-slate-200 transition flex items-center justify-center shadow-sm"><i id="icon-theme" class="fa-solid fa-moon text-xs"></i></button>
-                    <button id="btn-admin-panel" onclick="bukaAdminPanel()" class="hidden w-9 h-9 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 hover:bg-purple-600 hover:text-white transition flex items-center justify-center shadow-sm border border-purple-200"><i class="fa-solid fa-users-gear text-xs"></i></button>
-                    <button onclick="logoutGoogle()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-power-off text-xs"></i></button>
+                    <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-yellow-400 hover:bg-slate-200 transition flex items-center justify-center"><i id="icon-theme" class="fa-solid fa-moon text-xs"></i></button>
+                    <button id="btn-admin-panel" onclick="bukaAdminPanel()" class="hidden w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 hover:bg-purple-600 hover:text-white transition flex items-center justify-center border border-purple-200"><i class="fa-solid fa-gears text-xs"></i></button>
+                    <button onclick="logoutGoogle()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-red-400 hover:bg-red-500 hover:text-white transition flex items-center justify-center"><i class="fa-solid fa-power-off text-xs"></i></button>
                 </div>
             </header>
 
-            <main class="flex-1 overflow-x-hidden overflow-y-auto p-5 scroll-smooth pb-24">
-                <section id="view-home" class="fade-in">
-                    <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-xl shadow-amber-200/50 dark:shadow-none mb-6 relative overflow-hidden">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-5 scroll-smooth pb-24 relative">
+                
+                <section id="view-home" class="fade-in space-y-6">
+                    <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-xl shadow-amber-200/50 relative overflow-hidden text-center">
+                        <h1 id="clock-display" class="text-4xl font-black tracking-tight font-mono mb-2 text-slate-900 relative z-10">...</h1>
+                        <p id="date-display" class="text-sm font-medium opacity-80 relative z-10">...</p>
                         <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-20 rounded-full blur-xl"></div>
-                        <div class="text-center relative z-10 flex flex-col items-center">
-                            <h1 id="clock-display" class="text-4xl font-black tracking-tight font-mono mb-2 text-slate-900">...</h1>
-                            <div class="inline-flex items-center gap-2 bg-slate-900/10 px-3 py-1 rounded-full backdrop-blur-md border border-slate-900/5"><i class="fa-solid fa-satellite-dish text-[10px] text-slate-900 animate-pulse"></i><p id="gps-status" class="text-[10px] font-bold text-slate-900">GPS System</p></div>
+                    </div>
+
+                    <div class="bg-blue-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-blue-100 dark:border-slate-700 relative group">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-blue-800 dark:text-blue-400 text-sm"><i class="fa-solid fa-bullhorn mr-1"></i> Pengumuman Kantor</h3>
+                            <button id="btn-edit-info" onclick="editPengumuman()" class="hidden text-xs text-blue-500 hover:text-blue-700 underline">Edit</button>
+                        </div>
+                        <p id="teks-pengumuman" class="text-sm text-slate-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">Belum ada info terbaru.</p>
+                        
+                        <div id="form-pengumuman" class="hidden mt-2">
+                            <textarea id="input-pengumuman" class="w-full text-sm p-2 rounded border border-blue-200 dark:bg-slate-900 dark:text-white" rows="3"></textarea>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="simpanPengumuman()" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded font-bold">Simpan</button>
+                                <button onclick="batalEditPengumuman()" class="bg-gray-300 text-gray-700 text-xs px-3 py-1.5 rounded font-bold">Batal</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-white/90 dark:bg-slate-800/80 rounded-3xl shadow-sm border border-amber-100 dark:border-slate-700 p-1 mb-8">
+                    <div class="bg-white/90 dark:bg-slate-800/80 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-1">
                         <div id="camera-container" class="hidden relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
                             <video id="video-preview" class="w-full h-full object-cover" autoplay playsinline></video>
                         </div>
-                        <div class="p-4">
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 text-center">Mood?</label>
-                                    <div class="flex justify-between gap-2">
-                                        <button onclick="pilihMood('🔥')" id="mood-fire" class="mood-btn flex-1 py-2 rounded-lg text-lg border border-transparent bg-gray-50 dark:bg-slate-900">🔥</button>
-                                        <button onclick="pilihMood('🙂')" id="mood-smile" class="mood-btn flex-1 py-2 rounded-lg text-lg border border-transparent bg-gray-50 dark:bg-slate-900 selected">🙂</button>
-                                        <button onclick="pilihMood('🤯')" id="mood-stress" class="mood-btn flex-1 py-2 rounded-lg text-lg border border-transparent bg-gray-50 dark:bg-slate-900">🤯</button>
-                                    </div>
+                        <div class="p-4 space-y-4">
+                            <div class="flex justify-between gap-2">
+                                <button onclick="pilihMood('🔥')" id="mood-fire" class="mood-btn flex-1 py-2 rounded-lg text-xl bg-gray-50 dark:bg-slate-900 hover:bg-orange-50 transition border border-transparent">🔥</button>
+                                <button onclick="pilihMood('🙂')" id="mood-smile" class="mood-btn flex-1 py-2 rounded-lg text-xl bg-gray-50 dark:bg-slate-900 hover:bg-yellow-50 transition border border-transparent selected border-amber-400 bg-amber-50">🙂</button>
+                                <button onclick="pilihMood('🤯')" id="mood-stress" class="mood-btn flex-1 py-2 rounded-lg text-xl bg-gray-50 dark:bg-slate-900 hover:bg-red-50 transition border border-transparent">🤯</button>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="relative">
+                                    <select id="jenis-absen" onchange="aturForm()" class="w-full bg-amber-50 dark:bg-slate-700 rounded-xl p-3 text-sm font-bold text-slate-800 dark:text-white outline-none appearance-none"><option value="Masuk">Masuk</option><option value="Pulang">Pulang</option></select>
+                                    <i class="fa-solid fa-caret-down absolute right-3 top-3.5 text-amber-500 pointer-events-none"></i>
                                 </div>
-                                <div class="bg-amber-50/50 dark:bg-slate-700 rounded-xl p-1 flex border border-amber-100 dark:border-slate-600 relative">
-                                    <i class="fa-solid fa-list-check absolute left-4 top-4 text-amber-500"></i>
-                                    <select id="jenis-absen" onchange="aturForm()" class="w-full bg-transparent p-3 pl-10 font-bold text-slate-800 dark:text-slate-200 outline-none text-sm appearance-none"><option value="Masuk">☀️ Absen Masuk</option><option value="Pulang">🌙 Absen Pulang</option></select>
-                                </div>
-                                <div id="container-status" class="relative">
-                                    <i class="fa-solid fa-map-pin absolute left-4 top-4 text-amber-500 z-10"></i>
-                                    <select id="status-absen" class="w-full bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-3 pl-10 font-medium text-slate-700 dark:text-slate-200 outline-none text-sm appearance-none"></select>
+                                <div class="relative">
+                                    <select id="status-absen" class="w-full bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-3 text-sm text-slate-700 dark:text-white outline-none appearance-none"></select>
                                 </div>
                             </div>
-                            <div class="mt-4">
-                                <button id="btn-open-camera" onclick="bukaKamera()" class="w-full bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 text-yellow-400 dark:text-slate-900 font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95"><i class="fa-solid fa-camera"></i> BUKA KAMERA</button>
-                                <button id="btn-capture" onclick="jepretDanKirim()" class="hidden w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 text-slate-900 font-black py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95"><i class="fa-solid fa-paper-plane"></i> KIRIM ABSEN</button>
-                            </div>
+
+                            <button id="btn-open-camera" onclick="bukaKamera()" class="w-full bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-900 font-bold py-3.5 rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2"><i class="fa-solid fa-camera"></i> BUKA KAMERA</button>
+                            <button id="btn-capture" onclick="jepretDanKirim()" class="hidden w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold py-3.5 rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2"><i class="fa-solid fa-paper-plane"></i> KIRIM ABSEN</button>
                         </div>
                     </div>
 
                     <div>
-                        <div class="flex justify-between items-center mb-4 px-1"><h3 class="font-bold text-slate-900 dark:text-white text-lg">Riwayat Hari Ini</h3></div>
-                        <div id="tabel-body" class="space-y-3"></div>
-                        <p id="empty-msg" class="hidden text-center text-gray-400 py-10 text-sm italic">Belum ada absen masuk.</p>
+                        <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-3">Hari Ini</h3>
+                        <div id="tabel-body" class="space-y-3 pb-10"></div>
+                        <p id="empty-msg" class="hidden text-center text-gray-400 text-xs italic py-8">Belum ada data absen.</p>
                     </div>
                 </section>
 
                 <section id="view-games" class="hidden fade-in">
-                    <div class="mb-6"><h2 class="text-2xl font-black text-slate-800 dark:text-white">🎮 Game Center</h2><p class="text-xs text-gray-500">Refreshing bentar jon.</p></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div onclick="bukaGacha()" class="col-span-2 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden cursor-pointer active:scale-95 transition">
-                            <div class="relative z-10 flex items-center justify-between"><div><h3 class="font-black text-xl mb-1">GACHA MAKAN</h3><p class="text-xs text-purple-100">Solusi bingung makan siang!</p></div><div class="text-4xl">🎲</div></div>
-                        </div>
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center gap-2 opacity-60"><i class="fa-solid fa-ghost text-2xl text-gray-300"></i><p class="text-[10px] font-bold text-gray-400">Cek Khodam</p></div>
+                    <div class="mb-6"><h2 class="text-2xl font-black text-slate-800 dark:text-white">Game Center</h2><p class="text-xs text-gray-500">Istirahat dulu lah.</p></div>
+                    <div onclick="document.getElementById('gacha-modal').classList.remove('hidden')" class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden cursor-pointer active:scale-95 transition mb-4">
+                        <h3 class="font-black text-xl mb-1">GACHA MAKAN</h3>
+                        <p class="text-xs text-purple-200">Bingung makan apa? Klik sini!</p>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-4xl">🎲</div>
                     </div>
                 </section>
-                <div class="h-20"></div>
+
             </main>
 
-            <nav class="glass fixed bottom-0 left-0 w-full z-40 border-t border-gray-200 dark:border-slate-700 pb-safe">
+            <nav class="glass fixed bottom-0 left-0 w-full z-40 pb-safe">
                 <div class="max-w-md mx-auto flex justify-around items-center p-3">
-                    <button onclick="switchView('home')" id="nav-home" class="nav-item active flex flex-col items-center gap-1 w-16"><i class="fa-solid fa-house text-xl mb-0.5"></i><span class="text-[9px] font-bold">Home</span></button>
-                    <button onclick="switchView('games')" id="nav-games" class="nav-item flex flex-col items-center gap-1 w-16"><i class="fa-solid fa-gamepad text-xl mb-0.5"></i><span class="text-[9px] font-bold">Games</span></button>
+                    <button onclick="switchView('home')" id="nav-home" class="nav-item active flex flex-col items-center w-16"><i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[9px] font-bold">Home</span></button>
+                    <button onclick="switchView('games')" id="nav-games" class="nav-item flex flex-col items-center w-16"><i class="fa-solid fa-gamepad text-xl mb-1"></i><span class="text-[9px] font-bold">Games</span></button>
                 </div>
             </nav>
+        </div>
+    </div>
 
+    <div id="gacha-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-6 fade-in" onclick="this.classList.add('hidden')">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 text-center max-w-sm w-full relative" onclick="event.stopPropagation()">
+            <h2 class="text-2xl font-black mb-2 dark:text-white">MAKAN APA?</h2>
+            <div id="gacha-result" class="text-3xl font-black text-amber-500 h-24 flex items-center justify-center border-4 border-dashed border-gray-200 rounded-2xl mb-6 bg-gray-50 dark:bg-slate-900">???</div>
+            <button onclick="putarGacha()" class="w-full bg-slate-900 dark:bg-amber-500 text-white dark:text-slate-900 font-bold py-3 rounded-xl shadow-lg active:scale-95 transition">SPIN!</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, getDocs, doc, setDoc, where, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // SETTINGS LOKASI & DB
-        const KANTOR_LAT = -7.988571; 
-        const KANTOR_LONG = 112.652931;
         const firebaseConfig = {
             apiKey: "AIzaSyAcBFC_vOSHyJP89gGvguKPJ60G2BOoIvg",
             authDomain: "moccasuperapp.firebaseapp.com",
             projectId: "moccasuperapp",
             storageBucket: "moccasuperapp.firebasestorage.app",
             messagingSenderId: "966529708566",
-            appId: "1:966529708566:web:7f7bb39e7c6811e9c93b37",
-            measurementId: "G-CLCMR26YV6"
+            appId: "1:966529708566:web:7f7bb39e7c6811e9c93b37"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -220,88 +231,78 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
         
-        let currentUser = null, userProfile = {}, videoStream = null, currentLat = null, currentLong = null;
-        let selectedMood = "🙂";
+        let currentUser = null, userProfile = {}, videoStream = null, currentLat = null, currentLong = null, selectedMood = "🙂";
 
-        // --- AUTH & LOGIN LOGIC (GATEKEEPER) ---
+        // --- AUTH & LOGIN SYSTEM ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Cek apakah email user ada di whitelist 'data_karyawan'
+                // Cek Whitelist
                 const q = query(collection(db, "data_karyawan"), where("email", "==", user.email));
-                const querySnapshot = await getDocs(q);
+                const snap = await getDocs(q);
+                const allKaryawan = await getDocs(collection(db, "data_karyawan"));
 
-                let isWhitelisted = false;
-                let employeeData = {};
+                let isAllowed = false, dbData = {};
 
-                // Cek Khusus: Kalau database karyawan masih kosong, izinkan user pertama masuk sebagai Admin
-                const allKaryawanCheck = await getDocs(collection(db, "data_karyawan"));
-                
-                if (allKaryawanCheck.empty) {
-                    console.log("Database kosong. User pertama otomatis jadi Admin.");
-                    isWhitelisted = true;
-                    employeeData = {
-                        nama: user.displayName,
-                        divisi: "IT/Developer",
-                        role: "admin",
-                        email: user.email
-                    };
-                    // Simpan user pertama ke database karyawan secara otomatis
-                    await addDoc(collection(db, "data_karyawan"), employeeData);
-                } else if (!querySnapshot.empty) {
-                    // User ditemukan di database
-                    isWhitelisted = true;
-                    querySnapshot.forEach((doc) => { employeeData = doc.data(); });
+                // Super Admin Logic (First User)
+                if (allKaryawan.empty) {
+                    isAllowed = true;
+                    dbData = { nama: user.displayName, divisi: "IT/Developer", role: "admin", email: user.email };
+                    await addDoc(collection(db, "data_karyawan"), dbData);
+                } else if (!snap.empty) {
+                    isAllowed = true;
+                    snap.forEach(d => dbData = d.data());
                 }
 
-                if (isWhitelisted) {
+                if (isAllowed) {
+                    // Ambil data personal (foto) dari collection 'users' jika ada
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userDocSnap = await getDoc(userDocRef);
+                    let customPhoto = user.photoURL;
+                    
+                    if (userDocSnap.exists() && userDocSnap.data().photoURL) {
+                        customPhoto = userDocSnap.data().photoURL;
+                    }
+
                     currentUser = user;
-                    userProfile = {
-                        ...employeeData,
-                        photoURL: user.photoURL,
-                        uid: user.uid
-                    };
+                    userProfile = { ...dbData, photoURL: customPhoto, uid: user.uid };
                     
-                    // Simpan/Update data sesi user ke collection 'users' untuk keperluan UID mapping
-                    await setDoc(doc(db, "users", user.uid), userProfile, { merge: true });
-                    
-                    setupUI();
+                    // Update sesi
+                    await setDoc(userDocRef, userProfile, { merge: true });
+
+                    initUI();
                 } else {
-                    // DITOLAK
                     await signOut(auth);
-                    document.getElementById('login-error').innerText = "Akses Ditolak: Email anda belum terdaftar sebagai karyawan aktif. Hubungi HR.";
-                    document.getElementById('login-error').classList.remove('hidden');
-                    document.getElementById('login-screen').classList.remove('hidden');
-                    document.getElementById('app-screen').classList.add('hidden');
+                    showLoginError("Email anda tidak terdaftar di database kantor.");
                 }
             } else {
-                currentUser = null;
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('app-screen').classList.add('hidden');
+                showLoginScreen();
             }
         });
 
-        function setupUI() {
+        function initUI() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
             
-            // Render User Info
+            // Render Info User
             document.getElementById('user-photo').src = userProfile.photoURL || 'icon.png';
             document.getElementById('user-name-display').innerText = userProfile.nama;
             document.getElementById('user-divisi-display').innerText = userProfile.divisi;
 
-            // Cek Role Admin
+            // Admin Features
             if (userProfile.role === 'admin') {
                 document.getElementById('btn-admin-panel').classList.remove('hidden');
                 document.getElementById('badge-admin').classList.remove('hidden');
-                loadDaftarKaryawan(); // Pre-load list karyawan buat admin
+                document.getElementById('btn-edit-info').classList.remove('hidden');
+                loadDaftarKaryawan();
             }
 
             aturForm();
-            loadRiwayatHariIni();
+            loadRiwayat();
+            loadPengumuman();
         }
 
-        // --- ADMIN PANEL LOGIC ---
-        window.bukaAdminPanel = () => { document.getElementById('admin-modal').classList.remove('hidden'); };
+        // --- ADMIN: MANAJEMEN KARYAWAN ---
+        window.bukaAdminPanel = () => document.getElementById('admin-modal').classList.remove('hidden');
         
         window.tambahKaryawan = async () => {
             const email = document.getElementById('adm-email').value.trim();
@@ -309,154 +310,204 @@
             const divisi = document.getElementById('adm-divisi').value;
             const role = document.getElementById('adm-role').value;
 
-            if (!email || !nama || !divisi) return alert("Semua data wajib diisi!");
-
+            if (!email || !nama || !divisi) return alert("Lengkapi data!");
+            
             try {
-                // Cek duplikat email
                 const q = query(collection(db, "data_karyawan"), where("email", "==", email));
-                const snap = await getDocs(q);
-                if (!snap.empty) return alert("Email ini sudah terdaftar!");
+                if (!(await getDocs(q)).empty) return alert("Email sudah ada!");
 
-                await addDoc(collection(db, "data_karyawan"), {
-                    email: email, nama: nama, divisi: divisi, role: role, timestamp: new Date()
-                });
-
-                alert("Karyawan Berhasil Ditambahkan!");
-                // Reset Form
+                await addDoc(collection(db, "data_karyawan"), { email, nama, divisi, role, timestamp: new Date() });
+                alert("Karyawan ditambahkan!");
                 document.getElementById('adm-email').value = "";
                 document.getElementById('adm-nama').value = "";
-            } catch (e) {
-                alert("Error: " + e.message);
-            }
+            } catch(e) { alert(e.message); }
         };
 
         window.loadDaftarKaryawan = () => {
-            const q = query(collection(db, "data_karyawan"), orderBy("nama", "asc"));
-            onSnapshot(q, (snapshot) => {
+            onSnapshot(query(collection(db, "data_karyawan"), orderBy("nama")), (snap) => {
                 const list = document.getElementById('list-karyawan');
                 list.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const badge = data.role === 'admin' ? '<span class="text-[9px] bg-purple-100 text-purple-700 px-1 rounded font-bold ml-1">ADMIN</span>' : '';
+                snap.forEach(doc => {
+                    const d = doc.data();
                     list.innerHTML += `
-                    <div class="bg-white dark:bg-slate-800 p-3 rounded-lg border border-gray-100 dark:border-slate-700 flex justify-between items-center shadow-sm">
-                        <div>
-                            <p class="text-sm font-bold text-slate-800 dark:text-white">${data.nama} ${badge}</p>
-                            <p class="text-xs text-amber-600 font-medium">${data.divisi}</p>
-                            <p class="text-[10px] text-gray-400">${data.email}</p>
-                        </div>
-                        <button onclick="hapusKaryawan('${doc.id}', '${data.nama}')" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button>
+                    <div class="bg-gray-50 dark:bg-slate-700 p-2 rounded border border-gray-200 dark:border-slate-600 flex justify-between items-center mb-2">
+                        <div><p class="text-xs font-bold dark:text-white">${d.nama}</p><p class="text-[10px] text-gray-500">${d.divisi}</p></div>
+                        <button onclick="hapusKaryawan('${doc.id}', '${d.nama}')" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></button>
                     </div>`;
                 });
             });
         };
 
         window.hapusKaryawan = async (id, nama) => {
-            if (confirm(`Yakin hapus ${nama} dari database? Dia tidak akan bisa login lagi.`)) {
-                await deleteDoc(doc(db, "data_karyawan", id));
+            if(confirm(`Hapus akses ${nama}?`)) await deleteDoc(doc(db, "data_karyawan", id));
+        };
+
+        // --- ADMIN: EXPORT EXCEL (RESTORED) ---
+        window.exportToExcel = async () => {
+            if(!confirm("Download semua data absensi?")) return;
+            const snap = await getDocs(query(collection(db, "absensi"), orderBy("timestamp", "desc")));
+            let csv = "Nama,Divisi,Tanggal,Waktu,Status,Lokasi\n";
+            snap.forEach(doc => {
+                const d = doc.data();
+                csv += `"${d.nama}","${d.divisi}","${d.tanggal}","${d.waktu}","${d.status}","${d.koordinat}"\n`;
+            });
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a"); a.href = url; a.download = "Laporan_Absensi_Mocca.csv"; a.click();
+        };
+
+        // --- FITUR: PENGUMUMAN (RESTORED) ---
+        window.loadPengumuman = () => {
+            onSnapshot(doc(db, "settings", "pengumuman"), (doc) => {
+                if(doc.exists()) document.getElementById('teks-pengumuman').innerText = doc.data().isi || "Belum ada info.";
+            });
+        };
+        window.editPengumuman = () => {
+            document.getElementById('input-pengumuman').value = document.getElementById('teks-pengumuman').innerText;
+            document.getElementById('teks-pengumuman').classList.add('hidden');
+            document.getElementById('form-pengumuman').classList.remove('hidden');
+        };
+        window.batalEditPengumuman = () => {
+            document.getElementById('teks-pengumuman').classList.remove('hidden');
+            document.getElementById('form-pengumuman').classList.add('hidden');
+        };
+        window.simpanPengumuman = async () => {
+            const isi = document.getElementById('input-pengumuman').value;
+            await setDoc(doc(db, "settings", "pengumuman"), { isi: isi }, { merge: true });
+            batalEditPengumuman();
+        };
+
+        // --- FITUR: GANTI FOTO PROFIL (RESTORED) ---
+        window.gantiFotoProfil = async (input) => {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = async function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = async function() {
+                        // Resize Logic
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const MAX_WIDTH = 300;
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        const resizedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                        
+                        // Update UI & Database
+                        document.getElementById('user-photo').src = resizedBase64;
+                        await setDoc(doc(db, "users", userProfile.uid), { photoURL: resizedBase64 }, { merge: true });
+                        alert("Foto profil berhasil diganti!");
+                    }
+                };
+                reader.readAsDataURL(file);
             }
         };
 
-        // --- APP LOGIC (GENERAL) ---
-        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
-        window.logoutGoogle = () => { if(confirm("Keluar?")) signOut(auth); };
-        window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); };
-
+        // --- CORE FUNCTIONS (Absen, Gacha, UI) ---
+        window.loginGoogle = () => signInWithPopup(auth, provider);
+        window.logoutGoogle = () => { if(confirm("Logout?")) signOut(auth); };
+        window.showLoginScreen = () => { document.getElementById('login-screen').classList.remove('hidden'); document.getElementById('app-screen').classList.add('hidden'); };
+        window.showLoginError = (msg) => { const el = document.getElementById('login-error'); el.innerText = msg; el.classList.remove('hidden'); showLoginScreen(); };
+        
+        window.toggleDarkMode = () => document.documentElement.classList.toggle('dark');
         window.switchView = (v) => {
-            document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-games').classList.add('hidden');
-            document.getElementById('nav-home').classList.remove('active'); document.getElementById('nav-games').classList.remove('active');
-            document.getElementById(`view-${v}`).classList.remove('hidden'); document.getElementById(`nav-${v}`).classList.add('active');
+            document.querySelectorAll('section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${v}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${v}`).classList.add('active');
         };
 
-        // --- GACHA & MOOD ---
-        const foodList = ["Soto Ayam", "Nasi Padang", "Bakso", "Mie Ayam", "Warteg", "Lalapan", "Gado-gado", "Nasi Goreng", "Penyetan", "Sate"];
-        window.bukaGacha = () => document.getElementById('gacha-modal').classList.remove('hidden');
-        window.tutupGacha = () => document.getElementById('gacha-modal').classList.add('hidden');
-        window.putarGacha = () => {
-            const res = document.getElementById('gacha-result'); let c=0;
-            const i = setInterval(() => { res.innerText = foodList[Math.floor(Math.random()*foodList.length)]; c++; if(c>15){ clearInterval(i); } }, 100);
-        };
-        window.pilihMood = (m) => { selectedMood=m; document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected')); if(m==='🔥')document.getElementById('mood-fire').classList.add('selected'); if(m==='🙂')document.getElementById('mood-smile').classList.add('selected'); if(m==='🤯')document.getElementById('mood-stress').classList.add('selected'); };
-
-        // --- ABSENSI LOGIC ---
         window.aturForm = () => {
-            const j = document.getElementById('jenis-absen').value; const s = document.getElementById('status-absen'); s.innerHTML="";
-            if(j==='Masuk') s.innerHTML = `<option value="Hadir (WFO)">🏢 WFO (Kantor)</option><option value="Hadir (WFH)">🏠 WFH (Rumah)</option>`;
-            else s.innerHTML = `<option value="Pulang">🏠 Pulang Kerja</option>`;
+            const j = document.getElementById('jenis-absen').value;
+            const s = document.getElementById('status-absen');
+            s.innerHTML = j === 'Masuk' ? `<option>WFO (Kantor)</option><option>WFH (Rumah)</option><option>Dinas Luar</option>` : `<option>Pulang Kerja</option>`;
         };
 
         window.bukaKamera = async () => {
             try {
-                const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }); videoStream = s;
+                const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                videoStream = s;
                 document.getElementById('video-preview').srcObject = s;
                 document.getElementById('camera-container').classList.remove('hidden');
                 document.getElementById('btn-open-camera').classList.add('hidden');
                 document.getElementById('btn-capture').classList.remove('hidden');
-                
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(p => { 
-                        currentLat=p.coords.latitude; currentLong=p.coords.longitude; 
-                        document.getElementById('gps-status').innerHTML = `<span class="text-green-600 font-bold">GPS Terkunci</span>`;
-                    });
-                }
-            } catch (e) { alert("Error Kamera: " + e.message); }
+                if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => { currentLat=p.coords.latitude; currentLong=p.coords.longitude; });
+            } catch (e) { alert("Error kamera: " + e.message); }
         };
 
         window.jepretDanKirim = async () => {
-            if(!videoStream || !currentLat) return alert("GPS/Kamera belum siap!");
-            const jenis = document.getElementById('jenis-absen').value;
-            const status = document.getElementById('status-absen').value;
+            if(!videoStream) return;
+            const canvas = document.createElement('canvas'); canvas.width=640; canvas.height=480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(document.getElementById('video-preview'),0,0,640,480);
             
-            const v = document.getElementById('video-preview');
-            const c = document.createElement('canvas'); c.width=640; c.height=480;
-            const ctx = c.getContext('2d'); ctx.drawImage(v,0,0,c.width,c.height);
-            // Overlay Text
-            ctx.fillStyle="rgba(0,0,0,0.6)"; ctx.fillRect(0,430,640,50);
-            ctx.fillStyle="white"; ctx.font="20px Arial"; ctx.fillText(`${userProfile.nama} - ${status}`, 20, 460);
-            
-            const foto = c.toDataURL('image/jpeg', 0.7);
-            const now = new Date();
+            // Overlay Info
+            ctx.fillStyle="rgba(0,0,0,0.5)"; ctx.fillRect(0,440,640,40);
+            ctx.fillStyle="white"; ctx.font="16px Arial"; ctx.fillText(`${userProfile.nama} | ${new Date().toLocaleTimeString()}`, 10, 465);
 
+            const foto = canvas.toDataURL('image/jpeg', 0.6);
+            
             try {
                 await addDoc(collection(db, "absensi"), {
-                    uid: userProfile.uid,
-                    nama: userProfile.nama,
-                    divisi: userProfile.divisi,
-                    kategori: jenis,
-                    status: status,
-                    bukti_foto: foto,
-                    mood: selectedMood,
-                    koordinat: `${currentLat},${currentLong}`,
-                    waktu: now.toLocaleTimeString('id-ID'),
-                    tanggal: now.toLocaleDateString('id-ID'),
-                    timestamp: now
+                    uid: userProfile.uid, nama: userProfile.nama, divisi: userProfile.divisi,
+                    kategori: document.getElementById('jenis-absen').value,
+                    status: document.getElementById('status-absen').value,
+                    mood: selectedMood, bukti_foto: foto, koordinat: `${currentLat},${currentLong}`,
+                    waktu: new Date().toLocaleTimeString('id-ID'), tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date()
                 });
-                
-                alert("Absen Berhasil!");
+                alert("Absen sukses!");
                 videoStream.getTracks().forEach(t=>t.stop());
                 document.getElementById('camera-container').classList.add('hidden');
                 document.getElementById('btn-open-camera').classList.remove('hidden');
                 document.getElementById('btn-capture').classList.add('hidden');
-            } catch(e) { alert("Gagal kirim: " + e.message); }
+            } catch(e) { alert("Gagal: " + e.message); }
         };
 
-        window.loadRiwayatHariIni = () => {
+        window.loadRiwayat = () => {
             const today = new Date().toLocaleDateString('id-ID');
-            const q = query(collection(db, "absensi"), where("tanggal", "==", today), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snap) => {
-                const c = document.getElementById('tabel-body'); c.innerHTML="";
+            onSnapshot(query(collection(db, "absensi"), where("tanggal", "==", today), orderBy("timestamp", "desc")), (snap) => {
+                const div = document.getElementById('tabel-body'); div.innerHTML="";
                 if(snap.empty) document.getElementById('empty-msg').classList.remove('hidden');
                 else {
                     document.getElementById('empty-msg').classList.add('hidden');
                     snap.forEach(d => {
                         const dt = d.data();
-                        c.innerHTML += `<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-gray-100 dark:border-slate-700 flex gap-3 items-center"><img src="${dt.bukti_foto}" class="w-12 h-12 rounded-lg object-cover"><div><h4 class="font-bold text-sm dark:text-white">${dt.nama}</h4><p class="text-xs text-gray-500">${dt.status} • ${dt.waktu}</p></div><div class="ml-auto text-xl">${dt.mood||''}</div></div>`;
+                        div.innerHTML += `<div class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-gray-100 dark:border-slate-700 flex gap-3 items-center"><img src="${dt.bukti_foto}" class="w-12 h-12 rounded-lg object-cover"><div><h4 class="font-bold text-sm dark:text-white">${dt.nama}</h4><p class="text-[10px] text-gray-500">${dt.status} • ${dt.waktu}</p></div><div class="ml-auto text-xl">${dt.mood}</div></div>`;
                     });
                 }
             });
         };
 
-        setInterval(() => document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
+        window.pilihMood = (m) => {
+            selectedMood = m;
+            document.querySelectorAll('.mood-btn').forEach(b => {
+                b.classList.remove('selected', 'bg-amber-50', 'border-amber-400');
+                b.classList.add('border-transparent');
+            });
+            const btn = m==='🔥'?document.getElementById('mood-fire'):m==='🙂'?document.getElementById('mood-smile'):document.getElementById('mood-stress');
+            btn.classList.add('selected', 'bg-amber-50', 'border-amber-400');
+            btn.classList.remove('border-transparent');
+        };
+
+        window.putarGacha = () => {
+            const foods = ["Soto Ayam", "Nasi Padang", "Bakso", "Mie Ayam", "Warteg", "Gado-gado", "Penyetan", "Ayam Geprek", "Bubur Ayam", "Sate"];
+            let i = 0;
+            const interval = setInterval(() => {
+                document.getElementById('gacha-result').innerText = foods[Math.floor(Math.random()*foods.length)];
+                i++; if(i>20) clearInterval(interval);
+            }, 80);
+        };
+
+        // Clock Update
+        setInterval(() => {
+            document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('id-ID');
+            document.getElementById('date-display').innerText = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long'});
+        }, 1000);
+
     </script>
 </body>
 </html>
