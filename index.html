@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - V8.6 Arcade</title>
+    <title>Mocca Super App - V8.7 Ultimate Arcade</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Press+Start+2P&family=Fredoka+One&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -50,11 +50,16 @@
         /* Game Styles */
         .khodam-font { font-family: 'Creepster', cursive; }
         .game-font { font-family: 'Press Start 2P', cursive; }
+        .fun-font { font-family: 'Fredoka One', cursive; }
         .khodam-glow { text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7; }
         @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
         .shake-element { animation: shake 0.5s; animation-iteration-count: infinite; }
-        
         .tap-btn:active { transform: scale(0.95); background-color: #ef4444; }
+
+        /* Whack a Bug */
+        .hole { background-color: #3f2c22; border-radius: 50%; height: 80px; position: relative; overflow: hidden; box-shadow: inset 0 10px 20px rgba(0,0,0,0.5); }
+        .bug { position: absolute; bottom: -100%; width: 100%; text-align: center; font-size: 50px; transition: bottom 0.2s; cursor: url('https://cur.cursors-4u.net/games/gam-13/gam1282.cur'), pointer; user-select: none; }
+        .bug.up { bottom: 0; }
     </style>
 </head>
 <body class="bg-amber-50 text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900 transition-colors duration-300">
@@ -75,7 +80,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.6</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.7</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -226,15 +231,12 @@
             <button onclick="tutupTapGame()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
             <h2 class="text-2xl font-black mb-1 dark:text-white game-font text-red-500">JARI PETIR</h2>
             <p class="text-xs text-gray-500 mb-4">Klik tombol sebanyak mungkin dalam 10 detik!</p>
-            
             <div class="mb-6 bg-gray-100 dark:bg-slate-900 p-4 rounded-xl flex justify-between items-center">
                 <div><p class="text-[10px] font-bold uppercase text-gray-400">Waktu</p><p id="tap-timer" class="text-2xl font-mono font-bold text-slate-800 dark:text-white">10.00</p></div>
                 <div><p class="text-[10px] font-bold uppercase text-gray-400">Skor</p><p id="tap-score" class="text-3xl font-black text-red-500">0</p></div>
             </div>
-
             <button id="btn-tap-action" onclick="tapClick()" disabled class="w-32 h-32 rounded-full bg-red-500 hover:bg-red-600 text-white font-black text-2xl shadow-lg border-4 border-red-300 active:scale-90 transition tap-btn mx-auto flex items-center justify-center mb-4">TAP!</button>
             <p id="tap-status" class="text-xs font-bold text-slate-500">Tekan MULAI untuk main</p>
-            
             <div class="mt-4 flex gap-2">
                 <button onclick="initTapGame()" class="flex-1 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800">MULAI</button>
                 <div class="px-4 py-2 bg-yellow-100 rounded-xl text-center"><p class="text-[8px] font-bold text-yellow-600">BEST</p><p id="tap-highscore" class="font-black text-yellow-700">0</p></div>
@@ -250,6 +252,48 @@
             <p id="flappy-start-msg" class="text-white text-sm animate-pulse mt-4 bg-black/50 inline-block px-3 py-1 rounded">Ketuk layar / Spasi untuk lompat</p>
         </div>
         <canvas id="flappyCanvas" class="w-full h-full max-w-md bg-sky-300 shadow-2xl"></canvas>
+    </div>
+
+    <div id="whack-game-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-4 fade-in">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 text-center max-w-sm w-full relative border-t-4 border-green-600 shadow-2xl">
+            <button onclick="tutupWhackGame()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h2 class="text-2xl font-black mb-1 dark:text-white fun-font text-green-600">PUKUL BUG!</h2>
+            <p class="text-xs text-gray-500 mb-4">Basmi bug (🪲) sebelum kabur!</p>
+            
+            <div class="flex justify-between items-center mb-4 bg-green-50 dark:bg-slate-900 p-2 rounded-lg">
+                <div class="text-left"><span class="text-[10px] font-bold text-gray-400 uppercase">Skor</span><br><span id="whack-score" class="text-2xl font-black text-green-600">0</span></div>
+                <div class="text-right"><span class="text-[10px] font-bold text-gray-400 uppercase">Waktu</span><br><span id="whack-time" class="text-xl font-mono font-bold dark:text-white">15</span></div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-4 bg-green-800 p-2 rounded-xl border-4 border-green-900">
+                <div class="hole" id="hole1"><div class="bug">🪲</div></div><div class="hole" id="hole2"><div class="bug">🪲</div></div><div class="hole" id="hole3"><div class="bug">🪲</div></div>
+                <div class="hole" id="hole4"><div class="bug">🪲</div></div><div class="hole" id="hole5"><div class="bug">🪲</div></div><div class="hole" id="hole6"><div class="bug">🪲</div></div>
+                <div class="hole" id="hole7"><div class="bug">🪲</div></div><div class="hole" id="hole8"><div class="bug">🪲</div></div><div class="hole" id="hole9"><div class="bug">🪲</div></div>
+            </div>
+            
+            <button onclick="startWhackGame()" id="btn-whack-start" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg active:scale-95">MULAI BASMI!</button>
+        </div>
+    </div>
+
+    <div id="snake-game-modal" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-2 fade-in">
+        <div class="w-full max-w-sm relative">
+            <button onclick="tutupSnakeGame()" class="absolute -top-10 right-0 text-white hover:text-red-500"><i class="fa-solid fa-circle-xmark text-3xl"></i></button>
+            <div class="bg-slate-800 rounded-t-2xl p-4 flex justify-between items-center border-b border-slate-700">
+                <h2 class="text-lg font-black text-white game-font text-green-400">ULAR MOCCA</h2>
+                <div class="text-white font-mono">Skor: <span id="snake-score">0</span></div>
+            </div>
+            <canvas id="snakeCanvas" width="300" height="300" class="bg-black w-full border-x-4 border-slate-700 shadow-2xl"></canvas>
+            
+            <div class="bg-slate-800 rounded-b-2xl p-4 grid grid-cols-3 gap-2 pt-6 pb-8">
+                <div></div>
+                <button onmousedown="changeSnakeDir('Up')" ontouchstart="changeSnakeDir('Up')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-up"></i></button>
+                <div></div>
+                <button onmousedown="changeSnakeDir('Left')" ontouchstart="changeSnakeDir('Left')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-left"></i></button>
+                <button onmousedown="changeSnakeDir('Down')" ontouchstart="changeSnakeDir('Down')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-down"></i></button>
+                <button onmousedown="changeSnakeDir('Right')" ontouchstart="changeSnakeDir('Right')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+            <button id="btn-snake-start" onclick="initSnakeGame()" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white font-black py-3 px-6 rounded-full shadow-xl hover:bg-green-600 active:scale-95 z-10 border-4 border-white">MAIN</button>
+        </div>
     </div>
 
     <div id="info-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
@@ -516,6 +560,18 @@
                             <div class="absolute inset-0 bg-sky-500/10 opacity-0 group-hover:opacity-100 transition"></div>
                             <i class="fa-solid fa-kiwi-bird text-2xl text-sky-500 group-hover:-translate-y-1 transition"></i>
                             <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Flappy Mocca</p>
+                        </div>
+
+                        <div onclick="bukaWhackGame()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition"></div>
+                            <i class="fa-solid fa-hammer text-2xl text-green-500 group-hover:rotate-45 transition"></i>
+                            <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Pukul Bug</p>
+                        </div>
+
+                        <div onclick="bukaSnakeGame()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-teal-500/10 opacity-0 group-hover:opacity-100 transition"></div>
+                            <i class="fa-solid fa-staff-snake text-2xl text-teal-500 group-hover:scale-110 transition"></i>
+                            <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Ular Klasik</p>
                         </div>
                     </div>
                 </section>
@@ -1073,6 +1129,163 @@
             }
         }
         // --- END FLAPPY ---
+
+        // --- GAME WHACK A BUG (BARU V8.7) ---
+        let whackScore = 0;
+        let whackTime = 15;
+        let lastHole;
+        let whackTimerInterval;
+        let whackUpInterval;
+        let isWhackPlaying = false;
+
+        window.bukaWhackGame = () => {
+            document.getElementById('whack-game-modal').classList.remove('hidden');
+            document.getElementById('whack-score').innerText = 0;
+            document.getElementById('whack-time').innerText = 15;
+        }
+        window.tutupWhackGame = () => {
+            document.getElementById('whack-game-modal').classList.add('hidden');
+            clearInterval(whackTimerInterval);
+            clearInterval(whackUpInterval);
+        }
+        
+        function randomTime(min, max) { return Math.round(Math.random() * (max - min) + min); }
+        function randomHole(holes) {
+            const idx = Math.floor(Math.random() * holes.length);
+            const hole = holes[idx];
+            if (hole === lastHole) return randomHole(holes);
+            lastHole = hole;
+            return hole;
+        }
+        function peep() {
+            const holes = document.querySelectorAll('.hole');
+            const time = randomTime(400, 1000);
+            const hole = randomHole(holes);
+            const bug = hole.querySelector('.bug');
+            bug.classList.add('up');
+            setTimeout(() => {
+                bug.classList.remove('up');
+                if (isWhackPlaying) peep();
+            }, time);
+        }
+        window.startWhackGame = () => {
+            whackScore = 0;
+            whackTime = 15;
+            isWhackPlaying = true;
+            document.getElementById('whack-score').innerText = 0;
+            document.getElementById('whack-time').innerText = 15;
+            document.getElementById('btn-whack-start').disabled = true;
+            document.getElementById('btn-whack-start').innerText = "BASMI SEKARANG!";
+            
+            peep();
+            
+            whackTimerInterval = setInterval(() => {
+                whackTime--;
+                document.getElementById('whack-time').innerText = whackTime;
+                if(whackTime <= 0) {
+                    clearInterval(whackTimerInterval);
+                    isWhackPlaying = false;
+                    document.getElementById('btn-whack-start').disabled = false;
+                    document.getElementById('btn-whack-start').innerText = "MULAI BASMI LAGI";
+                    alert(`WAKTU HABIS! Skor Basmi: ${whackScore}`);
+                }
+            }, 1000);
+        }
+        // Tambah event listener ke bug
+        setTimeout(() => {
+            document.querySelectorAll('.bug').forEach(bug => {
+                bug.addEventListener('click', function() {
+                    if(!isWhackPlaying) return;
+                    whackScore++;
+                    this.classList.remove('up');
+                    document.getElementById('whack-score').innerText = whackScore;
+                    if (navigator.vibrate) navigator.vibrate(50);
+                });
+            });
+        }, 1000);
+        // --- END WHACK A BUG ---
+
+        // --- GAME SNAKE (BARU V8.7) ---
+        let snakeCanvas, sCtx, snake, food, snakeDir, snakeGameLoop;
+        const box = 20; 
+        
+        window.bukaSnakeGame = () => {
+            document.getElementById('snake-game-modal').classList.remove('hidden');
+            snakeCanvas = document.getElementById('snakeCanvas');
+            sCtx = snakeCanvas.getContext("2d");
+        }
+        window.tutupSnakeGame = () => {
+            document.getElementById('snake-game-modal').classList.add('hidden');
+            clearInterval(snakeGameLoop);
+        }
+        window.initSnakeGame = () => {
+            document.getElementById('btn-snake-start').classList.add('hidden');
+            snake = [];
+            snake[0] = { x: 9 * box, y: 10 * box };
+            food = { x: Math.floor(Math.random()*15) * box, y: Math.floor(Math.random()*15) * box };
+            snakeDir = "";
+            let score = 0;
+            document.getElementById('snake-score').innerText = score;
+            
+            if(snakeGameLoop) clearInterval(snakeGameLoop);
+            snakeGameLoop = setInterval(drawSnake, 150);
+        }
+        window.changeSnakeDir = (dir) => {
+            if(dir === "Left" && snakeDir !== "Right") snakeDir = "Left";
+            if(dir === "Up" && snakeDir !== "Down") snakeDir = "Up";
+            if(dir === "Right" && snakeDir !== "Left") snakeDir = "Right";
+            if(dir === "Down" && snakeDir !== "Up") snakeDir = "Down";
+        }
+        function drawSnake() {
+            sCtx.fillStyle = "#1e293b"; 
+            sCtx.fillRect(0, 0, 300, 300); // BG
+
+            for(let i = 0; i < snake.length; i++) {
+                sCtx.fillStyle = (i === 0) ? "#4ade80" : "#22c55e"; // Green head
+                sCtx.fillRect(snake[i].x, snake[i].y, box, box);
+                sCtx.strokeStyle = "#1e293b";
+                sCtx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            sCtx.fillStyle = "red";
+            sCtx.fillRect(food.x, food.y, box, box); // Food
+
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            if(snakeDir == "Left") snakeX -= box;
+            if(snakeDir == "Up") snakeY -= box;
+            if(snakeDir == "Right") snakeX += box;
+            if(snakeDir == "Down") snakeY += box;
+
+            if(snakeX == food.x && snakeY == food.y) {
+                let score = parseInt(document.getElementById('snake-score').innerText);
+                score++;
+                document.getElementById('snake-score').innerText = score;
+                food = { x: Math.floor(Math.random()*15) * box, y: Math.floor(Math.random()*15) * box };
+            } else {
+                snake.pop();
+            }
+
+            let newHead = { x : snakeX, y : snakeY };
+
+            // Game Over Rules
+            if(snakeX < 0 || snakeX > 280 || snakeY < 0 || snakeY > 280 || collision(newHead, snake)) {
+                clearInterval(snakeGameLoop);
+                document.getElementById('btn-snake-start').classList.remove('hidden');
+                document.getElementById('btn-snake-start').innerText = "ULANGI";
+                alert("GAME OVER! Skor: " + document.getElementById('snake-score').innerText);
+            }
+
+            snake.unshift(newHead);
+        }
+        function collision(head, array) {
+            for(let i = 0; i < array.length; i++) {
+                if(head.x == array[i].x && head.y == array[i].y) return true;
+            }
+            return false;
+        }
+        // --- END SNAKE ---
 
         window.bukaAdminPanel = () => { document.getElementById('admin-modal').classList.remove('hidden'); }
         window.tambahKaryawan = async () => {
