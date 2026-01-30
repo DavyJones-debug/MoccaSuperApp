@@ -74,7 +74,7 @@
                         <select id="edit-divisi" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 appearance-none focus:ring-2 focus:ring-amber-500 transition outline-none font-medium">
                             <option value="HR/Admin">HR / Admin</option>
                             <option value="Management">Management</option>
-                            <option value="GameDev">GameDev</option> 
+                            <option value="GameDev">GameDev</option>
                             <option value="3D Anim">3D Anim</option>
                             <option value="3D Asset">3D Asset</option>
                             <option value="Rigger">Rigger</option>
@@ -124,7 +124,8 @@
                     <p id="idcard-divisi" class="text-sm font-medium text-amber-600 mb-6 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">...</p>
                 </div>
                 <div class="bg-white rounded-xl p-3 shadow-inner border border-gray-100 flex items-center gap-3 relative z-10">
-                    <img id="idcard-qr" src="" class="w-28 h-28 rounded-lg mix-blend-multiply"> <div class="flex-1 overflow-hidden"><p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest mb-1">EMPLOYEE ID</p><p id="idcard-uid" class="text-[10px] font-mono text-slate-600 break-all leading-tight">...</p><p class="text-[8px] text-green-600 font-bold mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> VERIFIED</p></div>
+                    <img id="idcard-qr" src="" class="w-28 h-28 rounded-lg mix-blend-multiply">
+                    <div class="flex-1 overflow-hidden"><p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest mb-1">EMPLOYEE ID</p><p id="idcard-uid" class="text-[10px] font-mono text-slate-600 break-all leading-tight">...</p><p class="text-[8px] text-green-600 font-bold mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> VERIFIED</p></div>
                 </div>
                 <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400"></div>
             </div>
@@ -250,7 +251,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // IMPORT DELETE DOC DITAMBAHKAN
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // ================= SETTING =================
@@ -364,21 +366,60 @@
             document.getElementById('idcard-nama').innerText = userProfile.nama_lengkap.toUpperCase();
             document.getElementById('idcard-divisi').innerText = userProfile.divisi.toUpperCase();
             document.getElementById('idcard-uid').innerText = currentUser.uid;
-            
-            // UPDATE: Request ukuran QR 300x300 (Resolusi Tinggi)
             document.getElementById('idcard-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${currentUser.uid}`;
         }
         window.tutupIDCard = () => { document.getElementById('idcard-modal').classList.add('hidden'); }
 
-        // --- FITUR PENGUMUMAN ---
+        // --- FITUR PENGUMUMAN (UPDATE: HAPUS) ---
         window.kirimPengumuman = async () => {
             const judul = document.getElementById('info-judul').value; const tipe = document.getElementById('info-tipe').value; const isi = document.getElementById('info-isi').value;
             if(!judul || !isi) return alert("Judul dan Isi wajib diisi!");
             try { await addDoc(collection(db, "pengumuman"), { judul: judul, tipe: tipe, isi: isi, penulis: userProfile.nama_lengkap, tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date() }); alert("Diposting!"); document.getElementById('info-modal').classList.add('hidden'); } catch(e) { alert("Error: " + e.message); }
         }
+        
+        // FUNGSI HAPUS PENGUMUMAN BARU
+        window.hapusPengumuman = async (id) => {
+            if(!confirm("Yakin mau hapus pengumuman ini?")) return;
+            try {
+                await deleteDoc(doc(db, "pengumuman", id));
+                alert("Pengumuman dihapus!");
+            } catch(e) { alert("Gagal hapus: " + e.message); }
+        }
+
         onSnapshot(query(collection(db, "pengumuman"), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
             const container = document.getElementById('info-slider'); const section = document.getElementById('info-section'); container.innerHTML = "";
-            if(snapshot.empty) { section.classList.add('hidden'); } else { section.classList.remove('hidden'); snapshot.forEach(doc => { const data = doc.data(); let border = "border-l-4 border-blue-500"; let icon = "fa-circle-info text-blue-500"; if(data.tipe === "Penting") { border = "border-l-4 border-red-500"; icon="fa-triangle-exclamation text-red-500"; } if(data.tipe === "Event") { border = "border-l-4 border-green-500"; icon="fa-calendar-check text-green-500"; } container.innerHTML += `<div class="snap-center shrink-0 w-72 bg-white rounded-xl p-4 shadow-sm border border-gray-100 ${border} flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><i class="fa-solid ${icon}"></i><span class="text-xs font-bold uppercase text-slate-500">${data.tipe}</span></div><span class="text-[10px] text-gray-400">${data.tanggal}</span></div><h4 class="font-bold text-slate-800 text-sm mb-1 leading-tight">${data.judul}</h4><p class="text-xs text-gray-500 line-clamp-2">${data.isi}</p></div><div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center"><span class="text-[10px] text-gray-400 italic">Oleh: ${data.penulis}</span></div></div>`; }); }
+            if(snapshot.empty) { section.classList.add('hidden'); } else { 
+                section.classList.remove('hidden'); 
+                snapshot.forEach(doc => { 
+                    const data = doc.data(); 
+                    const id = doc.id; // Ambil ID Dokumen
+                    
+                    let border = "border-l-4 border-blue-500"; 
+                    let icon = "fa-circle-info text-blue-500"; 
+                    if(data.tipe === "Penting") { border = "border-l-4 border-red-500"; icon="fa-triangle-exclamation text-red-500"; } 
+                    if(data.tipe === "Event") { border = "border-l-4 border-green-500"; icon="fa-calendar-check text-green-500"; } 
+
+                    // LOGIC TOMBOL HAPUS (CUMA ADMIN/HR/MANAGEMENT)
+                    let btnHapus = "";
+                    if(userProfile.divisi === "Management" || userProfile.divisi === "HR/Admin") {
+                        btnHapus = `<button onclick="hapusPengumuman('${id}')" class="absolute top-2 right-2 bg-white rounded-full w-6 h-6 flex items-center justify-center text-red-500 hover:bg-red-50 shadow-sm border border-red-100 z-10"><i class="fa-solid fa-trash text-[10px]"></i></button>`;
+                    }
+
+                    container.innerHTML += `
+                    <div class="snap-center shrink-0 w-72 bg-white rounded-xl p-4 shadow-sm border border-gray-100 ${border} flex flex-col justify-between relative group">
+                        ${btnHapus}
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-2"><i class="fa-solid ${icon}"></i><span class="text-xs font-bold uppercase text-slate-500">${data.tipe}</span></div>
+                                <span class="text-[10px] text-gray-400 mr-4">${data.tanggal}</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm mb-1 leading-tight pr-4">${data.judul}</h4>
+                            <p class="text-xs text-gray-500 line-clamp-2">${data.isi}</p>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center"><span class="text-[10px] text-gray-400 italic">Oleh: ${data.penulis}</span></div>
+                    </div>`; 
+                }); 
+            }
         });
 
         // --- FITUR PROFIL ---
