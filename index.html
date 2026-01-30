@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - V8.3 Community</title>
+    <title>Mocca Super App - V8.4 Khodam Edition</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -54,6 +55,24 @@
             background-size: 400% 400%;
             animation: rainbow 10s ease infinite;
         }
+
+        /* Khodam Styles */
+        .khodam-font { font-family: 'Creepster', cursive; }
+        .khodam-glow { text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7; }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake-element { animation: shake 0.5s; animation-iteration-count: infinite; }
     </style>
 </head>
 <body class="bg-amber-50 text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900 transition-colors duration-300">
@@ -74,7 +93,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.3</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.4</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -197,6 +216,30 @@
             <h2 class="text-2xl font-black mb-2 dark:text-white">🎲 GACHA MAKAN</h2>
             <div id="gacha-result" class="text-4xl font-black text-amber-500 h-20 flex items-center justify-center border-4 border-dashed border-gray-200 rounded-2xl mb-6 bg-gray-50 dark:bg-slate-900 dark:border-slate-700 transition-all">???</div>
             <button onclick="putarGacha()" id="btn-spin" class="w-full bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 dark:hover:bg-amber-600 text-white dark:text-slate-900 font-bold py-4 rounded-xl shadow-xl active:scale-95 transition">PUTAR SEKARANG! 🚀</button>
+        </div>
+    </div>
+
+    <div id="khodam-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[99] flex items-center justify-center p-6 fade-in" onclick="tutupKhodam()">
+        <div class="bg-slate-900 rounded-3xl p-8 text-center max-w-sm w-full relative overflow-hidden border border-purple-500/30" onclick="event.stopPropagation()">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500"></div>
+            
+            <i class="fa-solid fa-ghost text-4xl text-purple-400 mb-4 animate-bounce"></i>
+            <h2 class="text-2xl font-black mb-1 text-white khodam-font tracking-wider text-shadow-purple">CEK KHODAM</h2>
+            <p class="text-xs text-purple-200 mb-6">Siapakah sosok gaib di dalam dirimu?</p>
+
+            <div class="mb-6">
+                <input type="text" id="input-nama-khodam" placeholder="Ketik Nama Kamu..." class="w-full bg-slate-800 border border-purple-500/50 rounded-xl p-3 text-center text-white placeholder-purple-300/50 focus:ring-2 focus:ring-purple-500 outline-none font-bold">
+            </div>
+
+            <div id="khodam-result-box" class="hidden mb-6 animate-pulse">
+                <p class="text-[10px] text-purple-300 uppercase tracking-widest mb-1">Khodam Kamu Adalah:</p>
+                <h3 id="khodam-result" class="text-2xl font-black text-white khodam-glow leading-tight">...</h3>
+                <p id="khodam-desc" class="text-xs text-purple-200 mt-2 italic">"...?"</p>
+            </div>
+
+            <button onclick="prosesKhodam()" id="btn-check-khodam" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-purple-500/20 active:scale-95 transition">
+                <i class="fa-solid fa-eye mr-2"></i> TERAWANG SEKARANG
+            </button>
         </div>
     </div>
 
@@ -441,7 +484,13 @@
                                 <div><h3 class="font-black text-xl mb-1">GACHA MAKAN</h3><p class="text-xs text-purple-100 opacity-90">Bingung menu makan siang? <br>Klik di sini!</p></div><div class="text-4xl">🎲</div>
                             </div>
                         </div>
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 opacity-60"><i class="fa-solid fa-ghost text-2xl text-gray-300"></i><p class="text-[10px] font-bold text-gray-400 uppercase">Cek Khodam</p><span class="text-[8px] bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-gray-500">Coming Soon</span></div>
+                        
+                        <div onclick="bukaKhodam()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition"></div>
+                            <i class="fa-solid fa-ghost text-2xl text-purple-500 group-hover:animate-bounce"></i>
+                            <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Cek Khodam</p>
+                        </div>
+
                         <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 opacity-60"><i class="fa-solid fa-trophy text-2xl text-gray-300"></i><p class="text-[10px] font-bold text-gray-400 uppercase">Leaderboard</p><span class="text-[8px] bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-gray-500">Coming Soon</span></div>
                     </div>
                 </section>
@@ -598,7 +647,6 @@
                     tglUltah = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' });
                 }
                 
-                // DISINI UPDATE-NYA: MENAMBAHKAN ONCLICK KE SETIAP BARIS
                 container.innerHTML += `
                 <div onclick="lihatProfilOrang('${data.nama}', '${data.divisi}', '${data.email}', '${data.tgl_lahir}')" class="flex items-center gap-3 p-3 mb-2 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-700 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition active:scale-95">
                     <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-slate-600 flex items-center justify-center text-amber-600 dark:text-white font-bold text-lg">
@@ -616,13 +664,12 @@
             });
         };
 
-        // --- FITUR BARU: LIHAT PROFIL ORANG ---
         window.lihatProfilOrang = async (nama, divisi, email, tgl_lahir) => {
             document.getElementById('other-profile-modal').classList.remove('hidden');
             document.getElementById('view-other-nama').innerText = nama;
             document.getElementById('view-other-divisi').innerText = divisi;
             document.getElementById('view-other-email').innerText = email || "-";
-            document.getElementById('view-other-foto').src = 'icon.png'; // Default dulu sebelum loading
+            document.getElementById('view-other-foto').src = 'icon.png'; 
 
             let tgl = "-";
             if(tgl_lahir) {
@@ -631,7 +678,6 @@
             }
             document.getElementById('view-other-tgl').innerText = tgl;
 
-            // Coba cari foto profil asli dari collection 'users'
             try {
                 const q = query(collection(db, "users"), where("email", "==", email));
                 const snap = await getDocs(q);
@@ -641,7 +687,6 @@
                         if(d.photoURL) document.getElementById('view-other-foto').src = d.photoURL;
                     });
                 } else {
-                    // Fallback ke layanan avatar UI jika tidak ada foto
                     document.getElementById('view-other-foto').src = `https://ui-avatars.com/api/?name=${nama}&background=random&color=fff&size=200`;
                 }
             } catch(e) { console.log("Gagal load foto: " + e); }
@@ -658,7 +703,67 @@
                 alert("Email disalin ke clipboard!");
             }
         };
-        // --- END FITUR BARU ---
+
+        // --- KHODAM LOGIC ---
+        const listKhodam = [
+            { nama: "Kulkas 2 Pintu", desc: "Dingin, tapi isinya kosong." },
+            { nama: "Naga Indosiar", desc: "Sangar di luar, CGI di dalam." },
+            { nama: "Cicak Kawin", desc: "Suka nempel dan bikin ribut." },
+            { nama: "Kucing Oren", desc: "Rusuh dan suka cari masalah." },
+            { nama: "Vario Mberbet", desc: "Kadang jalan, kadang mogok." },
+            { nama: "Tuyul Mohawk", desc: "Kecil, botak, tapi gaul." },
+            { nama: "Nyi Blorong KW", desc: "Serem sih, tapi budget minim." },
+            { nama: "Setan Kredit", desc: "Selalu menagih janji manis." },
+            { nama: "Pocong Jumping", desc: "Hobi lompat pagar tetangga." },
+            { nama: "Genderuwo Insecure", desc: "Gede, item, tapi pemalu." },
+            { nama: "Laba-laba Sunda", desc: "Suka bikin sarang di hati orang." },
+            { nama: "Elang Indosiar", desc: "Datang tiba-tiba bikin kaget." },
+            { nama: "Siluman Capybara", desc: "Santuy banget, mas bro." },
+            { nama: "Harimau Cisewu", desc: "Gahar tapi murah senyum." },
+            { nama: "Ambatron", desc: "Kuat besi, hati hello kitty." }
+        ];
+
+        window.bukaKhodam = () => {
+            document.getElementById('khodam-modal').classList.remove('hidden');
+            document.getElementById('input-nama-khodam').value = userProfile.nama || "";
+            document.getElementById('khodam-result-box').classList.add('hidden');
+            document.getElementById('btn-check-khodam').classList.remove('hidden');
+        };
+
+        window.tutupKhodam = () => document.getElementById('khodam-modal').classList.add('hidden');
+
+        window.prosesKhodam = () => {
+            const nama = document.getElementById('input-nama-khodam').value;
+            if(!nama) return alert("Isi nama dulu dong!");
+
+            const btn = document.getElementById('btn-check-khodam');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> MENERAWANG...`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const acak = Math.floor(Math.random() * listKhodam.length);
+                const hasil = listKhodam[acak];
+
+                document.getElementById('khodam-result').innerText = hasil.nama;
+                document.getElementById('khodam-desc').innerText = `"${hasil.desc}"`;
+                
+                document.getElementById('khodam-result-box').classList.remove('hidden');
+                document.getElementById('khodam-result-box').classList.add('shake-element'); // Efek getar
+                btn.classList.add('hidden'); // Sembunyikan tombol
+                btn.innerHTML = `<i class="fa-solid fa-eye mr-2"></i> TERAWANG SEKARANG`;
+                btn.disabled = false;
+                
+                setTimeout(() => document.getElementById('khodam-result-box').classList.remove('shake-element'), 500);
+
+                // Reset tombol setelah 5 detik biar bisa main lagi
+                setTimeout(() => {
+                    btn.innerHTML = "MAIN LAGI?";
+                    btn.classList.remove('hidden');
+                }, 3000);
+
+            }, 2000); // Durasi loading 2 detik
+        };
+        // --- END KHODAM LOGIC ---
 
         window.bukaAdminPanel = () => { document.getElementById('admin-modal').classList.remove('hidden'); }
         window.tambahKaryawan = async () => {
