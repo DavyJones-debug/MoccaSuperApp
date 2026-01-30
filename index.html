@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - Corporate V7.4</title>
+    <title>Mocca Super App - V8.0 Community</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -13,7 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script> <script>
         tailwind.config = {
             darkMode: 'class', 
             theme: { extend: { colors: { darkbg: '#0f172a', darkcard: '#1e293b' } } }
@@ -21,33 +22,37 @@
     </script>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style> 
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
         .dark .glass { background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
-        .dark .bg-white { background-color: #1e293b; color: #f1f5f9; border-color: #334155; }
-        .dark .text-slate-900 { color: #f1f5f9; }
-        .dark input, .dark select, .dark textarea { background-color: #0f172a; border-color: #334155; color: white; }
-
         .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); } 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } } 
         .active-tab { background: #f59e0b; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.4); }
         .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .id-card { background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%); border: 1px solid rgba(251, 191, 36, 0.3); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; }
-        .id-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(30deg); pointer-events: none; }
-        .pattern-bg { background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 20px 20px; opacity: 0.1; }
         .mood-btn.selected { transform: scale(1.2); border-color: #f59e0b; background-color: #fffbeb; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3); }
         .dark .mood-btn.selected { background-color: #334155; border-color: #f59e0b; }
         .video-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
-        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); z-index: 1; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); z-index: 1; }
         .nav-item.active { color: #f59e0b; }
         .nav-item.active i { transform: translateY(-2px); }
         .nav-item { color: #94a3b8; transition: all 0.3s; }
         .dark .nav-item { color: #64748b; }
         .dark .nav-item.active { color: #fbbf24; }
+        
+        /* Birthday Card Animation */
+        @keyframes rainbow { 
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+        .birthday-gradient {
+            background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #ffd1ff, #fbc2eb, #a18cd1, #fad0c4);
+            background-size: 400% 400%;
+            animation: rainbow 10s ease infinite;
+        }
     </style>
 </head>
 <body class="bg-amber-50 text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900 transition-colors duration-300">
@@ -68,7 +73,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v7.4</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.0</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -82,18 +87,22 @@
             
             <div class="p-5 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700">
                 <div class="flex gap-2 mb-4">
-                    <button onclick="downloadLaporan()" class="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-xs font-bold hover:bg-green-200 border border-green-200"><i class="fa-solid fa-file-excel mr-1"></i> Export Excel</button>
+                    <button onclick="downloadLaporan()" class="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-xs font-bold hover:bg-green-200 border border-green-200"><i class="fa-solid fa-file-excel mr-1"></i> Export Absen</button>
                 </div>
                 <p class="text-xs text-gray-500 mb-2 font-bold uppercase">Tambah Karyawan Baru:</p>
                 <div class="grid grid-cols-2 gap-3 mb-3">
                     <input type="email" id="adm-email" placeholder="Email Google (Wajib)" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
-                    <input type="text" id="adm-nama" placeholder="Nama Lengkap" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
+                    <input type="text" id="adm-nama" placeholder="Nama Lengkap" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
+                    <div class="col-span-2">
+                        <label class="text-[10px] text-gray-400 font-bold uppercase ml-1">Tanggal Lahir</label>
+                        <input type="date" id="adm-tgl" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
+                    </div>
                     <select id="adm-divisi" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
                         <option value="">Pilih Divisi...</option><option value="HR/Admin">HR / Admin</option><option value="Management">Management</option><option value="GameDev">GameDev</option><option value="3D Anim">3D Anim</option><option value="3D Asset">3D Asset</option><option value="Rigger">Rigger</option><option value="Layout">Layout</option><option value="Editor/LRC">Editor / LRC</option><option value="2D Anim">2D Anim</option><option value="2D Ilustrasi">2D Ilustrasi</option><option value="Lovy Merchandise">Lovy Merchandise</option><option value="Cafe/Kitchen">Cafe / Kitchen</option><option value="IT/Minebi">IT / Minebi</option><option value="Lainnya">Lainnya</option>
                     </select>
-                    <select id="adm-role" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
-                        <option value="user">Karyawan Biasa (User)</option>
-                        <option value="admin">HR / Management (Admin)</option>
+                    <select id="adm-role" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white">
+                        <option value="user">User Biasa</option>
+                        <option value="admin">Admin</option>
                     </select>
                 </div>
                 <button onclick="tambahKaryawan()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg shadow-md transition active:scale-95 text-sm"><i class="fa-solid fa-plus mr-1"></i> SIMPAN KE DATABASE</button>
@@ -102,6 +111,18 @@
             <div class="flex-1 overflow-y-auto p-5 bg-gray-50 dark:bg-slate-900/50">
                 <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Database Karyawan</h3>
                 <div id="list-karyawan" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="team-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[95] flex items-center justify-center p-4 fade-in">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md h-[80vh] flex flex-col overflow-hidden relative border-t-4 border-blue-500">
+            <div class="p-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900">
+                <h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-users text-blue-500 mr-2"></i>Daftar Tim Mocca</h2>
+                <button onclick="document.getElementById('team-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-800" id="team-list-container">
+                <div class="text-center text-gray-400 py-10"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</div>
             </div>
         </div>
     </div>
@@ -131,7 +152,6 @@
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 text-center max-w-sm w-full relative overflow-hidden" onclick="event.stopPropagation()">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"></div>
             <h2 class="text-2xl font-black mb-2 dark:text-white">🎲 GACHA MAKAN</h2>
-            <p class="text-xs text-gray-500 mb-6">Bingung makan apa? Biar takdir yang menentukan!</p>
             <div id="gacha-result" class="text-4xl font-black text-amber-500 h-20 flex items-center justify-center border-4 border-dashed border-gray-200 rounded-2xl mb-6 bg-gray-50 dark:bg-slate-900 dark:border-slate-700 transition-all">???</div>
             <button onclick="putarGacha()" id="btn-spin" class="w-full bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 dark:hover:bg-amber-600 text-white dark:text-slate-900 font-bold py-4 rounded-xl shadow-xl active:scale-95 transition">PUTAR SEKARANG! 🚀</button>
         </div>
@@ -220,6 +240,8 @@
                 
                 <div class="flex gap-2">
                     <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-yellow-400 hover:bg-slate-200 transition flex items-center justify-center shadow-sm"><i id="icon-theme" class="fa-solid fa-moon text-xs"></i></button>
+                    <button onclick="bukaTim()" class="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm border border-blue-200"><i class="fa-solid fa-users text-xs"></i></button>
+                    
                     <button id="btn-admin-panel" onclick="bukaAdminPanel()" class="hidden w-9 h-9 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 hover:bg-purple-600 hover:text-white transition flex items-center justify-center shadow-sm border border-purple-200"><i class="fa-solid fa-users-gear text-xs"></i></button>
                     <button id="btn-scan-qr" onclick="bukaScanner()" class="hidden w-9 h-9 rounded-full bg-slate-900 dark:bg-slate-700 text-yellow-400 hover:bg-slate-700 transition flex items-center justify-center shadow-sm border border-slate-800"><i class="fa-solid fa-qrcode text-xs"></i></button>
                     <button onclick="bukaIDCard()" class="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300 hover:bg-amber-500 hover:text-white transition flex items-center justify-center shadow-sm border border-amber-200"><i class="fa-solid fa-id-card text-xs"></i></button>
@@ -231,6 +253,17 @@
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-5 scroll-smooth pb-24">
                 
                 <section id="view-home" class="fade-in">
+                    
+                    <div id="birthday-section" class="hidden mb-6">
+                        <div class="birthday-gradient p-5 rounded-2xl shadow-lg text-slate-900 relative overflow-hidden text-center">
+                            <div class="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/confetti.png')]"></div>
+                            <h3 class="text-sm font-bold uppercase tracking-widest mb-1 text-slate-700">🎉 BIRTHDAY ALERT! 🎉</h3>
+                            <p class="text-xs mb-3">Hari ini adalah hari spesial untuk:</p>
+                            <div id="birthday-names" class="text-2xl font-black mb-2">Budi & Siti</div>
+                            <p class="text-[10px] italic">Jangan lupa ucapin selamat ya! 🎂</p>
+                        </div>
+                    </div>
+
                     <div id="info-section" class="mb-6 hidden">
                         <div class="flex justify-between items-end mb-2 px-1"><h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm">📢 Papan Pengumuman</h3></div>
                         <div id="info-slider" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
@@ -421,6 +454,7 @@
             aturForm();
             loadRiwayatData();
             loadPengumuman();
+            cekUlangTahun(); // Cek Ultah Pas Login
         }
 
         function renderHeader() {
@@ -429,16 +463,80 @@
             document.getElementById('user-divisi-display').innerText = userProfile.divisi;
         }
 
+        // --- FITUR ULANG TAHUN & DIREKTORI ---
+        window.cekUlangTahun = async () => {
+            const today = new Date();
+            const todayDay = today.getDate();
+            const todayMonth = today.getMonth() + 1;
+            
+            const q = query(collection(db, "data_karyawan"));
+            const snap = await getDocs(q);
+            let birthdayKids = [];
+
+            snap.forEach(doc => {
+                const data = doc.data();
+                if (data.tgl_lahir) {
+                    const birthDate = new Date(data.tgl_lahir);
+                    if (birthDate.getDate() === todayDay && (birthDate.getMonth() + 1) === todayMonth) {
+                        birthdayKids.push(data.nama.split(' ')[0]); // Ambil nama depan
+                    }
+                }
+            });
+
+            if (birthdayKids.length > 0) {
+                document.getElementById('birthday-section').classList.remove('hidden');
+                document.getElementById('birthday-names').innerText = birthdayKids.join(" & ");
+                // Fire confetti
+                var duration = 3 * 1000; var animationEnd = Date.now() + duration; var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+                function random(min, max) { return Math.random() * (max - min) + min; }
+                var interval = setInterval(function() { var timeLeft = animationEnd - Date.now(); if (timeLeft <= 0) { return clearInterval(interval); } var particleCount = 50 * (timeLeft / duration); confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 } })); confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 } })); }, 250);
+            }
+        };
+
+        window.bukaTim = async () => {
+            document.getElementById('team-modal').classList.remove('hidden');
+            const container = document.getElementById('team-list-container');
+            container.innerHTML = `<div class="text-center text-gray-400 py-10"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</div>`;
+            
+            const q = query(collection(db, "data_karyawan"), orderBy("nama", "asc"));
+            const snap = await getDocs(q);
+            container.innerHTML = "";
+            
+            snap.forEach(doc => {
+                const data = doc.data();
+                let tglUltah = "-";
+                if(data.tgl_lahir) {
+                    const date = new Date(data.tgl_lahir);
+                    tglUltah = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' });
+                }
+                
+                container.innerHTML += `
+                <div class="flex items-center gap-3 p-3 mb-2 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-700">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-slate-600 flex items-center justify-center text-amber-600 dark:text-white font-bold text-lg">
+                        ${data.nama.charAt(0)}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.nama}</h4>
+                        <p class="text-xs text-amber-600 font-medium">${data.divisi}</p>
+                    </div>
+                    <div class="ml-auto text-right">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold">Ultah</p>
+                        <p class="text-xs font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-cake-candles text-pink-400 mr-1"></i>${tglUltah}</p>
+                    </div>
+                </div>`;
+            });
+        };
+
         window.bukaAdminPanel = () => { document.getElementById('admin-modal').classList.remove('hidden'); }
         window.tambahKaryawan = async () => {
-            const email = document.getElementById('adm-email').value.trim(); const nama = document.getElementById('adm-nama').value.trim(); const divisi = document.getElementById('adm-divisi').value; const role = document.getElementById('adm-role').value;
+            const email = document.getElementById('adm-email').value.trim(); const nama = document.getElementById('adm-nama').value.trim(); const divisi = document.getElementById('adm-divisi').value; const role = document.getElementById('adm-role').value; const tgl = document.getElementById('adm-tgl').value;
             if(!email || !nama || !divisi) return alert("Semua data wajib diisi!");
             try {
                 const q = query(collection(db, "data_karyawan"), where("email", "==", email)); const snap = await getDocs(q);
                 if(!snap.empty) return alert("Email ini sudah terdaftar!");
-                await addDoc(collection(db, "data_karyawan"), { email, nama, divisi, role, timestamp: new Date() });
+                await addDoc(collection(db, "data_karyawan"), { email, nama, divisi, role, tgl_lahir: tgl, timestamp: new Date() });
                 alert("Karyawan Berhasil Ditambahkan!");
-                document.getElementById('adm-email').value = ""; document.getElementById('adm-nama').value = "";
+                document.getElementById('adm-email').value = ""; document.getElementById('adm-nama').value = ""; document.getElementById('adm-tgl').value = "";
             } catch(e) { alert("Error: " + e.message); }
         }
         window.loadDaftarKaryawan = () => {
@@ -483,12 +581,7 @@
         window.gantiTanggalRiwayat = () => { const val = document.getElementById('input-filter-tanggal').value; if(val) loadRiwayatData(val); };
         window.resetTanggalRiwayat = () => { document.getElementById('input-filter-tanggal').value = ""; loadRiwayatData(null); };
         window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
-        
-        // --- FIXED: ADDED ONCLICK EVENT ---
-        function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; let moodUI = data.mood ? `<span class="text-lg absolute top-0 right-0 -mt-2 -mr-2 bg-white dark:bg-slate-800 rounded-full shadow border dark:border-slate-600 p-1">${data.mood}</span>` : ""; 
-        container.innerHTML += `<div class="bg-white/90 dark:bg-slate-800/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 dark:border-slate-700 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white dark:ring-slate-600" onclick="bukaFoto('${data.bukti_foto}')">${moodUI}<div class="absolute -bottom-2 -right-2 bg-white dark:bg-slate-700 rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 dark:text-slate-200 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 dark:bg-slate-700 dark:text-slate-300 px-1.5 rounded border border-amber-100 dark:border-slate-600">${data.waktu}</span></div><p class="text-xs text-amber-600 dark:text-amber-400 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 dark:text-slate-400 mt-2 italic bg-amber-50/50 dark:bg-slate-900 p-2 rounded-lg border border-amber-100 dark:border-slate-600">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
-        
-        // --- CORE FUNCTIONS EXPOSED TO WINDOW ---
+        function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; let moodUI = data.mood ? `<span class="text-lg absolute top-0 right-0 -mt-2 -mr-2 bg-white dark:bg-slate-800 rounded-full shadow border dark:border-slate-600 p-1">${data.mood}</span>` : ""; container.innerHTML += `<div class="bg-white/90 dark:bg-slate-800/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 dark:border-slate-700 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white dark:ring-slate-600" onclick="bukaFoto('${data.bukti_foto}')">${moodUI}<div class="absolute -bottom-2 -right-2 bg-white dark:bg-slate-700 rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 dark:text-slate-200 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 dark:bg-slate-700 dark:text-slate-300 px-1.5 rounded border border-amber-100 dark:border-slate-600">${data.waktu}</span></div><p class="text-xs text-amber-600 dark:text-amber-400 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 dark:text-slate-400 mt-2 italic bg-amber-50/50 dark:bg-slate-900 p-2 rounded-lg border border-amber-100 dark:border-slate-600">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
         window.bukaFoto = (src) => { document.getElementById('modal-img').src = src; document.getElementById('image-modal').classList.remove('hidden'); }
         window.tutupModal = () => { document.getElementById('image-modal').classList.add('hidden'); }
         window.downloadLaporan = async () => { if(userProfile.role !== "admin") { return alert("AKSES DITOLAK! Hanya HR/Admin yang boleh download data."); } let choice = prompt("Ketik '1' untuk Rekap HARI INI\nKetik '2' untuk SEMUA DATA", "1"); if (!choice) return; let q; const today = new Date().toLocaleDateString('id-ID'); if (choice === "1") { q = query(collection(db, "absensi"), where("tanggal", "==", today), orderBy("timestamp", "desc")); } else if (choice === "2") { q = query(collection(db, "absensi"), orderBy("timestamp", "desc")); } else { return; } try { const snap = await getDocs(q); if (snap.empty) { return alert(`Data kosong, Jon! \n(Tanggal dicari: ${today})`); } let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Mood,Keterangan,Lokasi,Koordinat\n"; snap.forEach(d => { const data = d.data(); const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-"; const safeLokasi = data.lokasi ? data.lokasi.replace(/,/g, " - ") : "Lokasi tidak terdeteksi"; const mood = data.mood || "-"; csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${mood}","${safeKet}","${safeLokasi}","${data.koordinat}"\n`; }); const link = document.createElement("a"); link.href = encodeURI(csv); const namaFile = (choice === "1") ? `Rekap_Harian_${today.replace(/\//g, "-")}.csv` : `Rekap_Full_Database.csv`; link.download = namaFile; document.body.appendChild(link); link.click(); document.body.removeChild(link); } catch (error) { console.error("ERROR FIREBASE:", error); if (error.message.includes("index")) { alert("⚠️ ERROR INDEX TERDETEKSI! \n\nCek Console (F12)."); } else { alert("Error: " + error.message); } } };
