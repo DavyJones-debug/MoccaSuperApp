@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - Corporate Fixed</title>
+    <title>Mocca Super App - Corporate V7.4</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -28,6 +28,10 @@
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
         .dark .glass { background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
+        .dark .bg-white { background-color: #1e293b; color: #f1f5f9; border-color: #334155; }
+        .dark .text-slate-900 { color: #f1f5f9; }
+        .dark input, .dark select, .dark textarea { background-color: #0f172a; border-color: #334155; color: white; }
+
         .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); } 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } } 
         .active-tab { background: #f59e0b; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.4); }
@@ -64,7 +68,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v7.3</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v7.4</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -194,6 +198,11 @@
         </div>
     </div>
 
+    <div id="image-modal" class="fixed inset-0 bg-slate-900/95 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm" onclick="tutupModal()">
+        <img id="modal-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl ring-4 ring-amber-500/30">
+        <button class="absolute top-6 right-6 text-white text-xl opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
     <div id="app-screen" class="hidden flex h-screen overflow-hidden bg-amber-50/50 dark:bg-slate-900/95 transition-colors duration-300">
         <div class="flex-1 flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full bg-white/80 dark:bg-slate-900 shadow-2xl relative transition-colors duration-300">
             
@@ -314,13 +323,18 @@
                     </div>
                 </section>
 
-                <div class="h-20"></div>
-            </main>
+                <div class="h-20"></div> </main>
 
             <nav class="glass fixed bottom-0 left-0 w-full z-40 border-t border-gray-200 dark:border-slate-700 pb-safe">
                 <div class="max-w-md mx-auto flex justify-around items-center p-3">
-                    <button onclick="switchView('home')" id="nav-home" class="nav-item active flex flex-col items-center gap-1 w-16"><i class="fa-solid fa-house text-xl mb-0.5 transition-transform"></i><span class="text-[9px] font-bold">Home</span></button>
-                    <button onclick="switchView('games')" id="nav-games" class="nav-item flex flex-col items-center gap-1 w-16"><i class="fa-solid fa-gamepad text-xl mb-0.5 transition-transform"></i><span class="text-[9px] font-bold">Games</span></button>
+                    <button onclick="switchView('home')" id="nav-home" class="nav-item active flex flex-col items-center gap-1 w-16">
+                        <i class="fa-solid fa-house text-xl mb-0.5 transition-transform"></i>
+                        <span class="text-[9px] font-bold">Home</span>
+                    </button>
+                    <button onclick="switchView('games')" id="nav-games" class="nav-item flex flex-col items-center gap-1 w-16">
+                        <i class="fa-solid fa-gamepad text-xl mb-0.5 transition-transform"></i>
+                        <span class="text-[9px] font-bold">Games</span>
+                    </button>
                 </div>
             </nav>
 
@@ -457,21 +471,7 @@
         window.bukaProfile = () => { document.getElementById('profile-modal').classList.remove('hidden'); document.getElementById('preview-foto-profil').src = userProfile.photoURL || currentUser.photoURL; document.getElementById('edit-nama').value = userProfile.nama || ""; document.getElementById('edit-divisi').value = userProfile.divisi || ""; }
         window.tutupProfile = () => { document.getElementById('profile-modal').classList.add('hidden'); }
         window.previewImage = (input) => { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const maxWidth = 300; const scaleSize = maxWidth / img.width; canvas.width = maxWidth; canvas.height = img.height * scaleSize; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); compressedProfileImage = canvas.toDataURL('image/jpeg', 0.7); document.getElementById('preview-foto-profil').src = compressedProfileImage; } }; reader.readAsDataURL(input.files[0]); } }
-        
-        // --- PERBAIKAN FITUR SAVE FOTO ---
-        window.updateProfileData = async () => { 
-            const finalPhoto = compressedProfileImage || userProfile.photoURL; 
-            try { 
-                const newData = { photoURL: finalPhoto }; 
-                await setDoc(doc(db, "users", currentUser.uid), newData, { merge: true }); 
-                userProfile.photoURL = finalPhoto; 
-                setupUI(); 
-                tutupProfile(); 
-                compressedProfileImage = ""; 
-                alert("Foto Profil Tersimpan!"); 
-            } catch (e) { alert("Gagal: " + e.message); } 
-        }
-        
+        window.updateProfileData = async () => { const finalPhoto = compressedProfileImage || userProfile.photoURL; try { const newData = { photoURL: finalPhoto }; await setDoc(doc(db, "users", currentUser.uid), newData, { merge: true }); userProfile.photoURL = finalPhoto; setupUI(); tutupProfile(); compressedProfileImage = ""; alert("Foto Profil Tersimpan!"); } catch (e) { alert("Gagal: " + e.message); } }
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
         window.logoutGoogle = () => { if(confirm("Keluar?")) signOut(auth); };
         window.aturForm = () => { const jenis = document.getElementById('jenis-absen').value; const selectStatus = document.getElementById('status-absen'); const boxStatus = document.getElementById('container-status'); const boxKet = document.getElementById('container-keterangan'); selectStatus.innerHTML = ""; if (jenis === 'Masuk') { boxStatus.classList.remove('hidden'); boxKet.classList.add('hidden'); selectStatus.innerHTML += `<option value="Hadir (WFO)">🏢 Hadir (WFO - Kantor)</option><option value="Hadir (WFH)">🏠 Hadir (WFH - Rumah)</option>`; } else if (jenis === 'Pulang') { boxStatus.classList.add('hidden'); boxKet.classList.add('hidden'); } else if (jenis === 'IzinSakit') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Sakit">🤒 Sakit</option><option value="Izin">⚠️ Izin</option>`; } else if (jenis === 'Cuti') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Cuti">🏖️ Cuti</option>`; } }
@@ -483,7 +483,12 @@
         window.gantiTanggalRiwayat = () => { const val = document.getElementById('input-filter-tanggal').value; if(val) loadRiwayatData(val); };
         window.resetTanggalRiwayat = () => { document.getElementById('input-filter-tanggal').value = ""; loadRiwayatData(null); };
         window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
-        function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; let moodUI = data.mood ? `<span class="text-lg absolute top-0 right-0 -mt-2 -mr-2 bg-white dark:bg-slate-800 rounded-full shadow border dark:border-slate-600 p-1">${data.mood}</span>` : ""; container.innerHTML += `<div class="bg-white/90 dark:bg-slate-800/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 dark:border-slate-700 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white dark:ring-slate-600" onclick="bukaFoto('${data.bukti_foto}')">${moodUI}<div class="absolute -bottom-2 -right-2 bg-white dark:bg-slate-700 rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 dark:text-slate-200 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 dark:bg-slate-700 dark:text-slate-300 px-1.5 rounded border border-amber-100 dark:border-slate-600">${data.waktu}</span></div><p class="text-xs text-amber-600 dark:text-amber-400 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 dark:text-slate-400 mt-2 italic bg-amber-50/50 dark:bg-slate-900 p-2 rounded-lg border border-amber-100 dark:border-slate-600">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
+        
+        // --- FIXED: ADDED ONCLICK EVENT ---
+        function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; let moodUI = data.mood ? `<span class="text-lg absolute top-0 right-0 -mt-2 -mr-2 bg-white dark:bg-slate-800 rounded-full shadow border dark:border-slate-600 p-1">${data.mood}</span>` : ""; 
+        container.innerHTML += `<div class="bg-white/90 dark:bg-slate-800/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 dark:border-slate-700 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white dark:ring-slate-600" onclick="bukaFoto('${data.bukti_foto}')">${moodUI}<div class="absolute -bottom-2 -right-2 bg-white dark:bg-slate-700 rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 dark:text-slate-200 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 dark:bg-slate-700 dark:text-slate-300 px-1.5 rounded border border-amber-100 dark:border-slate-600">${data.waktu}</span></div><p class="text-xs text-amber-600 dark:text-amber-400 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 dark:text-slate-400 mt-2 italic bg-amber-50/50 dark:bg-slate-900 p-2 rounded-lg border border-amber-100 dark:border-slate-600">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
+        
+        // --- CORE FUNCTIONS EXPOSED TO WINDOW ---
         window.bukaFoto = (src) => { document.getElementById('modal-img').src = src; document.getElementById('image-modal').classList.remove('hidden'); }
         window.tutupModal = () => { document.getElementById('image-modal').classList.add('hidden'); }
         window.downloadLaporan = async () => { if(userProfile.role !== "admin") { return alert("AKSES DITOLAK! Hanya HR/Admin yang boleh download data."); } let choice = prompt("Ketik '1' untuk Rekap HARI INI\nKetik '2' untuk SEMUA DATA", "1"); if (!choice) return; let q; const today = new Date().toLocaleDateString('id-ID'); if (choice === "1") { q = query(collection(db, "absensi"), where("tanggal", "==", today), orderBy("timestamp", "desc")); } else if (choice === "2") { q = query(collection(db, "absensi"), orderBy("timestamp", "desc")); } else { return; } try { const snap = await getDocs(q); if (snap.empty) { return alert(`Data kosong, Jon! \n(Tanggal dicari: ${today})`); } let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Mood,Keterangan,Lokasi,Koordinat\n"; snap.forEach(d => { const data = d.data(); const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-"; const safeLokasi = data.lokasi ? data.lokasi.replace(/,/g, " - ") : "Lokasi tidak terdeteksi"; const mood = data.mood || "-"; csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${mood}","${safeKet}","${safeLokasi}","${data.koordinat}"\n`; }); const link = document.createElement("a"); link.href = encodeURI(csv); const namaFile = (choice === "1") ? `Rekap_Harian_${today.replace(/\//g, "-")}.csv` : `Rekap_Full_Database.csv`; link.download = namaFile; document.body.appendChild(link); link.click(); document.body.removeChild(link); } catch (error) { console.error("ERROR FIREBASE:", error); if (error.message.includes("index")) { alert("⚠️ ERROR INDEX TERDETEKSI! \n\nCek Console (F12)."); } else { alert("Error: " + error.message); } } };
