@@ -110,9 +110,8 @@
                     <h2 id="idcard-nama" class="text-xl font-black text-slate-900 text-center leading-tight mb-1">...</h2>
                     <p id="idcard-divisi" class="text-sm font-medium text-amber-600 mb-6 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">...</p>
                 </div>
-                <div class="bg-white rounded-xl p-3 shadow-inner border border-gray-100 flex items-center gap-4 relative z-10">
-                    <img id="idcard-qr" src="" class="w-16 h-16 rounded-lg mix-blend-multiply">
-                    <div class="flex-1 overflow-hidden"><p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest mb-1">EMPLOYEE ID</p><p id="idcard-uid" class="text-[10px] font-mono text-slate-600 break-all leading-tight">...</p><p class="text-[8px] text-green-600 font-bold mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> VERIFIED</p></div>
+                <div class="bg-white rounded-xl p-3 shadow-inner border border-gray-100 flex items-center gap-3 relative z-10">
+                    <img id="idcard-qr" src="" class="w-28 h-28 rounded-lg mix-blend-multiply"> <div class="flex-1 overflow-hidden"><p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest mb-1">EMPLOYEE ID</p><p id="idcard-uid" class="text-[10px] font-mono text-slate-600 break-all leading-tight">...</p><p class="text-[8px] text-green-600 font-bold mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> VERIFIED</p></div>
                 </div>
                 <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400"></div>
             </div>
@@ -266,7 +265,7 @@
         let currentUser = null, userProfile = {}, compressedProfileImage = "", videoStream = null;
         let currentLat = null, currentLong = null, allData = [], currentTab = 'all';
         let html5QrCode = null;
-        let unsubscribeRiwayat = null; // Variable buat nyimpen listener riwayat
+        let unsubscribeRiwayat = null; 
 
         // AUTH LISTENER
         onAuthStateChanged(auth, async (user) => {
@@ -299,8 +298,6 @@
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
             aturForm();
-            
-            // JALANKAN RIWAYAT DEFAULT (HARI INI)
             loadRiwayatData();
         }
 
@@ -354,7 +351,9 @@
             document.getElementById('idcard-nama').innerText = userProfile.nama_lengkap.toUpperCase();
             document.getElementById('idcard-divisi').innerText = userProfile.divisi.toUpperCase();
             document.getElementById('idcard-uid').innerText = currentUser.uid;
-            document.getElementById('idcard-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${currentUser.uid}`;
+            
+            // UPDATE: Request ukuran QR 300x300 (Resolusi Tinggi)
+            document.getElementById('idcard-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${currentUser.uid}`;
         }
         window.tutupIDCard = () => { document.getElementById('idcard-modal').classList.add('hidden'); }
 
@@ -469,39 +468,28 @@
         };
 
         // --- QUERY DATA DINAMIS (BISA FILTER TANGGAL) ---
-        
         window.loadRiwayatData = (filterTanggal = null) => {
-            // 1. Matikan listener lama kalau ada (Biar gak numpuk)
-            if (unsubscribeRiwayat) {
-                unsubscribeRiwayat();
-            }
-
-            const today = new Date().toLocaleDateString('id-ID'); // Format: d/m/yyyy atau dd/mm/yyyy
+            if (unsubscribeRiwayat) { unsubscribeRiwayat(); }
+            const today = new Date().toLocaleDateString('id-ID'); 
             
-            // Tentukan target tanggal (Default hari ini)
             let targetDate = today;
             if (filterTanggal) {
-                // Convert input date (YYYY-MM-DD) ke format DB (d/m/yyyy)
-                const parts = filterTanggal.split('-'); // [2026, 01, 30]
-                // Hapus 0 di depan bulan/tanggal biar cocok sama format localeString
+                const parts = filterTanggal.split('-'); 
                 const day = parseInt(parts[2]).toString();
                 const month = parseInt(parts[1]).toString();
                 const year = parts[0];
                 targetDate = `${day}/${month}/${year}`;
             }
 
-            // Update UI Judul
             const label = document.getElementById('label-riwayat');
             label.innerText = (targetDate === today) ? "Riwayat Hari Ini" : `Riwayat: ${targetDate}`;
 
-            // 2. QUERY DATABASE (Pake Index)
             const q = query(
                 collection(db, "absensi"), 
-                where("tanggal", "==", targetDate), // Filter tanggal dulu
-                orderBy("timestamp", "desc")        // Baru urutin jam
+                where("tanggal", "==", targetDate), 
+                orderBy("timestamp", "desc")        
             );
             
-            // 3. PASANG LISTENER BARU
             unsubscribeRiwayat = onSnapshot(q, (snapshot) => { 
                 allData = []; 
                 snapshot.forEach(doc => allData.push(doc.data())); 
@@ -509,7 +497,6 @@
             });
         };
 
-        // Fungsi Trigger pas ganti tanggal di input
         window.gantiTanggalRiwayat = () => {
             const val = document.getElementById('input-filter-tanggal').value;
             if(val) loadRiwayatData(val);
@@ -517,7 +504,7 @@
 
         window.resetTanggalRiwayat = () => {
             document.getElementById('input-filter-tanggal').value = "";
-            loadRiwayatData(null); // Balik ke hari ini
+            loadRiwayatData(null); 
         };
 
         window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
