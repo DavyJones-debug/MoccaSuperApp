@@ -80,14 +80,17 @@
                     <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-users"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Tim</span>
                 </div>
+                
                 <div onclick="bukaIDCard()" class="flex flex-col items-center gap-2 cursor-pointer group">
                     <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-id-card"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">ID Card</span>
                 </div>
+
                 <div onclick="toggleDarkMode()" class="flex flex-col items-center gap-2 cursor-pointer group">
                     <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-yellow-400 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i id="menu-icon-theme" class="fa-solid fa-moon"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Tema</span>
                 </div>
+
                 <div onclick="logoutGoogle()" class="flex flex-col items-center gap-2 cursor-pointer group">
                     <div class="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-power-off"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Keluar</span>
@@ -97,10 +100,12 @@
                     <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-users-gear"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Admin</span>
                 </div>
+
                 <div id="menu-scan-qr" class="hidden flex flex-col items-center gap-2 cursor-pointer group" onclick="bukaScanner()">
                     <div class="w-12 h-12 rounded-2xl bg-slate-800 text-white flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-qrcode"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Scan</span>
                 </div>
+
                 <div id="menu-add-info" class="hidden flex flex-col items-center gap-2 cursor-pointer group" onclick="document.getElementById('info-modal').classList.remove('hidden'); tutupMainMenu()">
                     <div class="w-12 h-12 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-xl group-hover:scale-110 transition shadow-sm"><i class="fa-solid fa-bullhorn"></i></div>
                     <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300">Info</span>
@@ -129,9 +134,16 @@
                 <img id="detail-foto" src="" class="w-24 h-24 rounded-full border-4 border-white dark:border-slate-800 shadow-lg mx-auto bg-gray-200 object-cover">
                 <h2 id="detail-nama" class="text-xl font-black text-slate-800 dark:text-white mt-3 leading-tight">Nama User</h2>
                 <span id="detail-badge" class="inline-block bg-blue-100 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded mt-1 mb-4">Divisi</span>
+                
                 <div class="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 text-left border border-gray-100 dark:border-slate-700 space-y-3">
-                    <div class="flex justify-between items-center"><span class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-envelope mr-2"></i>Email</span><span id="detail-email" class="text-xs font-bold text-slate-700 dark:text-white truncate max-w-[150px]">-</span></div>
-                    <div class="flex justify-between items-center border-t border-gray-100 dark:border-slate-600 pt-2"><span class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-cake-candles mr-2"></i>Ultah</span><span id="detail-ultah" class="text-xs font-bold text-slate-700 dark:text-white">-</span></div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-envelope mr-2"></i>Email</span>
+                        <span id="detail-email" class="text-xs font-bold text-slate-700 dark:text-white truncate max-w-[150px]">-</span>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-gray-100 dark:border-slate-600 pt-2">
+                        <span class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-cake-candles mr-2"></i>Ultah</span>
+                        <span id="detail-ultah" class="text-xs font-bold text-slate-700 dark:text-white">-</span>
+                    </div>
                 </div>
                 <button onclick="tutupDetailUser()" class="mt-6 w-full py-3 rounded-xl font-bold bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg hover:opacity-90 transition">Tutup Profil</button>
             </div>
@@ -144,6 +156,7 @@
                 <h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-users-gear text-purple-500 mr-2"></i>Admin Dashboard</h2>
                 <button onclick="document.getElementById('admin-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
+            
             <div class="p-5 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700">
                 <div class="flex gap-2 mb-4"><button onclick="downloadLaporan()" class="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-xs font-bold hover:bg-green-200 border border-green-200"><i class="fa-solid fa-file-excel mr-1"></i> Export Absen</button></div>
                 <p class="text-xs text-gray-500 mb-2 font-bold uppercase">Tambah Karyawan Baru:</p>
