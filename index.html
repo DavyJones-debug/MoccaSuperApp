@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - V8.5 Full Version</title>
+    <title>Mocca Super App - V8.6 Arcade</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -44,35 +44,17 @@
         .dark .nav-item { color: #64748b; }
         .dark .nav-item.active { color: #fbbf24; }
         
-        /* Birthday Card Animation */
-        @keyframes rainbow { 
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
-        }
-        .birthday-gradient {
-            background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #ffd1ff, #fbc2eb, #a18cd1, #fad0c4);
-            background-size: 400% 400%;
-            animation: rainbow 10s ease infinite;
-        }
+        @keyframes rainbow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        .birthday-gradient { background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #ffd1ff, #fbc2eb, #a18cd1, #fad0c4); background-size: 400% 400%; animation: rainbow 10s ease infinite; }
 
-        /* Khodam Styles */
+        /* Game Styles */
         .khodam-font { font-family: 'Creepster', cursive; }
+        .game-font { font-family: 'Press Start 2P', cursive; }
         .khodam-glow { text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7; }
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
         .shake-element { animation: shake 0.5s; animation-iteration-count: infinite; }
+        
+        .tap-btn:active { transform: scale(0.95); background-color: #ef4444; }
     </style>
 </head>
 <body class="bg-amber-50 text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900 transition-colors duration-300">
@@ -93,7 +75,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.5</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.6</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -156,17 +138,14 @@
                 <div class="h-28 bg-gradient-to-r from-blue-400 to-indigo-500 relative">
                     <button onclick="tutupProfilOrang()" class="absolute top-4 right-4 bg-black/20 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/40 transition backdrop-blur-sm"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                
                 <div class="px-6 pb-8 text-center -mt-14 relative z-10">
                     <div class="w-28 h-28 rounded-full p-1.5 bg-white dark:bg-slate-800 shadow-xl mx-auto mb-4">
                         <img id="view-other-foto" src="" class="w-full h-full rounded-full object-cover border border-gray-100 dark:border-slate-700 bg-gray-200">
                     </div>
-                    
                     <h2 id="view-other-nama" class="text-2xl font-black text-slate-800 dark:text-white leading-tight mb-1">...</h2>
                     <div class="inline-block bg-blue-50 dark:bg-slate-700 px-3 py-1 rounded-full border border-blue-100 dark:border-slate-600 mb-6">
                         <p id="view-other-divisi" class="text-xs font-bold text-blue-600 dark:text-blue-300">...</p>
                     </div>
-
                     <div class="space-y-3">
                         <div class="flex items-center gap-3 bg-gray-50 dark:bg-slate-900 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
                             <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-slate-700 flex items-center justify-center text-orange-500"><i class="fa-solid fa-cake-candles"></i></div>
@@ -222,50 +201,55 @@
     <div id="khodam-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[99] flex items-center justify-center p-6 fade-in" onclick="tutupKhodam()">
         <div class="bg-slate-900 rounded-3xl p-8 text-center max-w-sm w-full relative overflow-hidden border border-purple-500/30" onclick="event.stopPropagation()">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500"></div>
-            
             <i class="fa-solid fa-ghost text-4xl text-purple-400 mb-4 animate-bounce"></i>
             <h2 class="text-2xl font-black mb-1 text-white khodam-font tracking-wider text-shadow-purple">CEK KHODAM</h2>
             <p class="text-xs text-purple-200 mb-6">Siapakah sosok gaib di dalam dirimu?</p>
-
-            <div class="mb-6">
-                <input type="text" id="input-nama-khodam" placeholder="Ketik Nama Kamu..." class="w-full bg-slate-800 border border-purple-500/50 rounded-xl p-3 text-center text-white placeholder-purple-300/50 focus:ring-2 focus:ring-purple-500 outline-none font-bold">
-            </div>
-
-            <div id="khodam-result-box" class="hidden mb-6 animate-pulse">
-                <p class="text-[10px] text-purple-300 uppercase tracking-widest mb-1">Khodam Kamu Adalah:</p>
-                <h3 id="khodam-result" class="text-2xl font-black text-white khodam-glow leading-tight">...</h3>
-                <p id="khodam-desc" class="text-xs text-purple-200 mt-2 italic">"...?"</p>
-            </div>
-
-            <button onclick="prosesKhodam()" id="btn-check-khodam" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-purple-500/20 active:scale-95 transition">
-                <i class="fa-solid fa-eye mr-2"></i> TERAWANG SEKARANG
-            </button>
+            <div class="mb-6"><input type="text" id="input-nama-khodam" placeholder="Ketik Nama Kamu..." class="w-full bg-slate-800 border border-purple-500/50 rounded-xl p-3 text-center text-white placeholder-purple-300/50 focus:ring-2 focus:ring-purple-500 outline-none font-bold"></div>
+            <div id="khodam-result-box" class="hidden mb-6 animate-pulse"><p class="text-[10px] text-purple-300 uppercase tracking-widest mb-1">Khodam Kamu Adalah:</p><h3 id="khodam-result" class="text-2xl font-black text-white khodam-glow leading-tight">...</h3><p id="khodam-desc" class="text-xs text-purple-200 mt-2 italic">"...?"</p></div>
+            <button onclick="prosesKhodam()" id="btn-check-khodam" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-purple-500/20 active:scale-95 transition"><i class="fa-solid fa-eye mr-2"></i> TERAWANG SEKARANG</button>
         </div>
     </div>
 
     <div id="leaderboard-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[98] flex items-center justify-center p-4 fade-in" onclick="document.getElementById('leaderboard-modal').classList.add('hidden')">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md h-[75vh] flex flex-col overflow-hidden relative border-t-4 border-amber-400" onclick="event.stopPropagation()">
-            
             <div class="p-5 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-slate-800 dark:to-slate-800 flex justify-between items-center relative overflow-hidden">
-                <div class="relative z-10">
-                    <h2 class="text-xl font-black text-slate-800 dark:text-white italic tracking-tighter"><i class="fa-solid fa-bolt text-amber-500 mr-2 animate-pulse"></i>THE FLASH</h2>
-                    <p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold tracking-widest uppercase ml-7">Top 10 Absen Paling Pagi</p>
-                </div>
+                <div class="relative z-10"><h2 class="text-xl font-black text-slate-800 dark:text-white italic tracking-tighter"><i class="fa-solid fa-bolt text-amber-500 mr-2 animate-pulse"></i>THE FLASH</h2><p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold tracking-widest uppercase ml-7">Top 10 Absen Paling Pagi</p></div>
                 <button onclick="document.getElementById('leaderboard-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center shadow-sm relative z-10"><i class="fa-solid fa-xmark"></i></button>
-                <i class="fa-solid fa-stopwatch absolute -right-4 -bottom-4 text-6xl text-amber-500/10"></i>
             </div>
+            <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-800" id="leaderboard-list"><div class="text-center py-10"><i class="fa-solid fa-spinner fa-spin text-3xl text-amber-500 mb-2"></i><p class="text-xs text-gray-400">Sedang mencari yang paling rajin...</p></div></div>
+            <div class="p-3 bg-gray-50 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-700 text-center"><p class="text-[10px] text-gray-400 italic">Data diperbarui otomatis hari ini</p></div>
+        </div>
+    </div>
+
+    <div id="tap-game-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[99] flex items-center justify-center p-4 fade-in">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 text-center max-w-sm w-full relative border-t-4 border-red-500 shadow-2xl">
+            <button onclick="tutupTapGame()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h2 class="text-2xl font-black mb-1 dark:text-white game-font text-red-500">JARI PETIR</h2>
+            <p class="text-xs text-gray-500 mb-4">Klik tombol sebanyak mungkin dalam 10 detik!</p>
             
-            <div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-800" id="leaderboard-list">
-                <div class="text-center py-10">
-                    <i class="fa-solid fa-spinner fa-spin text-3xl text-amber-500 mb-2"></i>
-                    <p class="text-xs text-gray-400">Sedang mencari yang paling rajin...</p>
-                </div>
+            <div class="mb-6 bg-gray-100 dark:bg-slate-900 p-4 rounded-xl flex justify-between items-center">
+                <div><p class="text-[10px] font-bold uppercase text-gray-400">Waktu</p><p id="tap-timer" class="text-2xl font-mono font-bold text-slate-800 dark:text-white">10.00</p></div>
+                <div><p class="text-[10px] font-bold uppercase text-gray-400">Skor</p><p id="tap-score" class="text-3xl font-black text-red-500">0</p></div>
             </div>
+
+            <button id="btn-tap-action" onclick="tapClick()" disabled class="w-32 h-32 rounded-full bg-red-500 hover:bg-red-600 text-white font-black text-2xl shadow-lg border-4 border-red-300 active:scale-90 transition tap-btn mx-auto flex items-center justify-center mb-4">TAP!</button>
+            <p id="tap-status" class="text-xs font-bold text-slate-500">Tekan MULAI untuk main</p>
             
-            <div class="p-3 bg-gray-50 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-700 text-center">
-                <p class="text-[10px] text-gray-400 italic">Data diperbarui otomatis hari ini</p>
+            <div class="mt-4 flex gap-2">
+                <button onclick="initTapGame()" class="flex-1 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800">MULAI</button>
+                <div class="px-4 py-2 bg-yellow-100 rounded-xl text-center"><p class="text-[8px] font-bold text-yellow-600">BEST</p><p id="tap-highscore" class="font-black text-yellow-700">0</p></div>
             </div>
         </div>
+    </div>
+
+    <div id="flappy-game-modal" class="hidden fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center">
+        <div class="absolute top-4 right-4 z-10"><button onclick="tutupFlappy()" class="w-10 h-10 bg-white/20 text-white rounded-full backdrop-blur-md"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="absolute top-10 left-0 w-full text-center pointer-events-none z-10">
+            <h2 class="game-font text-white text-3xl drop-shadow-md text-stroke">FLAPPY MOCCA</h2>
+            <p id="flappy-score-display" class="text-5xl font-black text-white drop-shadow-md mt-2">0</p>
+            <p id="flappy-start-msg" class="text-white text-sm animate-pulse mt-4 bg-black/50 inline-block px-3 py-1 rounded">Ketuk layar / Spasi untuk lompat</p>
+        </div>
+        <canvas id="flappyCanvas" class="w-full h-full max-w-md bg-sky-300 shadow-2xl"></canvas>
     </div>
 
     <div id="info-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
@@ -520,6 +504,18 @@
                             <div class="absolute inset-0 bg-amber-500/10 opacity-0 group-hover:opacity-100 transition"></div>
                             <i class="fa-solid fa-trophy text-2xl text-amber-500 group-hover:rotate-12 transition"></i>
                             <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Leaderboard</p>
+                        </div>
+
+                        <div onclick="bukaTapGame()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-red-500/10 opacity-0 group-hover:opacity-100 transition"></div>
+                            <i class="fa-solid fa-hand-pointer text-2xl text-red-500 group-hover:animate-pulse"></i>
+                            <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Jari Petir</p>
+                        </div>
+
+                        <div onclick="bukaFlappy()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-sky-500/10 opacity-0 group-hover:opacity-100 transition"></div>
+                            <i class="fa-solid fa-kiwi-bird text-2xl text-sky-500 group-hover:-translate-y-1 transition"></i>
+                            <p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Flappy Mocca</p>
                         </div>
                     </div>
                 </section>
@@ -793,7 +789,7 @@
         };
         // --- END KHODAM LOGIC ---
 
-        // --- LEADERBOARD LOGIC (BARU V8.5) ---
+        // --- LEADERBOARD LOGIC ---
         window.bukaLeaderboard = async () => {
             document.getElementById('leaderboard-modal').classList.remove('hidden');
             const list = document.getElementById('leaderboard-list');
@@ -802,8 +798,6 @@
             const today = new Date().toLocaleDateString('id-ID');
             
             try {
-                // Query Top 10 Tercepat Hari Ini
-                // NOTE: Jika error "index", klik link di Console Log
                 const q = query(
                     collection(db, "absensi"),
                     where("tanggal", "==", today),
@@ -868,6 +862,217 @@
             }
         }
         // --- END LEADERBOARD LOGIC ---
+
+        // --- GAME JARI PETIR (TAP) ---
+        let tapScore = 0;
+        let tapTime = 10;
+        let tapTimerInterval = null;
+        let isTapPlaying = false;
+
+        window.bukaTapGame = () => {
+            document.getElementById('tap-game-modal').classList.remove('hidden');
+            document.getElementById('tap-highscore').innerText = localStorage.getItem('tapHighScore') || 0;
+            resetTapGame();
+        }
+        window.tutupTapGame = () => {
+            document.getElementById('tap-game-modal').classList.add('hidden');
+            clearInterval(tapTimerInterval);
+        }
+        function resetTapGame() {
+            tapScore = 0; tapTime = 10; isTapPlaying = false;
+            document.getElementById('tap-score').innerText = 0;
+            document.getElementById('tap-timer').innerText = "10.00";
+            document.getElementById('tap-status').innerText = "Tekan MULAI untuk main";
+            document.getElementById('btn-tap-action').disabled = true;
+        }
+        window.initTapGame = () => {
+            resetTapGame();
+            isTapPlaying = true;
+            document.getElementById('tap-status').innerText = "TAP SECEPAT MUNGKIN!";
+            document.getElementById('btn-tap-action').disabled = false;
+            
+            tapTimerInterval = setInterval(() => {
+                tapTime -= 0.01;
+                document.getElementById('tap-timer').innerText = tapTime.toFixed(2);
+                if(tapTime <= 0) {
+                    clearInterval(tapTimerInterval);
+                    isTapPlaying = false;
+                    document.getElementById('btn-tap-action').disabled = true;
+                    document.getElementById('tap-timer').innerText = "0.00";
+                    
+                    const highScore = localStorage.getItem('tapHighScore') || 0;
+                    if(tapScore > highScore) {
+                        localStorage.setItem('tapHighScore', tapScore);
+                        document.getElementById('tap-highscore').innerText = tapScore;
+                        alert(`REKOR BARU! 🔥\nSkor Kamu: ${tapScore}`);
+                    } else {
+                        alert(`Waktu Habis!\nSkor Kamu: ${tapScore}`);
+                    }
+                }
+            }, 10);
+        }
+        window.tapClick = () => {
+            if(isTapPlaying) {
+                tapScore++;
+                document.getElementById('tap-score').innerText = tapScore;
+                if (navigator.vibrate) navigator.vibrate(20);
+            }
+        }
+        // --- END JARI PETIR ---
+
+        // --- GAME FLAPPY MOCCA ---
+        let canvas, ctx;
+        let frames = 0;
+        let score = 0;
+        let gameLoopId;
+        let bird = { x: 50, y: 150, w: 40, h: 40, radius: 20, v: 0, gravity: 0.25, jump: 4.6, rotation: 0 };
+        let pipes = [];
+        let state = { current: 0, getReady: 0, game: 1, over: 2 };
+        const gap = 120;
+        let birdImg = new Image();
+
+        window.bukaFlappy = () => {
+            document.getElementById('flappy-game-modal').classList.remove('hidden');
+            canvas = document.getElementById('flappyCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Resize canvas
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+
+            // Set User Photo
+            birdImg.src = userProfile.photoURL || 'icon.png';
+            
+            resetFlappy();
+            gameLoopId = requestAnimationFrame(loopFlappy);
+            
+            // Controls
+            canvas.addEventListener("click", flapAction);
+            window.addEventListener("keydown", (e) => { if(e.code === "Space") flapAction(); });
+        }
+
+        window.tutupFlappy = () => {
+            document.getElementById('flappy-game-modal').classList.add('hidden');
+            cancelAnimationFrame(gameLoopId);
+        }
+
+        function resetFlappy() {
+            bird.y = 150; bird.v = 0; bird.rotation = 0;
+            pipes = []; score = 0; frames = 0;
+            state.current = state.getReady;
+            document.getElementById('flappy-score-display').innerText = 0;
+            document.getElementById('flappy-start-msg').classList.remove('hidden');
+        }
+
+        function flapAction() {
+            if (state.current === state.getReady) {
+                state.current = state.game;
+                document.getElementById('flappy-start-msg').classList.add('hidden');
+            } else if (state.current === state.game) {
+                bird.v = -bird.jump;
+            } else if (state.current === state.over) {
+                resetFlappy();
+            }
+        }
+
+        function loopFlappy() {
+            updateFlappy();
+            drawFlappy();
+            gameLoopId = requestAnimationFrame(loopFlappy);
+        }
+
+        function updateFlappy() {
+            if (state.current === state.getReady) return;
+            if (state.current === state.game) {
+                bird.v += bird.gravity;
+                bird.y += bird.v;
+
+                // Collision with floor/ceiling
+                if(bird.y + bird.h/2 >= canvas.height || bird.y - bird.h/2 <= 0) {
+                    state.current = state.over;
+                }
+
+                // Pipes Logic
+                if (frames % 120 === 0) {
+                    pipes.push({ x: canvas.width, y: Math.random() * (canvas.height - 300) + 150 });
+                }
+                for(let i = 0; i < pipes.length; i++) {
+                    let p = pipes[i];
+                    p.x -= 2;
+
+                    // Collision pipe
+                    let birdLeft = bird.x - bird.radius;
+                    let birdRight = bird.x + bird.radius;
+                    let birdTop = bird.y - bird.radius;
+                    let birdBottom = bird.y + bird.radius;
+
+                    let pipeTopBottom = p.y - gap/2; 
+                    let pipeBotTop = p.y + gap/2; 
+
+                    if(birdRight > p.x && birdLeft < p.x + 50) {
+                        if(birdTop < pipeTopBottom || birdBottom > pipeBotTop) {
+                            state.current = state.over;
+                        }
+                    }
+
+                    if(p.x + 50 < 0) {
+                        pipes.shift();
+                        score++;
+                        document.getElementById('flappy-score-display').innerText = score;
+                    }
+                }
+                frames++;
+            }
+        }
+
+        function drawFlappy() {
+            // Background
+            ctx.fillStyle = "#70c5ce";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Pipes
+            ctx.fillStyle = "#73bf2e";
+            ctx.strokeStyle = "#538d22";
+            ctx.lineWidth = 2;
+            for(let i = 0; i < pipes.length; i++) {
+                let p = pipes[i];
+                // Top Pipe
+                ctx.fillRect(p.x, 0, 50, p.y - gap/2);
+                ctx.strokeRect(p.x, 0, 50, p.y - gap/2);
+                
+                // Bottom Pipe
+                ctx.fillRect(p.x, p.y + gap/2, 50, canvas.height - (p.y + gap/2));
+                ctx.strokeRect(p.x, p.y + gap/2, 50, canvas.height - (p.y + gap/2));
+            }
+
+            // Bird (User Photo)
+            ctx.save();
+            ctx.translate(bird.x, bird.y);
+            ctx.rotate(bird.v * 0.1);
+            ctx.beginPath();
+            ctx.arc(0, 0, bird.radius, 0, Math.PI*2, true);
+            ctx.closePath();
+            ctx.clip();
+            ctx.drawImage(birdImg, -bird.radius, -bird.radius, bird.w, bird.h);
+            ctx.restore();
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI*2, true);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "white";
+            ctx.stroke();
+
+            // Game Over
+            if(state.current === state.over) {
+                ctx.fillStyle = "rgba(0,0,0,0.5)";
+                ctx.fillRect(0,0,canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+                ctx.font = "30px 'Press Start 2P'";
+                ctx.fillText("GAME OVER", canvas.width/2 - 120, canvas.height/2);
+                ctx.font = "15px Arial";
+                ctx.fillText("Ketuk untuk main lagi", canvas.width/2 - 60, canvas.height/2 + 40);
+            }
+        }
+        // --- END FLAPPY ---
 
         window.bukaAdminPanel = () => { document.getElementById('admin-modal').classList.remove('hidden'); }
         window.tambahKaryawan = async () => {
