@@ -15,7 +15,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class', // Aktifin Dark Mode via Class
+            darkMode: 'class', 
             theme: { extend: { colors: { darkbg: '#0f172a', darkcard: '#1e293b' } } }
         }
     </script>
@@ -27,30 +27,32 @@
         body { font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
         
-        /* DARK MODE STYLES */
         .dark .glass { background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
         .dark .bg-white { background-color: #1e293b; color: #f1f5f9; border-color: #334155; }
         .dark .text-slate-900 { color: #f1f5f9; }
-        .dark .text-slate-800 { color: #e2e8f0; }
-        .dark .text-slate-500 { color: #94a3b8; }
         .dark input, .dark select, .dark textarea { background-color: #0f172a; border-color: #334155; color: white; }
 
-        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } } 
         .active-tab { background: #f59e0b; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.4); }
         .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .id-card { background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%); border: 1px solid rgba(251, 191, 36, 0.3); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; }
         .id-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(30deg); pointer-events: none; }
         .pattern-bg { background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 20px 20px; opacity: 0.1; }
         
-        /* MOOD SELECTOR */
         .mood-btn.selected { transform: scale(1.2); border-color: #f59e0b; background-color: #fffbeb; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3); }
         .dark .mood-btn.selected { background-color: #334155; border-color: #f59e0b; }
 
-        /* VIDEO STYLE */
         .video-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
         .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.65); z-index: 1; }
+
+        /* NAV BOTTOM STYLE */
+        .nav-item.active { color: #f59e0b; }
+        .nav-item.active i { transform: translateY(-2px); }
+        .nav-item { color: #94a3b8; transition: all 0.3s; }
+        .dark .nav-item { color: #64748b; }
+        .dark .nav-item.active { color: #fbbf24; }
     </style>
 </head>
 <body class="bg-amber-50 text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900 transition-colors duration-300">
@@ -70,12 +72,12 @@
             </button>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v5.0</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v6.0</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
 
-    <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
+    <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
         <div class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md p-6 text-slate-800 max-h-[90vh] overflow-y-auto border-t-4 border-amber-500">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold dark:text-slate-800">Edit Profil</h2>
@@ -104,7 +106,7 @@
         </div>
     </div>
 
-    <div id="gacha-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex items-center justify-center p-6 fade-in" onclick="tutupGacha()">
+    <div id="gacha-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[95] flex items-center justify-center p-6 fade-in" onclick="tutupGacha()">
         <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 text-center max-w-sm w-full relative overflow-hidden" onclick="event.stopPropagation()">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"></div>
             <h2 class="text-2xl font-black mb-2 dark:text-white">🎲 GACHA MAKAN</h2>
@@ -121,7 +123,7 @@
         </div>
     </div>
 
-    <div id="info-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
+    <div id="info-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
         <div class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md p-6 text-slate-800 border-t-4 border-blue-500">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold dark:text-slate-800">Buat Pengumuman</h2>
@@ -136,7 +138,7 @@
         </div>
     </div>
 
-    <div id="idcard-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4 fade-in" onclick="tutupIDCard()">
+    <div id="idcard-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[90] flex items-center justify-center p-4 fade-in" onclick="tutupIDCard()">
         <div class="w-full max-w-sm transform transition-all scale-100" onclick="event.stopPropagation()">
             <div class="id-card rounded-2xl p-6 relative">
                 <div class="absolute inset-0 pattern-bg"></div>
@@ -159,7 +161,7 @@
         </div>
     </div>
 
-    <div id="scanner-modal" class="hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
+    <div id="scanner-modal" class="hidden fixed inset-0 bg-black z-[90] flex flex-col items-center justify-center">
         <div class="absolute top-4 right-4 z-50"><button onclick="tutupScanner()" class="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center backdrop-blur-md"><i class="fa-solid fa-xmark"></i></button></div>
         <div class="w-full h-full max-w-lg bg-black relative">
             <div id="reader" class="w-full h-full"></div>
@@ -167,7 +169,7 @@
         </div>
     </div>
 
-    <div id="scan-result-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[60] flex items-center justify-center p-6 fade-in">
+    <div id="scan-result-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[95] flex items-center justify-center p-6 fade-in">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden relative">
             <div id="scan-header" class="bg-green-500 p-6 text-center text-white"></div>
             <div class="p-6 text-center space-y-4">
@@ -182,6 +184,11 @@
         </div>
     </div>
 
+    <div id="image-modal" class="fixed inset-0 bg-slate-900/95 hidden z-[90] flex items-center justify-center p-4 backdrop-blur-sm" onclick="tutupModal()">
+        <img id="modal-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl ring-4 ring-amber-500/30">
+        <button class="absolute top-6 right-6 text-white text-xl opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
     <div id="app-screen" class="hidden flex h-screen overflow-hidden bg-amber-50/50 dark:bg-slate-900/95 transition-colors duration-300">
         <div class="flex-1 flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full bg-white/80 dark:bg-slate-900 shadow-2xl relative transition-colors duration-300">
             
@@ -193,7 +200,6 @@
                 
                 <div class="flex gap-2">
                     <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-yellow-400 hover:bg-slate-200 transition flex items-center justify-center shadow-sm"><i id="icon-theme" class="fa-solid fa-moon text-xs"></i></button>
-                    
                     <button id="btn-scan-qr" onclick="bukaScanner()" class="hidden w-9 h-9 rounded-full bg-slate-900 dark:bg-slate-700 text-yellow-400 hover:bg-slate-700 transition flex items-center justify-center shadow-sm border border-slate-800"><i class="fa-solid fa-qrcode text-xs"></i></button>
                     <button onclick="bukaIDCard()" class="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300 hover:bg-amber-500 hover:text-white transition flex items-center justify-center shadow-sm border border-amber-200"><i class="fa-solid fa-id-card text-xs"></i></button>
                     <button id="btn-add-info" onclick="document.getElementById('info-modal').classList.remove('hidden')" class="hidden w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-bullhorn text-xs"></i></button>
@@ -202,92 +208,131 @@
             </header>
 
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-5 scroll-smooth pb-24">
-                <div id="info-section" class="mb-6 hidden">
-                    <div class="flex justify-between items-end mb-2 px-1"><h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm">📢 Papan Pengumuman</h3></div>
-                    <div id="info-slider" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
-                </div>
+                
+                <section id="view-home" class="fade-in">
+                    <div id="info-section" class="mb-6 hidden">
+                        <div class="flex justify-between items-end mb-2 px-1"><h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm">📢 Papan Pengumuman</h3></div>
+                        <div id="info-slider" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
+                    </div>
 
-                <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-xl shadow-amber-200/50 dark:shadow-none mb-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-20 rounded-full blur-xl"></div>
-                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-20 h-20 bg-yellow-300 opacity-30 rounded-full blur-xl"></div>
-                    <div class="text-center relative z-10 flex flex-col items-center">
-                        <p class="text-amber-900/70 text-[10px] font-bold tracking-[0.2em] uppercase mb-1">Waktu Server</p>
-                        <h1 id="clock-display" class="text-4xl font-black tracking-tight font-mono mb-2 text-slate-900">...</h1>
-                        <div class="flex gap-2">
+                    <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-xl shadow-amber-200/50 dark:shadow-none mb-6 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-20 rounded-full blur-xl"></div>
+                        <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-20 h-20 bg-yellow-300 opacity-30 rounded-full blur-xl"></div>
+                        <div class="text-center relative z-10 flex flex-col items-center">
+                            <p class="text-amber-900/70 text-[10px] font-bold tracking-[0.2em] uppercase mb-1">Waktu Server</p>
+                            <h1 id="clock-display" class="text-4xl font-black tracking-tight font-mono mb-2 text-slate-900">...</h1>
                             <div class="inline-flex items-center gap-2 bg-slate-900/10 px-3 py-1 rounded-full backdrop-blur-md border border-slate-900/5"><i class="fa-solid fa-satellite-dish text-[10px] text-slate-900 animate-pulse"></i><p id="gps-status" class="text-[10px] font-bold text-slate-900">Mencari Satelit...</p></div>
-                            <button onclick="bukaGacha()" class="bg-white/20 hover:bg-white/40 px-3 py-1 rounded-full backdrop-blur-md border border-white/10 text-[10px] font-bold text-slate-900 flex items-center gap-1 transition"><i class="fa-solid fa-dice"></i> Makan Apa?</button>
+                            <p id="jarak-status" class="text-[10px] font-bold mt-2 hidden bg-slate-900/10 text-slate-900 inline-block px-2 py-0.5 rounded"></p>
                         </div>
-                        <p id="jarak-status" class="text-[10px] font-bold mt-2 hidden bg-slate-900/10 text-slate-900 inline-block px-2 py-0.5 rounded"></p>
                     </div>
-                </div>
 
-                <div class="bg-white/90 dark:bg-slate-800/80 rounded-3xl shadow-sm border border-amber-100 dark:border-slate-700 p-1 mb-8">
-                    <div id="camera-container" class="hidden relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
-                        <video id="video-preview" class="w-full h-full object-cover" autoplay playsinline></video>
-                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-4"><p class="text-white text-xs text-center">Pastikan pencahayaan cukup</p></div>
-                    </div>
-                    <div class="p-4">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-wider text-center">Energi Kamu Hari Ini?</label>
-                                <div class="flex justify-between gap-2 bg-gray-50 dark:bg-slate-900 p-2 rounded-xl border border-gray-100 dark:border-slate-700">
-                                    <button onclick="pilihMood('🔥')" id="mood-fire" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">🔥</button>
-                                    <button onclick="pilihMood('🙂')" id="mood-smile" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent selected">🙂</button>
-                                    <button onclick="pilihMood('😴')" id="mood-sleep" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">😴</button>
-                                    <button onclick="pilihMood('🤯')" id="mood-stress" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">🤯</button>
+                    <div class="bg-white/90 dark:bg-slate-800/80 rounded-3xl shadow-sm border border-amber-100 dark:border-slate-700 p-1 mb-8">
+                        <div id="camera-container" class="hidden relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
+                            <video id="video-preview" class="w-full h-full object-cover" autoplay playsinline></video>
+                            <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-4"><p class="text-white text-xs text-center">Pastikan pencahayaan cukup</p></div>
+                        </div>
+                        <div class="p-4">
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-wider text-center">Energi Kamu Hari Ini?</label>
+                                    <div class="flex justify-between gap-2 bg-gray-50 dark:bg-slate-900 p-2 rounded-xl border border-gray-100 dark:border-slate-700">
+                                        <button onclick="pilihMood('🔥')" id="mood-fire" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">🔥</button>
+                                        <button onclick="pilihMood('🙂')" id="mood-smile" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent selected">🙂</button>
+                                        <button onclick="pilihMood('😴')" id="mood-sleep" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">😴</button>
+                                        <button onclick="pilihMood('🤯')" id="mood-stress" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">🤯</button>
+                                    </div>
                                 </div>
+                                <div class="bg-amber-50/50 dark:bg-slate-700 rounded-xl p-1 flex border border-amber-100 dark:border-slate-600 relative focus-within:border-amber-400 transition">
+                                    <i class="fa-solid fa-list-check absolute left-4 top-4 text-amber-500"></i>
+                                    <select id="jenis-absen" onchange="aturForm()" class="w-full bg-transparent p-3 pl-10 font-bold text-slate-800 dark:text-slate-200 outline-none text-sm appearance-none"><option value="Masuk">☀️ Absen Masuk</option><option value="Pulang">🌙 Absen Pulang</option><option value="IzinSakit">🤒 Izin / Sakit</option><option value="Cuti">🏖️ Cuti Kerja</option></select>
+                                    <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-amber-400 text-xs pointer-events-none"></i>
+                                </div>
+                                <div id="container-status" class="relative">
+                                    <i class="fa-solid fa-map-pin absolute left-4 top-4 text-amber-500 z-10"></i>
+                                    <div class="relative"><select id="status-absen" class="w-full bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-3 pl-10 font-medium text-slate-700 dark:text-slate-200 outline-none text-sm appearance-none focus:ring-2 focus:ring-amber-500 transition"></select><i class="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 text-xs pointer-events-none"></i></div>
+                                </div>
+                                <div id="container-keterangan" class="hidden"><textarea id="input-keterangan" rows="2" class="w-full bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-3 font-medium text-sm focus:ring-2 focus:ring-amber-500 outline-none transition text-slate-700 dark:text-slate-200" placeholder="Tulis alasan lengkap..."></textarea></div>
                             </div>
-
-                            <div class="bg-amber-50/50 dark:bg-slate-700 rounded-xl p-1 flex border border-amber-100 dark:border-slate-600 relative focus-within:border-amber-400 transition">
-                                <i class="fa-solid fa-list-check absolute left-4 top-4 text-amber-500"></i>
-                                <select id="jenis-absen" onchange="aturForm()" class="w-full bg-transparent p-3 pl-10 font-bold text-slate-800 dark:text-slate-200 outline-none text-sm appearance-none"><option value="Masuk">☀️ Absen Masuk</option><option value="Pulang">🌙 Absen Pulang</option><option value="IzinSakit">🤒 Izin / Sakit</option><option value="Cuti">🏖️ Cuti Kerja</option></select>
-                                <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-amber-400 text-xs pointer-events-none"></i>
+                            <div class="mt-4">
+                                <button id="btn-open-camera" onclick="bukaKamera()" class="w-full bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 dark:hover:bg-amber-600 text-yellow-400 dark:text-slate-900 font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95"><i class="fa-solid fa-camera"></i> BUKA KAMERA</button>
+                                <button id="btn-capture" onclick="jepretDanKirim()" class="hidden w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-900 font-black py-4 rounded-xl shadow-lg shadow-amber-300/50 transition flex items-center justify-center gap-2 active:scale-95"><i class="fa-solid fa-paper-plane"></i> KIRIM ABSEN</button>
                             </div>
-                            <div id="container-status" class="relative">
-                                <i class="fa-solid fa-map-pin absolute left-4 top-4 text-amber-500 z-10"></i>
-                                <div class="relative"><select id="status-absen" class="w-full bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-3 pl-10 font-medium text-slate-700 dark:text-slate-200 outline-none text-sm appearance-none focus:ring-2 focus:ring-amber-500 transition"></select><i class="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 text-xs pointer-events-none"></i></div>
-                            </div>
-                            <div id="container-keterangan" class="hidden"><textarea id="input-keterangan" rows="2" class="w-full bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-3 font-medium text-sm focus:ring-2 focus:ring-amber-500 outline-none transition text-slate-700 dark:text-slate-200" placeholder="Tulis alasan lengkap..."></textarea></div>
-                        </div>
-                        <div class="mt-4">
-                            <button id="btn-open-camera" onclick="bukaKamera()" class="w-full bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 dark:hover:bg-amber-600 text-yellow-400 dark:text-slate-900 font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95"><i class="fa-solid fa-camera"></i> BUKA KAMERA</button>
-                            <button id="btn-capture" onclick="jepretDanKirim()" class="hidden w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-900 font-black py-4 rounded-xl shadow-lg shadow-amber-300/50 transition flex items-center justify-center gap-2 active:scale-95"><i class="fa-solid fa-paper-plane"></i> KIRIM ABSEN</button>
                         </div>
                     </div>
+
+                    <div>
+                        <div class="flex flex-col mb-4 px-1 gap-2">
+                            <div class="flex justify-between items-center">
+                                <h3 id="label-riwayat" class="font-bold text-slate-900 dark:text-white text-lg">Riwayat Hari Ini</h3>
+                                <button id="btn-download-excel" onclick="downloadLaporan()" class="hidden bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2"><i class="fa-solid fa-file-excel"></i> Export</button>
+                            </div>
+                            <div class="flex items-center gap-2 bg-white dark:bg-slate-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
+                                <span class="text-xs font-bold text-gray-400 pl-2">Filter:</span>
+                                <input type="date" id="input-filter-tanggal" onchange="gantiTanggalRiwayat()" class="text-xs font-bold text-slate-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-2 py-1 focus:ring-1 focus:ring-amber-500 outline-none">
+                                <button onclick="resetTanggalRiwayat()" class="text-[10px] font-bold bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-300 px-2 py-1.5 rounded-lg hover:bg-amber-100 hover:text-amber-600 transition">Hari Ini</button>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
+                            <button onclick="gantiTab('all')" id="tab-all" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent">Semua</button>
+                            <button onclick="gantiTab('wfo')" id="tab-wfo" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">WFO</button>
+                            <button onclick="gantiTab('wfh')" id="tab-wfh" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">WFH</button>
+                            <button onclick="gantiTab('pulang')" id="tab-pulang" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">Pulang</button>
+                            <button onclick="gantiTab('sakit')" id="tab-sakit" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">Izin</button>
+                            <button onclick="gantiTab('cuti')" id="tab-cuti" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">Cuti</button>
+                        </div>
+                        <div id="tabel-body" class="space-y-3"></div>
+                        <p id="empty-msg" class="hidden text-center text-gray-400 py-10 text-sm italic">Belum ada data untuk tanggal ini.</p>
+                    </div>
+                </section>
+
+                <section id="view-games" class="hidden fade-in">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-1">🎮 Game Center</h2>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Tempat seru-seruan anak Mocca!</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div onclick="bukaGacha()" class="col-span-2 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl p-6 shadow-lg text-white relative overflow-hidden cursor-pointer hover:scale-[1.02] transition active:scale-95 group">
+                            <div class="absolute right-0 top-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition"></div>
+                            <div class="relative z-10 flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-black text-xl mb-1">GACHA MAKAN</h3>
+                                    <p class="text-xs text-purple-100 opacity-90">Bingung menu makan siang? <br>Klik di sini!</p>
+                                </div>
+                                <div class="text-4xl">🎲</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 opacity-60">
+                            <i class="fa-solid fa-ghost text-2xl text-gray-300"></i>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Cek Khodam</p>
+                            <span class="text-[8px] bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-gray-500">Coming Soon</span>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 opacity-60">
+                            <i class="fa-solid fa-trophy text-2xl text-gray-300"></i>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Leaderboard</p>
+                            <span class="text-[8px] bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded text-gray-500">Coming Soon</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="h-20"></div> </main>
+
+            <nav class="glass fixed bottom-0 left-0 w-full z-40 border-t border-gray-200 dark:border-slate-700 pb-safe">
+                <div class="max-w-md mx-auto flex justify-around items-center p-3">
+                    <button onclick="switchView('home')" id="nav-home" class="nav-item active flex flex-col items-center gap-1 w-16">
+                        <i class="fa-solid fa-house text-xl mb-0.5 transition-transform"></i>
+                        <span class="text-[9px] font-bold">Home</span>
+                    </button>
+                    <button onclick="switchView('games')" id="nav-games" class="nav-item flex flex-col items-center gap-1 w-16">
+                        <i class="fa-solid fa-gamepad text-xl mb-0.5 transition-transform"></i>
+                        <span class="text-[9px] font-bold">Games</span>
+                    </button>
                 </div>
+            </nav>
 
-                <div>
-                    <div class="flex flex-col mb-4 px-1 gap-2">
-                        <div class="flex justify-between items-center">
-                            <h3 id="label-riwayat" class="font-bold text-slate-900 dark:text-white text-lg">Riwayat Hari Ini</h3>
-                            <button id="btn-download-excel" onclick="downloadLaporan()" class="hidden bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2"><i class="fa-solid fa-file-excel"></i> Export</button>
-                        </div>
-                        <div class="flex items-center gap-2 bg-white dark:bg-slate-800 p-2 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700">
-                            <span class="text-xs font-bold text-gray-400 pl-2">Filter:</span>
-                            <input type="date" id="input-filter-tanggal" onchange="gantiTanggalRiwayat()" class="text-xs font-bold text-slate-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-lg px-2 py-1 focus:ring-1 focus:ring-amber-500 outline-none">
-                            <button onclick="resetTanggalRiwayat()" class="text-[10px] font-bold bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-300 px-2 py-1.5 rounded-lg hover:bg-amber-100 hover:text-amber-600 transition">Hari Ini</button>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
-                        <button onclick="gantiTab('all')" id="tab-all" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent">Semua</button>
-                        <button onclick="gantiTab('wfo')" id="tab-wfo" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">WFO</button>
-                        <button onclick="gantiTab('wfh')" id="tab-wfh" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">WFH</button>
-                        <button onclick="gantiTab('pulang')" id="tab-pulang" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">Pulang</button>
-                        <button onclick="gantiTab('sakit')" id="tab-sakit" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">Izin</button>
-                        <button onclick="gantiTab('cuti')" id="tab-cuti" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition">Cuti</button>
-                    </div>
-                    <div id="tabel-body" class="space-y-3"></div>
-                    <p id="empty-msg" class="hidden text-center text-gray-400 py-10 text-sm italic">Belum ada data untuk tanggal ini.</p>
-                </div>
-                <div class="h-10"></div>
-            </main>
         </div>
-    </div>
-
-    <div id="image-modal" class="fixed inset-0 bg-slate-900/95 hidden z-[80] flex items-center justify-center p-4 backdrop-blur-sm" onclick="tutupModal()">
-        <img id="modal-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl ring-4 ring-amber-500/30">
-        <button class="absolute top-6 right-6 text-white text-xl opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <script type="module">
@@ -320,7 +365,22 @@
         let html5QrCode = null;
         let unsubscribeRiwayat = null; 
         let unsubscribePengumuman = null;
-        let selectedMood = "🙂"; // Default Mood
+        let selectedMood = "🙂"; 
+
+        // --- NAVIGATION LOGIC ---
+        window.switchView = (viewName) => {
+            // Hide all views
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-games').classList.add('hidden');
+            
+            // Reset Nav Active State
+            document.getElementById('nav-home').classList.remove('active');
+            document.getElementById('nav-games').classList.remove('active');
+
+            // Show selected view
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            document.getElementById(`nav-${viewName}`).classList.add('active');
+        };
 
         // --- DARK MODE LOGIC ---
         window.toggleDarkMode = () => {
@@ -336,14 +396,13 @@
                 icon.className = 'fa-solid fa-sun text-xs';
             }
         };
-        // Cek LocalStorage pas loading
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
             document.getElementById('icon-theme').className = 'fa-solid fa-sun text-xs';
         }
 
         // --- GACHA LOGIC ---
-        const foodList = ["Soto Ayam", "Nasi Padang", "Bakso Malang", "Mie Ayam", "Warteg", "Lalapan", "Gado-gado", "Nasi Goreng", "Penyetan", "Sate Ayam"];
+        const foodList = ["Soto Ayam", "Nasi Padang", "Bakso Malang", "Mie Ayam", "Warteg", "Lalapan", "Gado-gado", "Nasi Goreng", "Penyetan", "Sate Ayam", "Seblak", "Mixue"];
         window.bukaGacha = () => document.getElementById('gacha-modal').classList.remove('hidden');
         window.tutupGacha = () => document.getElementById('gacha-modal').classList.add('hidden');
         window.putarGacha = () => {
@@ -514,9 +573,7 @@
             filteredData.forEach(data => { 
                 let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } 
                 let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; 
-                // MOOD DISPLAY DI TABEL
                 let moodUI = data.mood ? `<span class="text-lg absolute top-0 right-0 -mt-2 -mr-2 bg-white dark:bg-slate-800 rounded-full shadow border dark:border-slate-600 p-1">${data.mood}</span>` : "";
-                
                 container.innerHTML += `<div class="bg-white/90 dark:bg-slate-800/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 dark:border-slate-700 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white dark:ring-slate-600" onclick="bukaFoto('${data.bukti_foto}')">${moodUI}<div class="absolute -bottom-2 -right-2 bg-white dark:bg-slate-700 rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 dark:text-slate-200 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 dark:bg-slate-700 dark:text-slate-300 px-1.5 rounded border border-amber-100 dark:border-slate-600">${data.waktu}</span></div><p class="text-xs text-amber-600 dark:text-amber-400 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 dark:text-slate-400 mt-2 italic bg-amber-50/50 dark:bg-slate-900 p-2 rounded-lg border border-amber-100 dark:border-slate-600">"${data.keterangan}"</p>` : ''}</div></div>`; }); } 
         }
         window.bukaFoto = (src) => { document.getElementById('modal-img').src = src; document.getElementById('image-modal').classList.remove('hidden'); }
