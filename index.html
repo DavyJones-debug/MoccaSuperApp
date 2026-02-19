@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mocca Super App - V8.9 (Cafe Pro)</title>
+    <title>Mocca Super App - V9.0 (Kitchen Update)</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <link rel="apple-touch-icon" href="icon.png">
@@ -81,7 +81,7 @@
             <p id="login-error" class="text-red-300 text-xs font-bold mt-4 hidden bg-red-900/60 p-2 rounded border border-red-500/50 backdrop-blur-sm"></p>
         </div>
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v8.9</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Mocca Super App v9.0</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -106,8 +106,14 @@
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md h-[85vh] flex flex-col overflow-hidden relative border-t-4 border-orange-500" onclick="event.stopPropagation()">
             <div class="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900">
                 <div><h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-mug-hot text-orange-500 mr-2"></i>Mocca Cafe</h2><p class="text-[10px] text-gray-400">Internal Pantry Order</p></div>
-                <div class="flex gap-2">
+                <div class="flex gap-2 items-center">
+                    <button id="btn-live-orders" onclick="switchCafeView('orders')" class="hidden relative w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-200 transition flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-bell-concierge"></i>
+                        <span id="order-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">0</span>
+                    </button>
                     <button id="btn-manage-cafe" onclick="switchCafeView('manage')" class="hidden w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 hover:bg-blue-200 transition flex items-center justify-center shadow-sm"><i class="fa-solid fa-gear"></i></button>
+                    
+                    <div class="w-px h-6 bg-gray-200 dark:bg-slate-700 mx-1"></div>
                     <button onclick="tutupCafe()" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
@@ -158,6 +164,15 @@
                     </div>
             </div>
 
+            <div id="cafe-view-orders" class="hidden flex-1 flex flex-col overflow-hidden bg-gray-50 dark:bg-slate-900">
+                <div class="p-3 bg-red-50 dark:bg-slate-800 border-b border-red-100 dark:border-slate-700 flex items-center gap-2">
+                    <button onclick="switchCafeView('menu')" class="text-red-500"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h3 class="font-bold text-sm text-red-700 dark:text-red-400">Live Orders (Dapur)</h3>
+                </div>
+                <div class="flex-1 overflow-y-auto p-4 space-y-3" id="live-orders-list">
+                    </div>
+            </div>
+
             <div id="cafe-item-popup" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
                 <div class="bg-white dark:bg-slate-800 w-full rounded-3xl p-5 shadow-2xl relative transform transition-transform translate-y-0">
                     <button onclick="tutupPopupItem()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
@@ -184,7 +199,7 @@
     </div>
 
     <div id="admin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[95] flex items-center justify-center p-4 fade-in"><div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg h-[85vh] flex flex-col overflow-hidden relative border-t-4 border-purple-500"><div class="p-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900"><h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-users-gear text-purple-500 mr-2"></i>Admin Dashboard</h2><button onclick="document.getElementById('admin-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div><div class="p-5 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700"><div class="flex gap-2 mb-4"><button onclick="downloadLaporan()" class="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-xs font-bold hover:bg-green-200 border border-green-200"><i class="fa-solid fa-file-excel mr-1"></i> Export Absen</button></div><p class="text-xs text-gray-500 mb-2 font-bold uppercase">Tambah Karyawan Baru:</p><div class="grid grid-cols-2 gap-3 mb-3"><input type="email" id="adm-email" placeholder="Email Google (Wajib)" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white"><input type="text" id="adm-nama" placeholder="Nama Lengkap" class="col-span-2 w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white"><div class="col-span-2"><label class="text-[10px] text-gray-400 font-bold uppercase ml-1">Tanggal Lahir</label><input type="date" id="adm-tgl" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white"></div><select id="adm-divisi" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white"><option value="">Pilih Divisi...</option><option value="HR/Admin">HR / Admin</option><option value="Management">Management</option><option value="GameDev">GameDev</option><option value="3D Anim">3D Anim</option><option value="3D Asset">3D Asset</option><option value="Rigger">Rigger</option><option value="Layout">Layout</option><option value="Editor/LRC">Editor / LRC</option><option value="2D Anim">2D Anim</option><option value="2D Ilustrasi">2D Ilustrasi</option><option value="Lovy Merchandise">Lovy Merchandise</option><option value="Cafe/Kitchen">Cafe / Kitchen</option><option value="IT/Minebi">IT / Minebi</option><option value="Lainnya">Lainnya</option></select><select id="adm-role" class="w-full border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none dark:text-white"><option value="user">User Biasa</option><option value="admin">Admin</option></select></div><button onclick="tambahKaryawan()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg shadow-md transition active:scale-95 text-sm"><i class="fa-solid fa-plus mr-1"></i> SIMPAN KE DATABASE</button></div><div class="flex-1 overflow-y-auto p-5 bg-gray-50 dark:bg-slate-900/50"><h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Database Karyawan</h3><div id="list-karyawan" class="space-y-2"></div></div></div></div>
-    <div id="team-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[95] flex items-center justify-center p-4 fade-in"><div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md h-[80vh] flex flex-col overflow-hidden relative border-t-4 border-blue-500"><div class="p-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900"><h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-users text-blue-500 mr-2"></i>Daftar Tim Mocca</h2><button onclick="document.getElementById('team-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div><div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-800" id="team-list-container"><div class="text-center text-gray-400 py-10"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</div></div></div></div>
+    <div id="team-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[95] flex items-center justify-center p-4 fade-in"><div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md h-[80vh] flex flex-col overflow-hidden relative border-t-4 border-blue-500"><div class="p-5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900"><h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-users text-blue-500 mr-2"></i>Daftar Tim Mocca</h2><button onclick="document.getElementById('team-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div><div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-800" id="team-list-container"><div class="text-center text-gray-400 py-10"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</div></div><div class="p-3 bg-gray-50 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-700 text-center"><p class="text-[10px] text-gray-400 italic">Klik pada nama teman untuk melihat profil</p></div></div></div>
     <div id="other-profile-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[98] flex items-center justify-center p-4 fade-in" onclick="tutupProfilOrang()"><div class="w-full max-w-sm relative transform transition-all scale-100" onclick="event.stopPropagation()"><div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl relative"><div class="h-28 bg-gradient-to-r from-blue-400 to-indigo-500 relative"><button onclick="tutupProfilOrang()" class="absolute top-4 right-4 bg-black/20 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/40 transition backdrop-blur-sm"><i class="fa-solid fa-xmark"></i></button></div><div class="px-6 pb-8 text-center -mt-14 relative z-10"><div class="w-28 h-28 rounded-full p-1.5 bg-white dark:bg-slate-800 shadow-xl mx-auto mb-4"><img id="view-other-foto" src="" class="w-full h-full rounded-full object-cover border border-gray-100 dark:border-slate-700 bg-gray-200"></div><h2 id="view-other-nama" class="text-2xl font-black text-slate-800 dark:text-white leading-tight mb-1">...</h2><div class="inline-block bg-blue-50 dark:bg-slate-700 px-3 py-1 rounded-full border border-blue-100 dark:border-slate-600 mb-6"><p id="view-other-divisi" class="text-xs font-bold text-blue-600 dark:text-blue-300">...</p></div><div class="space-y-3"><div class="flex items-center gap-3 bg-gray-50 dark:bg-slate-900 p-3 rounded-xl border border-gray-100 dark:border-slate-700"><div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-slate-700 flex items-center justify-center text-orange-500"><i class="fa-solid fa-cake-candles"></i></div><div class="text-left"><p class="text-[10px] text-gray-400 font-bold uppercase">Ulang Tahun</p><p id="view-other-tgl" class="text-sm font-bold text-slate-700 dark:text-slate-200">-</p></div></div><div class="flex items-center gap-3 bg-gray-50 dark:bg-slate-900 p-3 rounded-xl border border-gray-100 dark:border-slate-700 group cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700/80 transition" onclick="copyEmailOrang()"><div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-slate-700 flex items-center justify-center text-blue-500"><i class="fa-solid fa-envelope"></i></div><div class="text-left flex-1 min-w-0"><p class="text-[10px] text-gray-400 font-bold uppercase">Email Kontak</p><p id="view-other-email" class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">-</p></div><i class="fa-regular fa-copy text-gray-300 group-hover:text-blue-400"></i></div></div></div></div></div></div>
     <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in"><div class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md p-6 text-slate-800 max-h-[90vh] overflow-y-auto border-t-4 border-amber-500"><div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold dark:text-slate-800">Edit Profil</h2><button onclick="tutupProfile()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div><div class="space-y-5"><div class="text-center"><div class="relative inline-block group"><img id="preview-foto-profil" src="" class="w-28 h-28 rounded-full mx-auto border-4 border-amber-100 shadow-lg object-cover"><label class="absolute bottom-0 right-0 bg-amber-500 text-slate-900 p-2 rounded-full cursor-pointer hover:bg-amber-600 shadow-lg transition transform group-hover:scale-110"><i class="fa-solid fa-camera text-xs"></i><input type="file" id="input-foto-file" class="hidden" accept="image/*" onchange="previewImage(this)"></label></div><p class="text-xs text-gray-400 mt-2">Klik ikon kamera untuk ganti foto.</p></div><div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Nama Lengkap (Locked)</label><input type="text" id="edit-nama" class="w-full border border-gray-200 bg-gray-100 rounded-xl p-3 outline-none font-medium text-slate-500 cursor-not-allowed" readonly></div><div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Divisi (Locked)</label><input type="text" id="edit-divisi" class="w-full border border-gray-200 bg-gray-100 rounded-xl p-3 outline-none font-medium text-slate-500 cursor-not-allowed" readonly></div><button onclick="updateProfileData()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95">SIMPAN FOTO</button></div></div></div>
     <div id="info-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in"><div class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md p-6 text-slate-800 border-t-4 border-blue-500"><div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold dark:text-slate-800">Buat Pengumuman</h2><button onclick="document.getElementById('info-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-red-100 text-gray-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div><div class="space-y-4"><div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Judul</label><input type="text" id="info-judul" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"></div><div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Tipe</label><select id="info-tipe" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"><option value="Penting">🔴 PENTING</option><option value="Info">🔵 INFO</option><option value="Event">🟢 EVENT</option></select></div><div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Isi</label><textarea id="info-isi" rows="3" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-slate-900"></textarea></div><button onclick="kirimPengumuman()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95">POSTING</button></div></div></div>
@@ -192,9 +207,18 @@
     <div id="scanner-modal" class="hidden fixed inset-0 bg-black z-[90] flex flex-col items-center justify-center"><div class="absolute top-4 right-4 z-50"><button onclick="tutupScanner()" class="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center backdrop-blur-md"><i class="fa-solid fa-xmark"></i></button></div><div class="w-full h-full max-w-lg bg-black relative"><div id="reader" class="w-full h-full"></div><div class="absolute inset-0 border-2 border-amber-500/50 pointer-events-none m-12 rounded-2xl flex items-center justify-center"><p class="text-white/80 text-sm font-bold bg-black/50 px-3 py-1 rounded">Arahkan ke QR Code</p></div></div></div>
     <div id="scan-result-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[95] flex items-center justify-center p-6 fade-in"><div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden relative"><div id="scan-header" class="bg-green-500 p-6 text-center text-white"></div><div class="p-6 text-center space-y-4"><img id="scan-foto" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-lg mx-auto -mt-16 bg-gray-200 object-cover"><div><h3 id="scan-nama" class="text-xl font-bold text-slate-800 leading-tight">Nama Karyawan</h3><p id="scan-divisi" class="text-amber-600 font-bold text-sm">Divisi</p></div><div class="grid grid-cols-2 gap-2 text-left bg-slate-50 p-4 rounded-xl text-xs"><div><p class="text-gray-400 font-bold uppercase text-[10px]">Tanggal Lahir</p><p id="scan-tgl" class="font-bold text-slate-700">-</p></div><div><p class="text-gray-400 font-bold uppercase text-[10px]">Email</p><p id="scan-email" class="font-bold text-slate-700 truncate">-</p></div></div><button onclick="document.getElementById('scan-result-modal').classList.add('hidden')" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition">OK, TUTUP</button></div></div></div>
     <div id="image-modal" class="fixed inset-0 bg-slate-900/95 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm" onclick="tutupModal()"><img id="modal-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl ring-4 ring-amber-500/30"><button class="absolute top-6 right-6 text-white text-xl opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button></div>
+    
+    <div id="gacha-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[95] flex items-center justify-center p-6 fade-in" onclick="tutupGacha()"><div class="bg-white dark:bg-slate-800 rounded-3xl p-8 text-center max-w-sm w-full relative overflow-hidden" onclick="event.stopPropagation()"><div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"></div><h2 class="text-2xl font-black mb-2 dark:text-white">🎲 GACHA MAKAN</h2><div id="gacha-result" class="text-4xl font-black text-amber-500 h-20 flex items-center justify-center border-4 border-dashed border-gray-200 rounded-2xl mb-6 bg-gray-50 dark:bg-slate-900 dark:border-slate-700 transition-all">???</div><button onclick="putarGacha()" id="btn-spin" class="w-full bg-slate-900 dark:bg-amber-500 hover:bg-slate-800 dark:hover:bg-amber-600 text-white dark:text-slate-900 font-bold py-4 rounded-xl shadow-xl active:scale-95 transition">PUTAR SEKARANG! 🚀</button></div></div>
+    <div id="khodam-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[99] flex items-center justify-center p-6 fade-in" onclick="tutupKhodam()"><div class="bg-slate-900 rounded-3xl p-8 text-center max-w-sm w-full relative overflow-hidden border border-purple-500/30" onclick="event.stopPropagation()"><div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500"></div><i class="fa-solid fa-ghost text-4xl text-purple-400 mb-4 animate-bounce"></i><h2 class="text-2xl font-black mb-1 text-white khodam-font tracking-wider text-shadow-purple">CEK KHODAM</h2><p class="text-xs text-purple-200 mb-6">Siapakah sosok gaib di dalam dirimu?</p><div class="mb-6"><input type="text" id="input-nama-khodam" placeholder="Ketik Nama Kamu..." class="w-full bg-slate-800 border border-purple-500/50 rounded-xl p-3 text-center text-white placeholder-purple-300/50 focus:ring-2 focus:ring-purple-500 outline-none font-bold"></div><div id="khodam-result-box" class="hidden mb-6 animate-pulse"><p class="text-[10px] text-purple-300 uppercase tracking-widest mb-1">Khodam Kamu Adalah:</p><h3 id="khodam-result" class="text-2xl font-black text-white khodam-glow leading-tight">...</h3><p id="khodam-desc" class="text-xs text-purple-200 mt-2 italic">"...?"</p></div><button onclick="prosesKhodam()" id="btn-check-khodam" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-purple-500/20 active:scale-95 transition"><i class="fa-solid fa-eye mr-2"></i> TERAWANG SEKARANG</button></div></div>
+    <div id="leaderboard-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[98] flex items-center justify-center p-4 fade-in" onclick="document.getElementById('leaderboard-modal').classList.add('hidden')"><div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md h-[75vh] flex flex-col overflow-hidden relative border-t-4 border-amber-400" onclick="event.stopPropagation()"><div class="p-5 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-slate-800 dark:to-slate-800 flex justify-between items-center relative overflow-hidden"><div class="relative z-10"><h2 class="text-xl font-black text-slate-800 dark:text-white italic tracking-tighter"><i class="fa-solid fa-bolt text-amber-500 mr-2 animate-pulse"></i>THE FLASH</h2><p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold tracking-widest uppercase ml-7">Top 10 Absen Paling Pagi</p></div><button onclick="document.getElementById('leaderboard-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center shadow-sm relative z-10"><i class="fa-solid fa-xmark"></i></button></div><div class="flex-1 overflow-y-auto p-4 bg-white dark:bg-slate-800" id="leaderboard-list"><div class="text-center py-10"><i class="fa-solid fa-spinner fa-spin text-3xl text-amber-500 mb-2"></i><p class="text-xs text-gray-400">Sedang mencari yang paling rajin...</p></div></div><div class="p-3 bg-gray-50 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-700 text-center"><p class="text-[10px] text-gray-400 italic">Data diperbarui otomatis hari ini</p></div></div></div>
+    <div id="tap-game-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[99] flex items-center justify-center p-4 fade-in"><div class="bg-white dark:bg-slate-800 rounded-3xl p-6 text-center max-w-sm w-full relative border-t-4 border-red-500 shadow-2xl"><button onclick="tutupTapGame()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button><h2 class="text-2xl font-black mb-1 dark:text-white game-font text-red-500">JARI PETIR</h2><p class="text-xs text-gray-500 mb-4">Klik tombol sebanyak mungkin dalam 10 detik!</p><div class="mb-6 bg-gray-100 dark:bg-slate-900 p-4 rounded-xl flex justify-between items-center"><div><p class="text-[10px] font-bold uppercase text-gray-400">Waktu</p><p id="tap-timer" class="text-2xl font-mono font-bold text-slate-800 dark:text-white">10.00</p></div><div><p class="text-[10px] font-bold uppercase text-gray-400">Skor</p><p id="tap-score" class="text-3xl font-black text-red-500">0</p></div></div><button id="btn-tap-action" onclick="tapClick()" disabled class="w-32 h-32 rounded-full bg-red-500 hover:bg-red-600 text-white font-black text-2xl shadow-lg border-4 border-red-300 active:scale-90 transition tap-btn mx-auto flex items-center justify-center mb-4">TAP!</button><p id="tap-status" class="text-xs font-bold text-slate-500">Tekan MULAI untuk main</p><div class="mt-4 flex gap-2"><button onclick="initTapGame()" class="flex-1 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800">MULAI</button><div class="px-4 py-2 bg-yellow-100 rounded-xl text-center"><p class="text-[8px] font-bold text-yellow-600">BEST</p><p id="tap-highscore" class="font-black text-yellow-700">0</p></div></div></div></div>
+    <div id="flappy-game-modal" class="hidden fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center"><div class="absolute top-4 right-4 z-10"><button onclick="tutupFlappy()" class="w-10 h-10 bg-white/20 text-white rounded-full backdrop-blur-md"><i class="fa-solid fa-xmark"></i></button></div><div class="absolute top-10 left-0 w-full text-center pointer-events-none z-10"><h2 class="game-font text-white text-3xl drop-shadow-md text-stroke">FLAPPY MOCCA</h2><p id="flappy-score-display" class="text-5xl font-black text-white drop-shadow-md mt-2">0</p><p id="flappy-start-msg" class="text-white text-sm animate-pulse mt-4 bg-black/50 inline-block px-3 py-1 rounded">Ketuk layar / Spasi untuk lompat</p></div><canvas id="flappyCanvas" class="w-full h-full max-w-md bg-sky-300 shadow-2xl"></canvas></div>
+    <div id="whack-game-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-4 fade-in"><div class="bg-white dark:bg-slate-800 rounded-3xl p-6 text-center max-w-sm w-full relative border-t-4 border-green-600 shadow-2xl"><button onclick="tutupWhackGame()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button><h2 class="text-2xl font-black mb-1 dark:text-white fun-font text-green-600">PUKUL BUG!</h2><p class="text-xs text-gray-500 mb-4">Basmi bug (🪲) sebelum kabur!</p><div class="flex justify-between items-center mb-4 bg-green-50 dark:bg-slate-900 p-2 rounded-lg"><div class="text-left"><span class="text-[10px] font-bold text-gray-400 uppercase">Skor</span><br><span id="whack-score" class="text-2xl font-black text-green-600">0</span></div><div class="text-right"><span class="text-[10px] font-bold text-gray-400 uppercase">Waktu</span><br><span id="whack-time" class="text-xl font-mono font-bold dark:text-white">15</span></div></div><div class="grid grid-cols-3 gap-2 mb-4 bg-green-800 p-2 rounded-xl border-4 border-green-900"><div class="hole" id="hole1"><div class="bug">🪲</div></div><div class="hole" id="hole2"><div class="bug">🪲</div></div><div class="hole" id="hole3"><div class="bug">🪲</div></div><div class="hole" id="hole4"><div class="bug">🪲</div></div><div class="hole" id="hole5"><div class="bug">🪲</div></div><div class="hole" id="hole6"><div class="bug">🪲</div></div><div class="hole" id="hole7"><div class="bug">🪲</div></div><div class="hole" id="hole8"><div class="bug">🪲</div></div><div class="hole" id="hole9"><div class="bug">🪲</div></div></div><button onclick="startWhackGame()" id="btn-whack-start" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg active:scale-95">MULAI BASMI!</button></div></div>
+    <div id="snake-game-modal" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-2 fade-in"><div class="w-full max-w-sm relative"><button onclick="tutupSnakeGame()" class="absolute -top-10 right-0 text-white hover:text-red-500"><i class="fa-solid fa-circle-xmark text-3xl"></i></button><div class="bg-slate-800 rounded-t-2xl p-4 flex justify-between items-center border-b border-slate-700"><h2 class="text-lg font-black text-white game-font text-green-400">ULAR MOCCA</h2><div class="text-white font-mono">Skor: <span id="snake-score">0</span></div></div><canvas id="snakeCanvas" width="300" height="300" class="bg-black w-full border-x-4 border-slate-700 shadow-2xl"></canvas><div class="bg-slate-800 rounded-b-2xl p-4 grid grid-cols-3 gap-2 pt-6 pb-8"><div></div><button onmousedown="changeSnakeDir('Up')" ontouchstart="changeSnakeDir('Up')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-up"></i></button><div></div><button onmousedown="changeSnakeDir('Left')" ontouchstart="changeSnakeDir('Left')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-left"></i></button><button onmousedown="changeSnakeDir('Down')" ontouchstart="changeSnakeDir('Down')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-down"></i></button><button onmousedown="changeSnakeDir('Right')" ontouchstart="changeSnakeDir('Right')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-right"></i></button></div><button id="btn-snake-start" onclick="initSnakeGame()" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white font-black py-3 px-6 rounded-full shadow-xl hover:bg-green-600 active:scale-95 z-10 border-4 border-white">MAIN</button></div></div>
 
     <div id="app-screen" class="hidden flex h-screen overflow-hidden bg-amber-50/50 dark:bg-slate-900/95 transition-colors duration-300">
         <div class="flex-1 flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full bg-white/80 dark:bg-slate-900 shadow-2xl relative transition-colors duration-300">
+            
             <header class="glass sticky top-0 z-50 px-5 py-4 flex justify-between items-center shadow-sm">
                 <div class="flex items-center gap-3 cursor-pointer group" onclick="bukaProfile()"><div class="relative"><img id="user-photo" src="" class="w-11 h-11 rounded-full border-2 border-amber-100 shadow-md object-cover group-hover:border-amber-300 transition"><div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div></div><div><p id="user-name-display" class="text-sm font-bold text-slate-900 leading-tight">Loading...</p><div class="flex items-center gap-1"><p id="user-divisi-display" class="text-[11px] text-amber-600 font-semibold tracking-wide">...</p><span id="badge-admin" class="hidden bg-purple-100 text-purple-700 text-[9px] font-bold px-1.5 rounded border border-purple-200">ADMIN</span></div></div></div>
                 <div class="relative">
@@ -203,9 +227,7 @@
                         <p class="text-[10px] font-bold text-gray-400 uppercase mb-3 tracking-wider">Aplikasi & Fitur</p>
                         <div class="grid grid-cols-4 gap-3">
                             <button onclick="bukaQuest(); toggleMenu()" class="flex flex-col items-center gap-1 p-1 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="w-9 h-9 rounded-full bg-green-100 text-green-600 flex items-center justify-center"><i class="fa-solid fa-list-check"></i></div><span class="text-[8px] font-bold text-slate-600 dark:text-slate-300">Quest</span></button>
-                            
                             <button onclick="bukaCafe(); toggleMenu()" class="flex flex-col items-center gap-1 p-1 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="w-9 h-9 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center"><i class="fa-solid fa-mug-hot"></i></div><span class="text-[8px] font-bold text-slate-600 dark:text-slate-300">Cafe</span></button>
-                            
                             <button onclick="toggleDarkMode()" class="flex flex-col items-center gap-1 p-1 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-yellow-400 flex items-center justify-center"><i id="icon-theme" class="fa-solid fa-moon"></i></div><span class="text-[8px] font-bold text-slate-600 dark:text-slate-300">Tema</span></button>
                             <button onclick="bukaIDCard(); toggleMenu()" class="flex flex-col items-center gap-1 p-1 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-id-card"></i></div><span class="text-[8px] font-bold text-slate-600 dark:text-slate-300">ID Card</span></button>
                             <button onclick="bukaTim(); toggleMenu()" class="flex flex-col items-center gap-1 p-1 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition"><div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-users"></i></div><span class="text-[8px] font-bold text-slate-600 dark:text-slate-300">Tim</span></button>
@@ -223,7 +245,6 @@
                 <section id="view-home" class="fade-in">
                     <div id="birthday-section" class="hidden mb-6"><div class="birthday-gradient p-5 rounded-2xl shadow-lg text-slate-900 relative overflow-hidden text-center"><h3 class="text-sm font-bold uppercase tracking-widest mb-1 text-slate-700">🎉 BIRTHDAY ALERT! 🎉</h3><p class="text-xs mb-3">Hari ini adalah hari spesial untuk:</p><div id="birthday-names" class="text-2xl font-black mb-2">...</div><p class="text-[10px] italic">Jangan lupa ucapin selamat ya! 🎂</p></div></div>
                     <div id="info-section" class="mb-6 hidden"><div class="flex justify-between items-end mb-2 px-1"><h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm">📢 Papan Pengumuman</h3></div><div id="info-slider" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x"></div></div>
-                    
                     <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-xl shadow-amber-200/50 dark:shadow-none mb-6 relative overflow-hidden"><div class="text-center relative z-10 flex flex-col items-center"><p class="text-amber-900/70 text-[10px] font-bold tracking-[0.2em] uppercase mb-1">Waktu Server</p><h1 id="clock-display" class="text-4xl font-black tracking-tight font-mono mb-2 text-slate-900">...</h1><div class="inline-flex items-center gap-2 bg-slate-900/10 px-3 py-1 rounded-full backdrop-blur-md border border-slate-900/5"><i class="fa-solid fa-satellite-dish text-[10px] text-slate-900 animate-pulse"></i><p id="gps-status" class="text-[10px] font-bold text-slate-900">Mencari Satelit...</p></div><p id="jarak-status" class="text-[10px] font-bold mt-2 hidden bg-slate-900/10 text-slate-900 inline-block px-2 py-0.5 rounded"></p></div></div>
                     
                     <div class="bg-white/90 dark:bg-slate-800/80 rounded-3xl shadow-sm border border-amber-100 dark:border-slate-700 p-1 mb-8">
@@ -271,16 +292,12 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const KANTOR_LAT = -7.988571; 
-        const KANTOR_LONG = 112.652931; 
-        const MAX_JARAK_METER = 100;
-        const JAM_MASUK_KANTOR = 10; 
-        const MENIT_MASUK_KANTOR = 0; 
+        const KANTOR_LAT = -7.988571; const KANTOR_LONG = 112.652931; const MAX_JARAK_METER = 100; const JAM_MASUK_KANTOR = 10; const MENIT_MASUK_KANTOR = 0; 
         const firebaseConfig = { apiKey: "AIzaSyAcBFC_vOSHyJP89gGvguKPJ60G2BOoIvg", authDomain: "moccasuperapp.firebaseapp.com", projectId: "moccasuperapp", storageBucket: "moccasuperapp.firebasestorage.app", messagingSenderId: "966529708566", appId: "1:966529708566:web:7f7bb39e7c6811e9c93b37", measurementId: "G-CLCMR26YV6" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app); const provider = new GoogleAuthProvider();
         
         let currentUser = null, userProfile = {}, compressedProfileImage = "", videoStream = null, currentLat = null, currentLong = null, allData = [], currentTab = 'all';
-        let html5QrCode = null, unsubscribeRiwayat = null, unsubscribePengumuman = null, unsubscribeQuest = null, selectedMood = "🙂"; 
+        let html5QrCode = null, unsubscribeRiwayat = null, unsubscribePengumuman = null, unsubscribeQuest = null, unsubscribeOrders = null, selectedMood = "🙂"; 
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -291,11 +308,10 @@
                     const querySnapshot = await getDocs(q);
                     
                     if (!querySnapshot.empty) {
-                        btnText.innerText = "Memuat Aplikasi...";
+                        btnText.innerText = "Memuat Profil...";
                         let employeeData = {}; 
                         querySnapshot.forEach((doc) => { employeeData = doc.data(); });
                         let customPhoto = user.photoURL; 
-                        
                         try {
                             const userDoc = await getDoc(doc(db, "users", user.uid));
                             if(userDoc.exists() && userDoc.data().photoURL) { customPhoto = userDoc.data().photoURL; }
@@ -311,15 +327,8 @@
                         errMsg.innerText = `Email ${user.email} tidak terdaftar di database kantor!`; 
                         errMsg.classList.remove('hidden'); 
                     }
-                } catch(e) {
-                    btnText.innerText = "Error Koneksi";
-                    alert("Gagal koneksi database. Error: " + e.message);
-                }
-            } else { 
-                currentUser = null; 
-                document.getElementById('login-screen').classList.remove('hidden'); 
-                document.getElementById('app-screen').classList.add('hidden'); 
-            }
+                } catch(e) { btnText.innerText = "Error Koneksi"; alert("Gagal koneksi database. Error: " + e.message); }
+            } else { currentUser = null; document.getElementById('login-screen').classList.remove('hidden'); document.getElementById('app-screen').classList.add('hidden'); }
         });
 
         function setupUI() { 
@@ -329,6 +338,7 @@
                     document.getElementById('btn-add-info').classList.remove('hidden'); 
                     document.getElementById('btn-scan-qr').classList.remove('hidden'); 
                     document.getElementById('btn-admin-panel').classList.remove('hidden'); 
+                    document.getElementById('badge-admin').classList.remove('hidden');
                     loadDaftarKaryawan(); 
                 } catch(e) {}
             } 
@@ -339,36 +349,37 @@
             try { loadRiwayatData(); } catch(e){}
             try { loadPengumuman(); } catch(e){}
             try { cekUlangTahun(); } catch(e){}
+            try { loadMenuCafeDariDatabase(); } catch(e){}
         }
 
         function renderHeader() { document.getElementById('user-photo').src = userProfile.photoURL || 'icon.png'; document.getElementById('user-name-display').innerText = userProfile.nama; document.getElementById('user-divisi-display').innerText = userProfile.divisi; }
 
-        // --- ☕ FITUR BARU: MOCCA CAFE PRO ---
+        // --- ☕ FITUR BARU: MOCCA CAFE KITCHEN DASHBOARD ---
         let cartCafe = [];
-        let itemDitahan = null; // Menyimpan item sementara sebelum masuk keranjang
+        let itemDitahan = null;
 
         window.bukaCafe = () => {
             document.getElementById('cafe-modal').classList.remove('hidden');
             switchCafeView('menu');
             
-            // Tampilkan tombol Kelola Menu jika admin atau divisi Cafe
             if(userProfile.role === 'admin' || userProfile.divisi === 'Cafe/Kitchen' || userProfile.divisi === 'HR/Admin') {
                 document.getElementById('btn-manage-cafe').classList.remove('hidden');
+                document.getElementById('btn-live-orders').classList.remove('hidden');
+                // Panggil background listener untuk badge notifikasi
+                loadLiveOrders(true); 
             }
             
             loadMenuCafeDariDatabase();
             updateKeranjangUI();
         };
 
-        window.tutupCafe = () => {
-            document.getElementById('cafe-modal').classList.add('hidden');
-        };
+        window.tutupCafe = () => { document.getElementById('cafe-modal').classList.add('hidden'); };
 
-        // Navigasi antar tampilan di dalam Modal Cafe
         window.switchCafeView = (view) => {
             document.getElementById('cafe-view-menu').classList.add('hidden');
             document.getElementById('cafe-view-cart').classList.add('hidden');
             document.getElementById('cafe-view-manage').classList.add('hidden');
+            document.getElementById('cafe-view-orders').classList.add('hidden');
             document.getElementById('cart-floating-bar').classList.add('hidden');
             
             if(view === 'menu') {
@@ -379,6 +390,9 @@
                 renderIsiKeranjang();
             } else if(view === 'manage') {
                 document.getElementById('cafe-view-manage').classList.remove('hidden');
+            } else if(view === 'orders') {
+                document.getElementById('cafe-view-orders').classList.remove('hidden');
+                loadLiveOrders(false); // Render UI Listnya
             }
         };
 
@@ -387,200 +401,157 @@
             onSnapshot(q, (snap) => {
                 const list = document.getElementById('menu-cafe-list');
                 const listManage = document.getElementById('manage-cafe-list');
-                list.innerHTML = ""; 
-                listManage.innerHTML = "";
+                list.innerHTML = ""; listManage.innerHTML = "";
                 
                 if(snap.empty) {
-                    list.innerHTML = `<div class="col-span-2 text-center text-xs text-gray-400 py-4">Menu belum ditambahkan oleh Kitchen.</div>`;
-                    listManage.innerHTML = `<div class="text-center text-xs text-gray-400 py-4">Belum ada menu.</div>`;
+                    list.innerHTML = `<div class="col-span-2 text-center text-xs text-gray-400 py-4">Menu belum ditambahkan.</div>`;
                     return;
                 }
 
                 snap.forEach(doc => {
-                    const d = doc.data();
-                    const id = doc.id;
-                    
-                    // Render untuk User (Pesan Menu)
+                    const d = doc.data(); const id = doc.id;
                     list.innerHTML += `
                         <div onclick="bukaPopupItem('${id}', '${d.nama}', ${d.harga}, '${d.emoji}')" class="bg-gray-50 dark:bg-slate-900 p-3 rounded-xl border border-gray-200 dark:border-slate-700 text-center cursor-pointer hover:bg-orange-50 dark:hover:bg-slate-800 transition active:scale-95 flex flex-col justify-between h-full">
-                            <div>
-                                <div class="text-4xl mb-2">${d.emoji}</div>
-                                <h4 class="font-bold text-xs text-slate-700 dark:text-white leading-tight mb-1">${d.nama}</h4>
-                            </div>
+                            <div><div class="text-4xl mb-2">${d.emoji}</div><h4 class="font-bold text-xs text-slate-700 dark:text-white leading-tight mb-1">${d.nama}</h4></div>
                             <p class="text-[10px] text-orange-500 font-bold bg-orange-100 dark:bg-orange-900/30 rounded py-1 mt-2">Rp ${d.harga.toLocaleString('id-ID')}</p>
-                        </div>
-                    `;
-                    
-                    // Render untuk Admin (Kelola Menu)
+                        </div>`;
                     listManage.innerHTML += `
                         <div class="flex justify-between items-center bg-gray-50 dark:bg-slate-900 p-2 rounded-lg border border-gray-200 dark:border-slate-700 mb-2">
-                            <div class="flex items-center gap-3">
-                                <span class="text-2xl">${d.emoji}</span>
-                                <div><p class="text-xs font-bold text-slate-700 dark:text-white">${d.nama}</p><p class="text-[10px] text-orange-500 font-bold">Rp ${d.harga.toLocaleString('id-ID')}</p></div>
-                            </div>
+                            <div class="flex items-center gap-3"><span class="text-2xl">${d.emoji}</span><div><p class="text-xs font-bold text-slate-700 dark:text-white">${d.nama}</p><p class="text-[10px] text-orange-500 font-bold">Rp ${d.harga.toLocaleString('id-ID')}</p></div></div>
                             <button onclick="hapusMenuCafe('${id}', '${d.nama}')" class="text-red-500 hover:text-red-600 p-2 bg-red-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    `;
+                        </div>`;
                 });
             });
         };
 
-        // --- FUNGSI ADMIN CAFE (TAMBAH / HAPUS MENU) ---
         window.tambahMenuCafe = async () => {
-            const nama = document.getElementById('add-menu-nama').value.trim();
-            const harga = document.getElementById('add-menu-harga').value;
-            const emoji = document.getElementById('add-menu-emoji').value.trim() || "☕";
-            
+            const nama = document.getElementById('add-menu-nama').value.trim(); const harga = document.getElementById('add-menu-harga').value; const emoji = document.getElementById('add-menu-emoji').value.trim() || "☕";
             if(!nama || !harga) return alert("Nama dan Harga wajib diisi!");
-            
-            try {
-                await addDoc(collection(db, "cafe_menus"), {
-                    nama: nama,
-                    harga: parseInt(harga),
-                    emoji: emoji,
-                    timestamp: new Date()
-                });
-                document.getElementById('add-menu-nama').value = "";
-                document.getElementById('add-menu-harga').value = "";
-                document.getElementById('add-menu-emoji').value = "";
-            } catch(e) { alert("Error: " + e.message); }
+            try { await addDoc(collection(db, "cafe_menus"), { nama: nama, harga: parseInt(harga), emoji: emoji, timestamp: new Date() }); document.getElementById('add-menu-nama').value = ""; document.getElementById('add-menu-harga').value = ""; document.getElementById('add-menu-emoji').value = ""; } catch(e) { alert("Error: " + e.message); }
         };
+        window.hapusMenuCafe = async (id, nama) => { if(!confirm(`Yakin hapus menu: ${nama}?`)) return; try { await deleteDoc(doc(db, "cafe_menus", id)); } catch(e) { alert("Error: " + e.message); } };
 
-        window.hapusMenuCafe = async (id, nama) => {
-            if(!confirm(`Yakin hapus menu: ${nama}?`)) return;
-            try { await deleteDoc(doc(db, "cafe_menus", id)); } catch(e) { alert("Error: " + e.message); }
-        };
-
-        // --- FUNGSI KERANJANG (CART) ---
         window.bukaPopupItem = (id, nama, harga, emoji) => {
             itemDitahan = { id, nama, harga, emoji, qty: 1 };
-            document.getElementById('popup-item-emoji').innerText = emoji;
-            document.getElementById('popup-item-nama').innerText = nama;
-            document.getElementById('popup-item-harga').innerText = harga.toLocaleString('id-ID');
-            document.getElementById('popup-item-qty').innerText = "1";
-            document.getElementById('popup-item-note').value = "";
-            
+            document.getElementById('popup-item-emoji').innerText = emoji; document.getElementById('popup-item-nama').innerText = nama; document.getElementById('popup-item-harga').innerText = harga.toLocaleString('id-ID'); document.getElementById('popup-item-qty').innerText = "1"; document.getElementById('popup-item-note').value = "";
             document.getElementById('cafe-item-popup').classList.remove('hidden');
         };
-
-        window.tutupPopupItem = () => {
-            document.getElementById('cafe-item-popup').classList.add('hidden');
-        };
-
-        window.ubahQty = (nilai) => {
-            if(!itemDitahan) return;
-            let qty = itemDitahan.qty + nilai;
-            if(qty < 1) qty = 1;
-            itemDitahan.qty = qty;
-            document.getElementById('popup-item-qty').innerText = qty;
-            document.getElementById('popup-item-harga').innerText = (itemDitahan.harga * qty).toLocaleString('id-ID');
-        };
+        window.tutupPopupItem = () => { document.getElementById('cafe-item-popup').classList.add('hidden'); };
+        window.ubahQty = (nilai) => { if(!itemDitahan) return; let qty = itemDitahan.qty + nilai; if(qty < 1) qty = 1; itemDitahan.qty = qty; document.getElementById('popup-item-qty').innerText = qty; document.getElementById('popup-item-harga').innerText = (itemDitahan.harga * qty).toLocaleString('id-ID'); };
 
         window.masukkanKeKeranjang = () => {
             if(!itemDitahan) return;
             const note = document.getElementById('popup-item-note').value.trim();
-            
-            // Cek apakah item dengan menu & note yang sama sudah ada di keranjang
             const existingIndex = cartCafe.findIndex(i => i.id === itemDitahan.id && i.note === note);
-            if(existingIndex > -1) {
-                cartCafe[existingIndex].qty += itemDitahan.qty;
-            } else {
-                cartCafe.push({ ...itemDitahan, note });
-            }
-            
-            tutupPopupItem();
-            updateKeranjangUI();
+            if(existingIndex > -1) { cartCafe[existingIndex].qty += itemDitahan.qty; } else { cartCafe.push({ ...itemDitahan, note }); }
+            tutupPopupItem(); updateKeranjangUI();
         };
 
         window.updateKeranjangUI = () => {
             const bar = document.getElementById('cart-floating-bar');
-            if(cartCafe.length === 0) {
-                bar.classList.add('hidden');
-                if(!document.getElementById('cafe-view-cart').classList.contains('hidden')) {
-                    switchCafeView('menu'); // Kalau keranjang kosong pas lagi di view cart, balik ke menu
-                }
-                return;
-            }
-            
-            let totalQty = 0;
-            let totalPrice = 0;
-            cartCafe.forEach(i => {
-                totalQty += i.qty;
-                totalPrice += (i.harga * i.qty);
-            });
-            
-            if(!document.getElementById('cafe-view-menu').classList.contains('hidden')) {
-                bar.classList.remove('hidden');
-            }
-            
-            document.getElementById('cart-item-count').innerText = `${totalQty} Item`;
-            document.getElementById('cart-total-price').innerText = totalPrice.toLocaleString('id-ID');
-            document.getElementById('checkout-total').innerText = totalPrice.toLocaleString('id-ID');
+            if(cartCafe.length === 0) { bar.classList.add('hidden'); if(!document.getElementById('cafe-view-cart').classList.contains('hidden')) { switchCafeView('menu'); } return; }
+            let totalQty = 0; let totalPrice = 0;
+            cartCafe.forEach(i => { totalQty += i.qty; totalPrice += (i.harga * i.qty); });
+            if(!document.getElementById('cafe-view-menu').classList.contains('hidden')) { bar.classList.remove('hidden'); }
+            document.getElementById('cart-item-count').innerText = `${totalQty} Item`; document.getElementById('cart-total-price').innerText = totalPrice.toLocaleString('id-ID'); document.getElementById('checkout-total').innerText = totalPrice.toLocaleString('id-ID');
         };
 
         window.renderIsiKeranjang = () => {
-            const list = document.getElementById('cart-items-list');
-            list.innerHTML = "";
+            const list = document.getElementById('cart-items-list'); list.innerHTML = "";
             cartCafe.forEach((item, index) => {
                 const noteUI = item.note ? `<p class="text-[9px] text-gray-500 italic mt-0.5 border-l-2 border-orange-300 pl-1">"${item.note}"</p>` : "";
-                list.innerHTML += `
-                    <div class="flex items-center gap-3 bg-white dark:bg-slate-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 relative">
-                        <div class="w-10 h-10 bg-orange-50 dark:bg-slate-700 rounded-lg flex items-center justify-center text-xl">${item.emoji}</div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-sm text-slate-800 dark:text-white leading-tight">${item.nama}</h4>
-                            <p class="text-[10px] font-bold text-orange-500">Rp ${item.harga.toLocaleString('id-ID')} x ${item.qty}</p>
-                            ${noteUI}
-                        </div>
-                        <div class="font-black text-slate-800 dark:text-white text-sm">
-                            Rp ${(item.harga * item.qty).toLocaleString('id-ID')}
-                        </div>
-                        <button onclick="hapusDariKeranjang(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-[10px] hover:bg-red-500 hover:text-white transition shadow-sm"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                `;
+                list.innerHTML += `<div class="flex items-center gap-3 bg-white dark:bg-slate-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 relative"><div class="w-10 h-10 bg-orange-50 dark:bg-slate-700 rounded-lg flex items-center justify-center text-xl">${item.emoji}</div><div class="flex-1 min-w-0"><h4 class="font-bold text-sm text-slate-800 dark:text-white leading-tight">${item.nama}</h4><p class="text-[10px] font-bold text-orange-500">Rp ${item.harga.toLocaleString('id-ID')} x ${item.qty}</p>${noteUI}</div><div class="font-black text-slate-800 dark:text-white text-sm">Rp ${(item.harga * item.qty).toLocaleString('id-ID')}</div><button onclick="hapusDariKeranjang(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-[10px] hover:bg-red-500 hover:text-white transition shadow-sm"><i class="fa-solid fa-xmark"></i></button></div>`;
             });
         };
 
-        window.hapusDariKeranjang = (index) => {
-            cartCafe.splice(index, 1);
-            updateKeranjangUI();
-            renderIsiKeranjang();
-        };
+        window.hapusDariKeranjang = (index) => { cartCafe.splice(index, 1); updateKeranjangUI(); renderIsiKeranjang(); };
 
         window.kirimPesananCafe = async () => {
             if(cartCafe.length === 0) return alert("Keranjang kosong!");
-            
-            let totalPesanan = 0;
-            const itemsToSave = cartCafe.map(item => {
-                totalPesanan += (item.harga * item.qty);
-                return { nama: item.nama, qty: item.qty, note: item.note, harga_satuan: item.harga };
-            });
-
-            try {
-                await addDoc(collection(db, "cafe_orders"), {
-                    pemesan: userProfile.nama,
-                    divisi: userProfile.divisi,
-                    uid: currentUser.uid,
-                    items: itemsToSave,
-                    total_harga: totalPesanan,
-                    status: "Menunggu Dibuat", // Status bisa diedit orang kitchen nanti di portal khusus
-                    waktu: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}),
-                    tanggal: new Date().toLocaleDateString('id-ID'),
-                    timestamp: new Date()
-                });
-                
-                alert("Yey! Pesanan berhasil dikirim ke Pantry! ☕ Tunggu ya.");
-                cartCafe = []; // Kosongkan keranjang
-                tutupCafe();
-            } catch(e) { alert("Gagal pesan: " + e.message); }
+            let totalPesanan = 0; const itemsToSave = cartCafe.map(item => { totalPesanan += (item.harga * item.qty); return { nama: item.nama, qty: item.qty, note: item.note, harga_satuan: item.harga }; });
+            try { await addDoc(collection(db, "cafe_orders"), { pemesan: userProfile.nama, divisi: userProfile.divisi, uid: currentUser.uid, items: itemsToSave, total_harga: totalPesanan, status: "Menunggu Dibuat", waktu: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}), tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date() }); alert("Yey! Pesanan berhasil dikirim ke Pantry! ☕ Tunggu ya."); cartCafe = []; tutupCafe(); } catch(e) { alert("Gagal pesan: " + e.message); }
         };
-        // --- AKHIR FITUR CAFE PRO ---
 
+        // KITCHEN DASHBOARD LOGIC
+        window.loadLiveOrders = (onlyBadge = false) => {
+            // Kita ambil 50 orderan terbaru, lalu filter by JS untuk menghindari masalah Index Firebase
+            const q = query(collection(db, "cafe_orders"), orderBy("timestamp", "desc"), limit(50));
+            if(unsubscribeOrders) unsubscribeOrders();
+            
+            unsubscribeOrders = onSnapshot(q, (snap) => {
+                const list = document.getElementById('live-orders-list');
+                if(!onlyBadge) list.innerHTML = "";
+                let activeCount = 0;
 
-        // --- FITUR DAILY QUEST (DARI V8.8) ---
+                const today = new Date().toLocaleDateString('id-ID');
+
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+
+                    // Hanya tampilkan pesanan HARI INI yang BELUM selesai
+                    if(data.status !== "Selesai" && data.tanggal === today) {
+                        activeCount++;
+                        
+                        if(!onlyBadge) {
+                            let itemsHTML = "";
+                            if(data.items) {
+                                data.items.forEach(item => {
+                                    itemsHTML += `<p class="text-xs text-slate-700 dark:text-slate-300">- ${item.qty}x ${item.nama} ${item.note ? `<br><i class="text-[9px] text-orange-500 ml-2">Note: ${item.note}</i>` : ''}</p>`;
+                                });
+                            }
+
+                            list.innerHTML += `
+                            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-orange-500 shadow-sm relative">
+                                <div class="flex justify-between items-start mb-2 border-b border-gray-100 dark:border-slate-700 pb-2">
+                                    <div>
+                                        <h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.pemesan}</h4>
+                                        <p class="text-[9px] text-gray-400 uppercase font-bold">${data.divisi || 'Karyawan'} • <i class="fa-regular fa-clock"></i> ${data.waktu}</p>
+                                    </div>
+                                    <span class="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[9px] font-black animate-pulse">Menunggu</span>
+                                </div>
+                                <div class="mb-4">
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Daftar Pesanan:</p>
+                                    ${itemsHTML}
+                                </div>
+                                <button onclick="selesaikanPesananCafe('${id}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-2.5 rounded-lg text-xs transition active:scale-95 shadow-md shadow-green-500/30"><i class="fa-solid fa-check mr-2"></i> TANDAI SELESAI</button>
+                            </div>`;
+                        }
+                    }
+                });
+
+                if(!onlyBadge && activeCount === 0) {
+                    list.innerHTML = `<div class="text-center text-gray-400 italic text-xs py-10"><i class="fa-solid fa-mug-hot text-3xl mb-2 text-gray-300"></i><br>Dapur bersih! Belum ada antrean pesanan. 👍</div>`;
+                }
+
+                // Update Red Badge Notification
+                const badge = document.getElementById('order-badge');
+                if(badge) {
+                    if(activeCount > 0) {
+                        badge.innerText = activeCount;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            });
+        };
+
+        window.selesaikanPesananCafe = async (id) => {
+            if(!confirm("Yakin mau diselesaikan? Pesanan akan hilang dari daftar Dapur.")) return;
+            try {
+                await updateDoc(doc(db, "cafe_orders", id), { status: "Selesai" });
+            } catch(e) {
+                alert("Gagal update status: " + e.message);
+            }
+        };
+
+        // --- FITUR DAILY QUEST ---
         window.bukaQuest = () => { document.getElementById('quest-modal').classList.remove('hidden'); const today = new Date().toLocaleDateString('id-ID').replace(/\//g, '-'); const q = query(collection(db, `daily_quests/${today}/${currentUser.uid}`), orderBy("timestamp", "asc")); if(unsubscribeQuest) unsubscribeQuest(); unsubscribeQuest = onSnapshot(q, (snap) => { const list = document.getElementById('list-quest'); list.innerHTML = ""; if(snap.empty) list.innerHTML = `<p class="text-center text-xs text-gray-400 italic mt-4">Belum ada target hari ini.</p>`; snap.forEach(doc => { const data = doc.data(); const statusClass = data.completed ? "completed bg-green-50 border-green-200 dark:bg-green-900/20" : "bg-white border-gray-200 dark:bg-slate-700 dark:border-slate-600"; const checked = data.completed ? "checked" : ""; list.innerHTML += `<div class="quest-item flex items-center gap-3 p-3 rounded-xl border ${statusClass} shadow-sm transition"><input type="checkbox" onchange="toggleQuest('${doc.id}', this.checked)" class="quest-checkbox w-5 h-5 rounded border-gray-300 text-green-500 focus:ring-green-500 cursor-pointer" ${checked}><span class="text-sm font-medium text-slate-700 dark:text-slate-200 flex-1">${data.task}</span><button onclick="hapusQuest('${doc.id}')" class="text-gray-300 hover:text-red-500 transition"><i class="fa-solid fa-trash"></i></button></div>`; }); }); };
         window.tambahQuest = async () => { const task = document.getElementById('input-quest').value.trim(); if(!task) return; const today = new Date().toLocaleDateString('id-ID').replace(/\//g, '-'); try { await addDoc(collection(db, `daily_quests/${today}/${currentUser.uid}`), { task: task, completed: false, timestamp: new Date() }); document.getElementById('input-quest').value = ""; } catch(e) { alert("Error: " + e.message); } };
         window.toggleQuest = async (id, status) => { const today = new Date().toLocaleDateString('id-ID').replace(/\//g, '-'); await updateDoc(doc(db, `daily_quests/${today}/${currentUser.uid}`, id), { completed: status }); };
         window.hapusQuest = async (id) => { if(!confirm("Hapus target ini?")) return; const today = new Date().toLocaleDateString('id-ID').replace(/\//g, '-'); await deleteDoc(doc(db, `daily_quests/${today}/${currentUser.uid}`, id)); };
+
 
         // --- FUNGSI LAMA (Absen, Game, dll) TETAP SAMA ---
         window.bukaTim = async () => { document.getElementById('team-modal').classList.remove('hidden'); const container = document.getElementById('team-list-container'); container.innerHTML = `<div class="text-center text-gray-400 py-10"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data...</div>`; const q = query(collection(db, "data_karyawan"), orderBy("nama", "asc")); const snap = await getDocs(q); container.innerHTML = ""; snap.forEach(doc => { const data = doc.data(); let tglUltah = "-"; if(data.tgl_lahir) { const date = new Date(data.tgl_lahir); tglUltah = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' }); } container.innerHTML += `<div onclick="lihatProfilOrang('${data.nama}', '${data.divisi}', '${data.email}', '${data.tgl_lahir}')" class="flex items-center gap-3 p-3 mb-2 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-100 dark:border-slate-700 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition active:scale-95"><div class="w-10 h-10 rounded-full bg-amber-100 dark:bg-slate-600 flex items-center justify-center text-amber-600 dark:text-white font-bold text-lg">${data.nama.charAt(0)}</div><div><h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.nama}</h4><p class="text-xs text-amber-600 font-medium">${data.divisi}</p></div><div class="ml-auto text-right"><p class="text-[10px] text-gray-400 uppercase font-bold">Ultah</p><p class="text-xs font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-cake-candles text-pink-400 mr-1"></i>${tglUltah}</p></div></div>`; }); };
@@ -629,6 +600,9 @@
         window.switchView = (viewName) => { document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-games').classList.add('hidden'); document.getElementById('nav-home').classList.remove('active'); document.getElementById('nav-games').classList.remove('active'); document.getElementById(`view-${viewName}`).classList.remove('hidden'); document.getElementById(`nav-${viewName}`).classList.add('active'); };
         window.toggleDarkMode = () => { const html = document.documentElement; const icon = document.getElementById('icon-theme'); if (html.classList.contains('dark')) { html.classList.remove('dark'); localStorage.setItem('theme', 'light'); icon.className = 'fa-solid fa-moon'; } else { html.classList.add('dark'); localStorage.setItem('theme', 'dark'); icon.className = 'fa-solid fa-sun'; } };
         if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { document.documentElement.classList.add('dark'); document.getElementById('icon-theme').className = 'fa-solid fa-sun'; }
+        window.bukaGacha = () => document.getElementById('gacha-modal').classList.remove('hidden'); window.tutupGacha = () => document.getElementById('gacha-modal').classList.add('hidden');
+        window.putarGacha = () => { const foodList = ["Soto Ayam", "Nasi Padang", "Bakso Malang", "Mie Ayam", "Warteg", "Lalapan", "Gado-gado", "Nasi Goreng", "Penyetan", "Sate Ayam", "Seblak", "Mixue"]; const resultBox = document.getElementById('gacha-result'); const btn = document.getElementById('btn-spin'); btn.disabled = true; let counter = 0; const interval = setInterval(() => { resultBox.innerText = foodList[Math.floor(Math.random() * foodList.length)]; counter++; if (counter > 20) { clearInterval(interval); btn.disabled = false; resultBox.classList.add('scale-110'); setTimeout(() => resultBox.classList.remove('scale-110'), 200); } }, 100); };
+        window.pilihMood = (mood) => { selectedMood = mood; document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected')); let btnId = ""; if(mood === '🔥') btnId = "mood-fire"; if(mood === '🙂') btnId = "mood-smile"; if(mood === '😴') btnId = "mood-sleep"; if(mood === '🤯') btnId = "mood-stress"; document.getElementById(btnId).classList.add('selected'); }
         window.loadPengumuman = () => { if (unsubscribePengumuman) unsubscribePengumuman(); const q = query(collection(db, "pengumuman"), orderBy("timestamp", "desc"), limit(5)); unsubscribePengumuman = onSnapshot(q, (snapshot) => { const container = document.getElementById('info-slider'); const section = document.getElementById('info-section'); container.innerHTML = ""; if(snapshot.empty) { section.classList.add('hidden'); } else { section.classList.remove('hidden'); snapshot.forEach(doc => { const data = doc.data(); const id = doc.id; let border = "border-l-4 border-blue-500"; let icon = "fa-circle-info text-blue-500"; if(data.tipe === "Penting") { border = "border-l-4 border-red-500"; icon="fa-triangle-exclamation text-red-500"; } if(data.tipe === "Event") { border = "border-l-4 border-green-500"; icon="fa-calendar-check text-green-500"; } let btnHapus = ""; if(userProfile && userProfile.role === 'admin') { btnHapus = `<button onclick="hapusPengumuman('${id}')" class="absolute top-2 right-2 bg-white rounded-full w-6 h-6 flex items-center justify-center text-red-500 hover:bg-red-50 shadow-sm border border-red-100 z-10"><i class="fa-solid fa-trash text-[10px]"></i></button>`; } container.innerHTML += `<div class="snap-center shrink-0 w-72 bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 ${border} flex flex-col justify-between relative group">${btnHapus}<div><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><i class="fa-solid ${icon}"></i><span class="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">${data.tipe}</span></div><span class="text-[10px] text-gray-400 mr-4">${data.tanggal}</span></div><h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm mb-1 leading-tight pr-4">${data.judul}</h4><p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">${data.isi}</p></div><div class="mt-3 pt-2 border-t border-gray-100 dark:border-slate-700 flex justify-between items-center"><span class="text-[10px] text-gray-400 italic">Oleh: ${data.penulis}</span></div></div>`; }); } }); };
         window.kirimPengumuman = async () => { const judul = document.getElementById('info-judul').value; const tipe = document.getElementById('info-tipe').value; const isi = document.getElementById('info-isi').value; if(!judul || !isi) return alert("Judul dan Isi wajib diisi!"); try { await addDoc(collection(db, "pengumuman"), { judul: judul, tipe: tipe, isi: isi, penulis: userProfile.nama, tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date() }); alert("Diposting!"); document.getElementById('info-modal').classList.add('hidden'); } catch(e) { alert("Error: " + e.message); } }
         window.hapusPengumuman = async (id) => { if(!confirm("Yakin mau hapus pengumuman ini?")) return; try { await deleteDoc(doc(db, "pengumuman", id)); alert("Pengumuman dihapus!"); } catch(e) { alert("Gagal hapus: " + e.message); } }
