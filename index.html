@@ -198,6 +198,9 @@
         
         let currentUser = null, userProfile = {}, compressedProfileImage = "", videoStream = null, currentLat = null, currentLong = null, allData = [], currentTab = 'all';
         let html5QrCode = null, unsubscribeRiwayat = null, unsubscribePengumuman = null, unsubscribeQuest = null, unsubscribeOrders = null, unsubscribeMenfess = null, selectedMood = "🙂"; 
+        
+        let cartCafe = []; // <-- Ditambahin ini biar error Mocca Cafe ilang
+        let itemDitahan = null; // <-- Ditambahin buat jaga-jaga fitur masukin keranjangnya ga error
         window.scannerMode = 'employee';
 
         // FUNGSI LOGIN GOOGLE
