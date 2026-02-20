@@ -290,10 +290,23 @@
             try { aturForm(); } catch(e){} try { loadRiwayatData(); } catch(e){} try { loadPengumuman(); } catch(e){} try { cekUlangTahun(); } catch(e){}
         }
 
+        // --- FUNGSI HEADER & ID CARD YANG UDAH DIBENERIN (POIN 2) ---
         function renderHeader() { 
             document.getElementById('user-photo').src = userProfile.photoURL || 'icon.png'; 
             document.getElementById('user-name-display').innerText = userProfile.nama || "Loading..."; 
             document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Karyawan"; 
+
+            // Tambahan untuk Poin 2: Update isi ID Card waktu render header
+            try {
+                if(userProfile) {
+                    document.getElementById('idcard-foto').src = userProfile.photoURL || 'icon.png';
+                    document.getElementById('idcard-nama').innerText = userProfile.nama || "Tidak Dikenal";
+                    document.getElementById('idcard-divisi').innerText = userProfile.divisi || "Karyawan";
+                    document.getElementById('idcard-uid').innerText = userProfile.uid || "UID-UNKNOWN";
+                    // Generate QR Code otomatis pakai API luar (gratis)
+                    document.getElementById('idcard-qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + (userProfile.uid || 'MoccaStudio');
+                }
+            } catch(e) { console.log("Gagal memuat data ID Card:", e); }
         }
 
         // --- FUNGSI MENFESS ---
