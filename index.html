@@ -196,11 +196,22 @@
         const firebaseConfig = { apiKey: "AIzaSyAcBFC_vOSHyJP89gGvguKPJ60G2BOoIvg", authDomain: "moccasuperapp.firebaseapp.com", projectId: "moccasuperapp", storageBucket: "moccasuperapp.firebasestorage.app", messagingSenderId: "966529708566", appId: "1:966529708566:web:7f7bb39e7c6811e9c93b37", measurementId: "G-CLCMR26YV6" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app); const provider = new GoogleAuthProvider();
         
+        // --- TAMBAHAN POIN 3: Daftar Khodam ---
+        const listKhodam = [
+            { nama: "Macan Putih", desc: "Berwibawa dan berani mengambil risiko!" },
+            { nama: "Kucing Oren", desc: "Agak barbar, suka makan, tapi ngangenin." },
+            { nama: "Buaya Darat", desc: "Waduh, hati-hati gampang banget nebar pesona!" },
+            { nama: "Seblak Ceker", desc: "Pedas, bikin emosi, tapi selalu dicari-cari." },
+            { nama: "Kipas Angin", desc: "Pembawa kesejukan di saat teman-teman lagi panas." },
+            { nama: "Sendal Jepit", desc: "Sederhana, merakyat, tapi sering ilang kalau di masjid." },
+            { nama: "Kosong (Tidak Ada)", desc: "Kamu murni, butuh banyak ibadah biar ada yang jagain." }
+        ];
+
         let currentUser = null, userProfile = {}, compressedProfileImage = "", videoStream = null, currentLat = null, currentLong = null, allData = [], currentTab = 'all';
         let html5QrCode = null, unsubscribeRiwayat = null, unsubscribePengumuman = null, unsubscribeQuest = null, unsubscribeOrders = null, unsubscribeMenfess = null, selectedMood = "🙂"; 
         
-        let cartCafe = []; // <-- Ditambahin ini biar error Mocca Cafe ilang
-        let itemDitahan = null; // <-- Ditambahin buat jaga-jaga fitur masukin keranjangnya ga error
+        let cartCafe = []; 
+        let itemDitahan = null; 
         window.scannerMode = 'employee';
 
         // FUNGSI LOGIN GOOGLE
@@ -296,14 +307,12 @@
             document.getElementById('user-name-display').innerText = userProfile.nama || "Loading..."; 
             document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Karyawan"; 
 
-            // Tambahan untuk Poin 2: Update isi ID Card waktu render header
             try {
                 if(userProfile) {
                     document.getElementById('idcard-foto').src = userProfile.photoURL || 'icon.png';
                     document.getElementById('idcard-nama').innerText = userProfile.nama || "Tidak Dikenal";
                     document.getElementById('idcard-divisi').innerText = userProfile.divisi || "Karyawan";
                     document.getElementById('idcard-uid').innerText = userProfile.uid || "UID-UNKNOWN";
-                    // Generate QR Code otomatis pakai API luar (gratis)
                     document.getElementById('idcard-qr').src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + (userProfile.uid || 'MoccaStudio');
                 }
             } catch(e) { console.log("Gagal memuat data ID Card:", e); }
