@@ -179,10 +179,22 @@
             </div>
 
             <div class="p-3 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700">
-                <div class="flex items-center gap-2 mb-2">
-                    <select id="menfess-target-user" class="text-[10px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded p-1.5 outline-none font-bold text-slate-600 dark:text-slate-300 max-w-[150px] truncate">
-                        <option value="public">🌍 Ke Publik</option>
-                        </select>
+                <div class="flex items-center gap-2 mb-2 relative">
+                    
+                    <div class="relative flex-1 max-w-[150px]">
+                        <button id="btn-menfess-target" onclick="toggleMenfessTargetDropdown()" class="w-full flex items-center justify-between text-[10px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded p-1.5 outline-none font-bold text-slate-600 dark:text-slate-300 truncate">
+                            <span id="menfess-target-label" class="truncate pr-1">🌍 Ke Publik</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div id="menfess-target-dropdown" class="hidden absolute bottom-full left-0 w-48 mb-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-xl z-50 flex flex-col">
+                            <div class="p-2 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 rounded-t-lg">
+                                <input type="text" id="menfess-search-user" onkeyup="filterMenfessUsers()" placeholder="Cari nama..." class="w-full text-[10px] p-1.5 rounded bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 outline-none focus:ring-1 focus:ring-pink-500 dark:text-white">
+                            </div>
+                            <div id="menfess-user-list" class="max-h-32 overflow-y-auto p-1 no-scrollbar rounded-b-lg">
+                                </div>
+                        </div>
+                    </div>
+
                     <label class="flex items-center gap-1 text-xs font-bold text-gray-500 cursor-pointer ml-auto">
                         <input type="checkbox" id="menfess-anon" checked class="rounded text-pink-500 focus:ring-pink-500">
                         <span>Anonim 👻</span>
@@ -248,9 +260,10 @@
         let itemDitahan = null; 
         window.scannerMode = 'employee';
         
-        // --- VARIABLE BARU BUAT MENFESS PRIVATE ---
+        // VARIABLE BARU BUAT MENFESS PRIVATE & SEARCH
         let currentMenfessTab = 'public';
         let listKaryawanMenfess = [];
+        let selectedMenfessTarget = 'public';
 
         window.loginGoogle = () => {
             const btnText = document.getElementById('btn-login-text');
@@ -339,28 +352,65 @@
             } catch(e) { console.log("Gagal memuat data ID Card:", e); }
         }
 
-        // --- LOGIKA MENFESS BARU (PRIVATE & PUBLIK) ---
+        // --- LOGIKA MENFESS PRIVATE + DROPDOWN SEARCH ---
         window.bukaMenfess = async () => { 
             document.getElementById('menfess-modal').classList.remove('hidden'); 
             
-            // Tarik data karyawan untuk dropdown kalo belum ditarik
+            // Tarik data teman untuk dropdown
             if(listKaryawanMenfess.length === 0) {
                 try {
                     const qUsers = query(collection(db, "data_karyawan"), orderBy("nama", "asc"));
                     const snapUsers = await getDocs(qUsers);
-                    const selectTarget = document.getElementById('menfess-target-user');
-                    let options = `<option value="public">🌍 Ke Publik</option>`;
+                    listKaryawanMenfess = [];
                     snapUsers.forEach(doc => {
                         const d = doc.data();
-                        if(d.email && d.email !== currentUser.email) { // Ga bisa ngirim rahasia ke diri sendiri
-                            options += `<option value="${d.email}">🔒 ${d.nama}</option>`;
+                        if(d.email && d.email !== currentUser.email) { 
+                            listKaryawanMenfess.push(d);
                         }
                     });
-                    selectTarget.innerHTML = options;
-                    listKaryawanMenfess = snapUsers.docs;
+                    renderMenfessUserDropdown();
                 } catch(e) { console.log("Gagal narik data teman:", e); }
+            } else {
+                renderMenfessUserDropdown();
             }
             switchMenfessTab('public');
+        };
+
+        window.renderMenfessUserDropdown = (filter = '') => {
+            const listContainer = document.getElementById('menfess-user-list');
+            if(!listContainer) return;
+            
+            let html = `<div onclick="pilihTargetMenfess('public', '🌍 Ke Publik')" class="p-1.5 text-[10px] font-bold text-slate-700 dark:text-slate-300 hover:bg-pink-50 dark:hover:bg-slate-700 rounded cursor-pointer mb-1 border-b border-gray-100 dark:border-slate-700">🌍 Ke Publik</div>`;
+            
+            listKaryawanMenfess.forEach(d => {
+                if(d.nama.toLowerCase().includes(filter.toLowerCase())) {
+                    html += `<div onclick="pilihTargetMenfess('${d.email}', '🔒 ${d.nama}')" class="p-1.5 text-[10px] font-bold text-slate-700 dark:text-slate-300 hover:bg-pink-50 dark:hover:bg-slate-700 rounded cursor-pointer truncate">🔒 ${d.nama}</div>`;
+                }
+            });
+            listContainer.innerHTML = html;
+        };
+
+        window.toggleMenfessTargetDropdown = () => {
+            const drop = document.getElementById('menfess-target-dropdown');
+            if(drop.classList.contains('hidden')) {
+                drop.classList.remove('hidden');
+                document.getElementById('menfess-search-user').value = '';
+                renderMenfessUserDropdown();
+                setTimeout(() => document.getElementById('menfess-search-user').focus(), 100);
+            } else {
+                drop.classList.add('hidden');
+            }
+        };
+
+        window.filterMenfessUsers = () => {
+            const val = document.getElementById('menfess-search-user').value;
+            renderMenfessUserDropdown(val);
+        };
+
+        window.pilihTargetMenfess = (email, label) => {
+            selectedMenfessTarget = email;
+            document.getElementById('menfess-target-label').innerText = label;
+            document.getElementById('menfess-target-dropdown').classList.add('hidden');
         };
 
         window.switchMenfessTab = (tab) => {
@@ -384,7 +434,6 @@
             container.innerHTML = `<div class="text-center py-10 text-gray-400 text-xs italic"><i class="fa-solid fa-spinner fa-spin"></i> Memuat pesan...</div>`;
             
             if(currentMenfessTab === 'public') {
-                // LOAD PESAN PUBLIK KAYA BIASA
                 const q = query(collection(db, "menfess"), orderBy("timestamp", "asc"), limit(100)); 
                 unsubscribeMenfess = onSnapshot(q, (snap) => { 
                     container.innerHTML = ""; 
@@ -400,7 +449,6 @@
                     setTimeout(() => { container.scrollTop = container.scrollHeight; }, 150);
                 }); 
             } else {
-                // LOAD PESAN PRIVATE (DIKIRIM KE EMAIL USER SAAT INI)
                 const q = query(collection(db, "menfess_private"), where("targetEmail", "==", currentUser.email));
                 unsubscribeMenfess = onSnapshot(q, (snap) => {
                     container.innerHTML = "";
@@ -408,7 +456,6 @@
                     
                     let msgs = [];
                     snap.forEach(doc => msgs.push(doc.data()));
-                    // Urutkan manual biar nggak pusing setting Index Firebase
                     msgs.sort((a,b) => {
                         let tA = a.timestamp?.seconds ? a.timestamp.seconds : 0;
                         let tB = b.timestamp?.seconds ? b.timestamp.seconds : 0;
@@ -416,7 +463,7 @@
                     });
 
                     msgs.forEach(data => {
-                        const bubbleClass = "other"; // Anggap aja selalu nerima dari 'orang lain'
+                        const bubbleClass = "other";
                         const senderName = data.isAnon ? "Seseorang Misterius 👻" : data.pengirim; 
                         container.innerHTML += `<div class="menfess-bubble ${bubbleClass} fade-in border-l-4 border-pink-500 shadow-md"><p class="text-[10px] font-bold opacity-70 mb-1">${senderName} <span class="bg-pink-100 text-pink-600 px-1 rounded ml-1">Private</span></p><p class="text-sm leading-snug">${data.pesan}</p><p class="text-[9px] opacity-50 text-right mt-1">${data.waktu}</p></div>`; 
                     });
@@ -429,22 +476,21 @@
             const input = document.getElementById('menfess-input'); 
             const pesan = input.value.trim(); 
             const isAnon = document.getElementById('menfess-anon').checked; 
-            const target = document.getElementById('menfess-target-user').value;
+            const target = selectedMenfessTarget; 
 
             if(!pesan) return; 
             const btn = document.getElementById('btn-kirim-menfess'); btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`; btn.disabled = true;
             
             try { 
                 if(target === 'public') {
-                    // Masukin ke database publik
                     await addDoc(collection(db, "menfess"), { pengirim: userProfile.nama, uid: currentUser.uid, pesan: pesan, isAnon: isAnon, waktu: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}), timestamp: new Date() }); 
                 } else {
-                    // Masukin ke database private
                     await addDoc(collection(db, "menfess_private"), { pengirim: userProfile.nama, uid: currentUser.uid, targetEmail: target, pesan: pesan, isAnon: isAnon, waktu: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}), timestamp: new Date() }); 
                     alert("Pesan Private berhasil meluncur secara " + (isAnon ? "Anonim!" : "Terbuka!"));
-                    if(currentMenfessTab === 'private') switchMenfessTab('public'); // Balikin ke publik biar layar ngerender ulang
+                    if(currentMenfessTab === 'private') switchMenfessTab('public'); 
                 }
                 input.value = ""; 
+                pilihTargetMenfess('public', '🌍 Ke Publik'); // Reset target ke publik tiap abis kirim
             } catch(e) { alert("Gagal kirim: " + e.message); } finally { btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i>`; btn.disabled = false; }
         };
 
@@ -529,8 +575,21 @@
         window.downloadLaporan = async () => { if(userProfile.role !== "admin") { return alert("AKSES DITOLAK! Hanya HR/Admin yang boleh download data."); } let choice = prompt("Ketik '1' untuk Rekap HARI INI\nKetik '2' untuk SEMUA DATA", "1"); if (!choice) return; let q; const today = new Date().toLocaleDateString('id-ID'); if (choice === "1") { q = query(collection(db, "absensi"), where("tanggal", "==", today), orderBy("timestamp", "desc")); } else if (choice === "2") { q = query(collection(db, "absensi"), orderBy("timestamp", "desc")); } else { return; } try { const snap = await getDocs(q); if (snap.empty) { return alert(`Data kosong, Jon! \n(Tanggal dicari: ${today})`); } let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Mood,Keterangan,Lokasi,Koordinat\n"; snap.forEach(d => { const data = d.data(); const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-"; const safeLokasi = data.lokasi ? data.lokasi.replace(/,/g, " - ") : "Lokasi tidak terdeteksi"; const mood = data.mood || "-"; csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${mood}","${safeKet}","${safeLokasi}","${data.koordinat}"\n`; }); const link = document.createElement("a"); link.href = encodeURI(csv); const namaFile = (choice === "1") ? `Rekap_Harian_${today.replace(/\//g, "-")}.csv` : `Rekap_Full_Database.csv`; link.download = namaFile; document.body.appendChild(link); link.click(); document.body.removeChild(link); } catch (error) { console.error("ERROR FIREBASE:", error); alert("Error: " + error.message); } };
         setInterval(() => { const c = document.getElementById('clock-display'); if(c) c.innerText = new Date().toLocaleTimeString('id-ID'); }, 1000);
 
-        window.toggleMenu = () => { const menu = document.getElementById('main-menu-dropdown'); if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); menu.classList.add('fade-in'); } else { menu.classList.add('hidden'); } };
-        document.addEventListener('click', (e) => { const menu = document.getElementById('main-menu-dropdown'); const toggleBtn = document.querySelector('button[onclick="toggleMenu()"]'); if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target) && !toggleBtn.contains(e.target)) { menu.classList.add('hidden'); } });
+        document.addEventListener('click', (e) => { 
+            // Klik diluar menu utama buat nutup
+            const menu = document.getElementById('main-menu-dropdown'); 
+            const toggleBtn = document.querySelector('button[onclick="toggleMenu()"]'); 
+            if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target) && !toggleBtn.contains(e.target)) { 
+                menu.classList.add('hidden'); 
+            } 
+            
+            // Klik diluar dropdown menfess buat nutup
+            const menfessDrop = document.getElementById('menfess-target-dropdown');
+            const menfessBtn = document.getElementById('btn-menfess-target');
+            if (menfessDrop && !menfessDrop.classList.contains('hidden') && !menfessDrop.contains(e.target) && !menfessBtn.contains(e.target)) {
+                menfessDrop.classList.add('hidden');
+            }
+        });
 
         // LOGIKA GAMES
         window.bukaKhodam = () => { document.getElementById('khodam-modal').classList.remove('hidden'); document.getElementById('input-nama-khodam').value = userProfile.nama || ""; document.getElementById('khodam-result-box').classList.add('hidden'); document.getElementById('btn-check-khodam').classList.remove('hidden'); };
