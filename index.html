@@ -175,6 +175,34 @@
                         <div onclick="bukaFlappy()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden"><div class="absolute inset-0 bg-sky-500/10 opacity-0 group-hover:opacity-100 transition"></div><i class="fa-solid fa-kiwi-bird text-2xl text-sky-500 group-hover:-translate-y-1 transition"></i><p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Flappy Mocca</p></div>
                         <div onclick="bukaWhackGame()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden"><div class="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition"></div><i class="fa-solid fa-hammer text-2xl text-green-500 group-hover:rotate-45 transition"></i><p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Pukul Bug</p></div>
                         <div onclick="bukaSnakeGame()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden"><div class="absolute inset-0 bg-teal-500/10 opacity-0 group-hover:opacity-100 transition"></div><i class="fa-solid fa-staff-snake text-2xl text-teal-500 group-hover:scale-110 transition"></i><p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Ular Klasik</p></div>
+<div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 mt-4 text-center">
+    <h3 class="font-black text-slate-800 dark:text-white mb-1">
+        <i class="fa-solid fa-border-all text-amber-500 mr-2"></i>Tic-Tac-Toe
+    </h3>
+    <p class="text-[10px] text-gray-500 mb-3 dark:text-gray-400">Main bentar nunggu jam pulang</p>
+    
+    <div class="flex justify-center mb-4">
+        <p id="ttt-status" class="bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all">
+            Giliran: X
+        </p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 max-w-[200px] mx-auto mb-4" id="ttt-board">
+        <button onclick="mainTTT(0)" id="ttt-0" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+        <button onclick="mainTTT(1)" id="ttt-1" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+        <button onclick="mainTTT(2)" id="ttt-2" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+        <button onclick="mainTTT(3)" id="ttt-3" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+        <button onclick="mainTTT(4)" id="ttt-4" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+        <button onclick="mainTTT(5)" id="ttt-5" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+        <button onclick="mainTTT(6)" id="ttt-6" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+        <button onclick="mainTTT(7)" id="ttt-7" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+        <button onclick="mainTTT(8)" id="ttt-8" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
+    </div>
+
+    <button onclick="resetTTT()" class="text-xs bg-slate-800 dark:bg-slate-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-slate-700 transition w-full max-w-[200px] shadow-lg shadow-slate-200 dark:shadow-none active:scale-95">
+        <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Game
+    </button>
+</div>
                     </div>
                 </section>
                 <div class="h-20"></div>
@@ -618,6 +646,88 @@
         window.changeSnakeDir = (dir) => { if(dir === "Left" && snakeDir !== "Right") snakeDir = "Left"; if(dir === "Up" && snakeDir !== "Down") snakeDir = "Up"; if(dir === "Right" && snakeDir !== "Left") snakeDir = "Right"; if(dir === "Down" && snakeDir !== "Up") snakeDir = "Down"; }
         function drawSnake() { sCtx.fillStyle = "#1e293b"; sCtx.fillRect(0, 0, 300, 300); for(let i = 0; i < snake.length; i++) { sCtx.fillStyle = (i === 0) ? "#4ade80" : "#22c55e"; sCtx.fillRect(snake[i].x, snake[i].y, box, box); sCtx.strokeStyle = "#1e293b"; sCtx.strokeRect(snake[i].x, snake[i].y, box, box); } sCtx.fillStyle = "red"; sCtx.fillRect(food.x, food.y, box, box); let snakeX = snake[0].x; let snakeY = snake[0].y; if(snakeDir == "Left") snakeX -= box; if(snakeDir == "Up") snakeY -= box; if(snakeDir == "Right") snakeX += box; if(snakeDir == "Down") snakeY += box; if(snakeX == food.x && snakeY == food.y) { let score = parseInt(document.getElementById('snake-score').innerText); score++; document.getElementById('snake-score').innerText = score; food = { x: Math.floor(Math.random()*15) * box, y: Math.floor(Math.random()*15) * box }; } else { snake.pop(); } let newHead = { x : snakeX, y : snakeY }; if(snakeX < 0 || snakeX > 280 || snakeY < 0 || snakeY > 280 || collision(newHead, snake)) { clearInterval(snakeGameLoop); document.getElementById('btn-snake-start').classList.remove('hidden'); document.getElementById('btn-snake-start').innerText = "ULANGI"; alert("GAME OVER! Skor: " + document.getElementById('snake-score').innerText); } snake.unshift(newHead); }
         function collision(head, array) { for(let i = 0; i < array.length; i++) { if(head.x == array[i].x && head.y == array[i].y) return true; } return false; }
+
+// --- FITUR GAME TIC-TAC-TOE ---
+let tttBoard = ["", "", "", "", "", "", "", "", ""];
+let tttPlayer = "X";
+let tttActive = true;
+
+// Kombinasi angka buat ngecek siapa yang menang (baris, kolom, miring)
+const tttWinConditions = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+    [0, 4, 8], [2, 4, 6]             
+];
+
+function mainTTT(index) {
+    // Kalau kotak udah diisi atau game udah kelar, cuekin kliknya
+    if (tttBoard[index] !== "" || !tttActive) return;
+
+    // Isi array dan tampilkan ke layar
+    tttBoard[index] = tttPlayer;
+    let cell = document.getElementById(`ttt-${index}`);
+    cell.innerText = tttPlayer;
+    
+    // Warnain beda biar cakep (X = Biru, O = Merah)
+    if (tttPlayer === "X") {
+        cell.classList.add("text-blue-500", "dark:text-blue-400");
+    } else {
+        cell.classList.add("text-rose-500", "dark:text-rose-400");
+    }
+
+    // Cek ada yang menang gak
+    cekMenangTTT();
+}
+
+function cekMenangTTT() {
+    let won = false;
+    for (let i = 0; i < tttWinConditions.length; i++) {
+        const [a, b, c] = tttWinConditions[i];
+        if (tttBoard[a] !== "" && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
+            won = true;
+            break;
+        }
+    }
+
+    const statusText = document.getElementById('ttt-status');
+
+    if (won) {
+        statusText.innerText = `Yeay! ${tttPlayer} Menang! 🎉`;
+        statusText.className = "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+        tttActive = false;
+        return;
+    }
+
+    // Cek kalau papannya udah penuh tapi gak ada yang menang (Seri)
+    if (!tttBoard.includes("")) {
+        statusText.innerText = "Yahh Seri! 🤝";
+        statusText.className = "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+        tttActive = false;
+        return;
+    }
+
+    // Ganti giliran main
+    tttPlayer = tttPlayer === "X" ? "O" : "X";
+    statusText.innerText = `Giliran: ${tttPlayer}`;
+    statusText.className = "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+}
+
+function resetTTT() {
+    // Balikin semua ke kondisi awal
+    tttBoard = ["", "", "", "", "", "", "", "", ""];
+    tttPlayer = "X";
+    tttActive = true;
+    
+    const statusText = document.getElementById('ttt-status');
+    statusText.innerText = "Giliran: X";
+    statusText.className = "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+
+    for (let i = 0; i < 9; i++) {
+        let cell = document.getElementById(`ttt-${i}`);
+        cell.innerText = "";
+        cell.classList.remove("text-blue-500", "dark:text-blue-400", "text-rose-500", "dark:text-rose-400");
+    }
+}
 
 // --- FITUR WIDGET CUACA BERDASARKAN GPS DEVICE ---
 
