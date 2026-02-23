@@ -181,6 +181,12 @@
     </div>
     <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300">Tic-Tac-Toe</span>
 </button>
+<button onclick="document.getElementById('memory-modal').classList.remove('hidden'); initMemoryGame();" class="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 hover:bg-gray-50 dark:hover:bg-slate-700 transition active:scale-95">
+    <div class="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xl shadow-inner">
+        <i class="fa-solid fa-clone"></i>
+    </div>
+    <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300">Memory Card</span>
+</button>
                     </div>
                 </section>
                 <div class="h-20"></div>
@@ -290,6 +296,29 @@
 
             <button onclick="resetTTT()" class="w-full bg-slate-800 dark:bg-slate-600 text-white py-3.5 rounded-xl font-bold hover:bg-slate-700 transition shadow-lg active:scale-95">
                 <i class="fa-solid fa-rotate-right mr-2"></i> Mulai Ulang
+            </button>
+        </div>
+    </div>
+</div>
+<div id="memory-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 fade-in" onclick="document.getElementById('memory-modal').classList.add('hidden')">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden relative border-t-4 border-purple-500" onclick="event.stopPropagation()">
+        
+        <div class="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900">
+            <h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-clone text-purple-500 mr-2"></i>Memory Card</h2>
+            <button onclick="document.getElementById('memory-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <div class="p-6 text-center">
+            <p id="memory-status" class="text-sm font-bold text-slate-600 dark:text-slate-300 mb-4 bg-gray-100 dark:bg-slate-700 py-2 rounded-xl">
+                Temukan semua pasangan!
+            </p>
+
+            <div id="memory-board" class="grid grid-cols-4 gap-2 mb-6"></div>
+
+            <button onclick="initMemoryGame()" class="w-full bg-slate-800 dark:bg-slate-600 text-white py-3.5 rounded-xl font-bold hover:bg-slate-700 transition shadow-lg active:scale-95">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Acak Ulang Kartu
             </button>
         </div>
     </div>
@@ -731,6 +760,101 @@ window.resetTTT = function() {
         cell.innerText = "";
         cell.classList.remove("text-blue-500", "dark:text-blue-400", "text-rose-500", "dark:text-rose-400");
     }
+};
+
+// --- LOGIKA GAME MEMORY CARD ---
+// Ikon-ikon tema kantor
+const memoryIcons = [
+    '<i class="fa-solid fa-mug-hot"></i>',
+    '<i class="fa-solid fa-laptop"></i>',
+    '<i class="fa-solid fa-headset"></i>',
+    '<i class="fa-solid fa-paperclip"></i>',
+    '<i class="fa-solid fa-briefcase"></i>',
+    '<i class="fa-solid fa-calculator"></i>'
+];
+
+let flippedCards = [];
+let matchedPairs = 0;
+let memoryLocked = false; // Biar user ga klik asal pas kartu lagi dicek
+
+window.initMemoryGame = function() {
+    const board = document.getElementById('memory-board');
+    const statusText = document.getElementById('memory-status');
+    
+    // Reset kondisi awal
+    board.innerHTML = '';
+    flippedCards = [];
+    matchedPairs = 0;
+    memoryLocked = false;
+    
+    statusText.innerText = "Temukan semua pasangan!";
+    statusText.className = "text-sm font-bold text-slate-600 dark:text-slate-300 mb-4 bg-gray-100 dark:bg-slate-700 py-2 rounded-xl";
+    
+    // Gandakan ikon biar berpasangan (jadi 12 kartu) dan acak urutannya
+    let memoryCards = [...memoryIcons, ...memoryIcons];
+    memoryCards.sort(() => Math.random() - 0.5);
+
+    // Buat kotaknya di HTML
+    memoryCards.forEach((icon, index) => {
+        const card = document.createElement('button');
+        // Awalnya text-transparent biar ikonnya gak kelihatan
+        card.className = "h-16 bg-gray-100 dark:bg-slate-700 rounded-xl text-2xl flex items-center justify-center transition-all shadow-inner text-transparent border border-gray-200 dark:border-slate-600 hover:bg-gray-200 dark:hover:bg-slate-600 active:scale-95"; 
+        card.dataset.index = index;
+        card.dataset.icon = icon;
+        card.innerHTML = icon;
+        card.onclick = () => flipMemoryCard(card);
+        board.appendChild(card);
+    });
+};
+
+window.flipMemoryCard = function(card) {
+    // Kalau papan lagi dikunci, atau kartu udah kebuka, abaikan kliknya
+    if (memoryLocked || card.classList.contains('matched') || flippedCards.includes(card)) return;
+
+    // Buka kartu (tampilkan ikon dengan ganti warna)
+    card.classList.remove('text-transparent', 'bg-gray-100', 'dark:bg-slate-700');
+    card.classList.add('bg-purple-100', 'text-purple-600', 'dark:bg-purple-900/40', 'dark:text-purple-300');
+    
+    flippedCards.push(card);
+
+    // Kalau udah 2 kartu yang kebuka, cek kembar apa enggak
+    if (flippedCards.length === 2) {
+        memoryLocked = true; // Kunci papan bentar biar ga bisa klik yang lain
+        setTimeout(checkMemoryMatch, 700); // Tunggu 0.7 detik baru dicek
+    }
+};
+
+window.checkMemoryMatch = function() {
+    const [card1, card2] = flippedCards;
+    
+    if (card1.dataset.icon === card2.dataset.icon) {
+        // Kalau KEMBAR: Ubah warna jadi hijau
+        card1.classList.add('matched', 'bg-green-100', 'text-green-600', 'dark:bg-green-900/40', 'dark:text-green-400');
+        card1.classList.remove('bg-purple-100', 'text-purple-600', 'dark:bg-purple-900/40', 'dark:text-purple-300');
+        
+        card2.classList.add('matched', 'bg-green-100', 'text-green-600', 'dark:bg-green-900/40', 'dark:text-green-400');
+        card2.classList.remove('bg-purple-100', 'text-purple-600', 'dark:bg-purple-900/40', 'dark:text-purple-300');
+        
+        matchedPairs++;
+        
+        // Cek kalau udah nemu semua
+        if (matchedPairs === memoryIcons.length) {
+            const statusText = document.getElementById('memory-status');
+            statusText.innerText = "Yeay! Kamu ingat semuanya! 🎉";
+            statusText.className = "text-sm font-bold text-green-800 dark:text-green-300 mb-4 bg-green-100 dark:bg-green-900/50 py-2 rounded-xl transition-all";
+        }
+    } else {
+        // Kalau GAK KEMBAR: Tutup lagi kartunya (bikin transparent lagi)
+        card1.classList.add('text-transparent', 'bg-gray-100', 'dark:bg-slate-700');
+        card1.classList.remove('bg-purple-100', 'text-purple-600', 'dark:bg-purple-900/40', 'dark:text-purple-300');
+        
+        card2.classList.add('text-transparent', 'bg-gray-100', 'dark:bg-slate-700');
+        card2.classList.remove('bg-purple-100', 'text-purple-600', 'dark:bg-purple-900/40', 'dark:text-purple-300');
+    }
+    
+    // Kosongin lagi daftarnya buat putaran berikutnya
+    flippedCards = [];
+    memoryLocked = false; // Buka kunci papan
 };
 
 // --- FITUR WIDGET CUACA BERDASARKAN GPS DEVICE ---
