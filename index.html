@@ -619,19 +619,19 @@
         function drawSnake() { sCtx.fillStyle = "#1e293b"; sCtx.fillRect(0, 0, 300, 300); for(let i = 0; i < snake.length; i++) { sCtx.fillStyle = (i === 0) ? "#4ade80" : "#22c55e"; sCtx.fillRect(snake[i].x, snake[i].y, box, box); sCtx.strokeStyle = "#1e293b"; sCtx.strokeRect(snake[i].x, snake[i].y, box, box); } sCtx.fillStyle = "red"; sCtx.fillRect(food.x, food.y, box, box); let snakeX = snake[0].x; let snakeY = snake[0].y; if(snakeDir == "Left") snakeX -= box; if(snakeDir == "Up") snakeY -= box; if(snakeDir == "Right") snakeX += box; if(snakeDir == "Down") snakeY += box; if(snakeX == food.x && snakeY == food.y) { let score = parseInt(document.getElementById('snake-score').innerText); score++; document.getElementById('snake-score').innerText = score; food = { x: Math.floor(Math.random()*15) * box, y: Math.floor(Math.random()*15) * box }; } else { snake.pop(); } let newHead = { x : snakeX, y : snakeY }; if(snakeX < 0 || snakeX > 280 || snakeY < 0 || snakeY > 280 || collision(newHead, snake)) { clearInterval(snakeGameLoop); document.getElementById('btn-snake-start').classList.remove('hidden'); document.getElementById('btn-snake-start').innerText = "ULANGI"; alert("GAME OVER! Skor: " + document.getElementById('snake-score').innerText); } snake.unshift(newHead); }
         function collision(head, array) { for(let i = 0; i < array.length; i++) { if(head.x == array[i].x && head.y == array[i].y) return true; } return false; }
 
-// --- FITUR WIDGET CUACA ---
-async function fetchWeather() {
+// --- FITUR WIDGET CUACA BERDASARKAN GPS DEVICE ---
+
+async function fetchWeatherByLocation(lat, lon) {
     try {
-        // 1. Ambil lokasi koordinat & kota pakai GeoJS (Gratis & Support HTTPS)
-        const locRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
-        const locData = await locRes.json();
-        const lat = locData.latitude;
-        const lon = locData.longitude;
-        const city = locData.city || "Kota Tidak Diketahui";
+        // 1. Dapatkan nama kota/daerah dari koordinat GPS (Reverse Geocoding gratis pakai BigDataCloud)
+        const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=id`);
+        const geoData = await geoRes.json();
         
+        // Ambil nama kota atau kecamatan
+        const city = geoData.locality || geoData.city || "Lokasi Anda";
         document.getElementById('weather-city').innerText = city;
 
-        // 2. Ambil data cuaca dari Open-Meteo berdasarkan koordinat tadi
+        // 2. Ambil data cuaca akurat dari Open-Meteo pakai koordinat device
         const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
         const weatherData = await weatherRes.json();
         
@@ -640,7 +640,7 @@ async function fetchWeather() {
         
         document.getElementById('weather-temp').innerText = `${temp}°`;
         
-        // 3. Ubah Icon WMO Code ke FontAwesome Icon yang udah ada di template lu
+        // 3. Ubah Icon WMO Code ke FontAwesome
         let icon = "fa-cloud-sun";
         let desc = "Cerah Berawan";
         
@@ -657,16 +657,41 @@ async function fetchWeather() {
         
     } catch (error) {
         console.error("Gagal memuat cuaca:", error);
-        document.getElementById('weather-city').innerText = "Gagal memuat";
-        document.getElementById('weather-desc').innerText = "Cek koneksi internet";
+        document.getElementById('weather-desc').innerText = "Gagal memuat data";
+    }
+}
+
+function getLocationAndWeather() {
+    document.getElementById('weather-desc').innerText = "Mendeteksi lokasi...";
+    
+    // Cek apakah browser support GPS
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                // Jika user mengizinkan akses lokasi
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                fetchWeatherByLocation(lat, lon);
+            },
+            (error) => {
+                // Jika user menolak akses lokasi / GPS mati
+                console.warn("Akses GPS ditolak atau gagal.");
+                document.getElementById('weather-city').innerText = "GPS Ditolak";
+                document.getElementById('weather-desc').innerText = "Izinkan GPS u/ cuaca";
+                document.getElementById('weather-temp').innerText = "--°";
+            },
+            { enableHighAccuracy: true } // Meminta akurasi GPS paling tinggi
+        );
+    } else {
+        document.getElementById('weather-desc').innerText = "Browser tidak support GPS";
     }
 }
 
 // Jalankan otomatis saat web dibuka
 document.addEventListener('DOMContentLoaded', () => {
-    fetchWeather();
-    // Taruh interval biar cuaca update tiap 30 menit
-    setInterval(fetchWeather, 30 * 60 * 1000); 
+    getLocationAndWeather();
+    // Update otomatis tiap 30 menit
+    setInterval(getLocationAndWeather, 30 * 60 * 1000); 
 });
     </script>
     <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); </script>
