@@ -117,8 +117,33 @@
                     
                     <div id="info-section" class="mb-6 hidden"><div class="flex justify-between items-end mb-2 px-1"><h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm">📢 Papan Pengumuman</h3></div><div id="info-slider" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x"></div></div>
                     
-                    <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-xl shadow-amber-200/50 dark:shadow-none mb-6 relative overflow-hidden"><div class="text-center relative z-10 flex flex-col items-center"><p class="text-amber-900/70 text-[10px] font-bold tracking-[0.2em] uppercase mb-1">Waktu Server</p><h1 id="clock-display" class="text-4xl font-black tracking-tight font-mono mb-2 text-slate-900">...</h1><div class="inline-flex items-center gap-2 bg-slate-900/10 px-3 py-1 rounded-full backdrop-blur-md border border-slate-900/5"><i class="fa-solid fa-satellite-dish text-[10px] text-slate-900 animate-pulse"></i><p id="gps-status" class="text-[10px] font-bold text-slate-900">Mencari Satelit...</p></div><p id="jarak-status" class="text-[10px] font-bold mt-2 hidden bg-slate-900/10 text-slate-900 inline-block px-2 py-0.5 rounded"></p></div></div>
-                    
+<div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-xl shadow-amber-200/50 dark:shadow-none mb-6 relative overflow-hidden">
+    <div class="text-center relative z-10 flex flex-col items-center">
+        <p class="text-amber-900/70 text-[10px] font-bold tracking-[0.2em] uppercase mb-1">Waktu Server</p>
+        <h1 id="clock-display" class="text-4xl font-black tracking-tight font-mono mb-2 text-slate-900">...</h1>
+        
+        <div class="inline-flex items-center gap-2 bg-slate-900/10 px-3 py-1 rounded-full backdrop-blur-md border border-slate-900/5 mb-3">
+            <i class="fa-solid fa-satellite-dish text-[10px] text-slate-900 animate-pulse"></i>
+            <p id="gps-status" class="text-[10px] font-bold text-slate-900">Mencari Satelit...</p>
+        </div>
+        <p id="jarak-status" class="text-[10px] font-bold mb-2 hidden bg-slate-900/10 text-slate-900 inline-block px-2 py-0.5 rounded"></p>
+
+        <div class="mt-2 w-full max-w-[250px] bg-white/20 backdrop-blur-sm rounded-2xl p-3 flex items-center justify-between border border-white/30 shadow-inner transition hover:scale-105">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 flex items-center justify-center bg-slate-900/10 rounded-full shadow-sm">
+                    <i id="weather-icon" class="fa-solid fa-cloud-sun text-xl text-slate-900"></i>
+                </div>
+                <div class="text-left">
+                    <p id="weather-city" class="text-[11px] font-black uppercase tracking-wider text-slate-900">Lokasi...</p>
+                    <p id="weather-desc" class="text-[10px] font-bold text-amber-900/70 capitalize">Memuat cuaca...</p>
+                </div>
+            </div>
+            <div>
+                <h2 id="weather-temp" class="text-2xl font-black text-slate-900 drop-shadow-sm">--°</h2>
+            </div>
+        </div>
+        </div>
+</div>                    
                     <div class="md:grid md:grid-cols-12 md:gap-8 md:items-start">
                         
                         <div class="md:col-span-5 bg-white/90 dark:bg-slate-800/80 rounded-3xl shadow-sm border border-amber-100 dark:border-slate-700 p-1 mb-8 md:mb-0 md:sticky md:top-4">
@@ -482,6 +507,8 @@
         function loadPeminjaman() { const q = query(collection(db, "inventory_logs"), orderBy("timestamp", "desc"), limit(50)); onSnapshot(q, (snap) => { const listDipinjam = document.getElementById('list-peminjaman'); const listRiwayat = document.getElementById('list-riwayat-aset'); listDipinjam.innerHTML = ""; listRiwayat.innerHTML = ""; let adaPinjaman = false; let adaRiwayat = false; snap.forEach(doc => { const data = doc.data(); if(data.status === "Dipinjam") { adaPinjaman = true; listDipinjam.innerHTML += `<div class="bg-gray-50 dark:bg-slate-900 p-3 rounded-lg border border-gray-200 dark:border-slate-700 flex justify-between items-center mb-2 shadow-sm fade-in"><div class="flex-1 pr-2"><p class="font-bold text-sm text-slate-800 dark:text-white leading-tight">${data.barang}</p><p class="text-[10px] text-gray-500 mt-1">Peminjam: <span class="font-bold text-blue-500">${data.peminjam}</span></p><p class="text-[9px] text-gray-400">Keperluan: ${data.keperluan}</p></div><button onclick="kembalikanBarang('${doc.id}')" class="bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700 px-3 py-2 rounded-lg text-[10px] font-black transition active:scale-95 text-center flex flex-col items-center"><i class="fa-solid fa-arrow-rotate-left mb-1"></i>KEMBALI</button></div>`; } else if (data.status === "Dikembalikan") { adaRiwayat = true; listRiwayat.innerHTML += `<div class="bg-gray-50 dark:bg-slate-900 p-3 rounded-lg border border-gray-200 dark:border-slate-700 flex justify-between items-center mb-2 shadow-sm opacity-70"><div class="flex-1 pr-2"><p class="font-bold text-sm text-slate-800 dark:text-white leading-tight line-through">${data.barang}</p><p class="text-[10px] text-gray-500 mt-1">Peminjam: ${data.peminjam}</p><p class="text-[9px] text-green-600 font-bold mt-0.5"><i class="fa-solid fa-check-circle"></i> Dikembalikan: ${data.tanggal_kembali}</p></div></div>`; } }); if(!adaPinjaman) listDipinjam.innerHTML = `<div class="text-center italic text-gray-400 py-4">Semua aset aman di gudang.</div>`; if(!adaRiwayat) listRiwayat.innerHTML = `<div class="text-center italic text-gray-400 py-4">Belum ada riwayat pengembalian.</div>`; }); }
         window.kembalikanBarang = async (id) => { if(!confirm("Yakin barang sudah dikembalikan dan dicek kondisinya?")) return; try { await updateDoc(doc(db, "inventory_logs", id), { status: "Dikembalikan", tanggal_kembali: new Date().toLocaleString('id-ID') }); alert("Barang berhasil dikembalikan ke Gudang!"); } catch(e) { alert("Error: " + e.message); } };
 
+
+
         // --- FUNGSI SCANNER (MULTI-FUNGSI) ---
         window.bukaScanner = async () => { document.getElementById('scanner-modal').classList.remove('hidden'); if (!html5QrCode) { html5QrCode = new Html5Qrcode("reader"); } const config = { fps: 10, qrbox: { width: 250, height: 250 } }; try { await html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure); } catch (err) { alert("Gagal membuka kamera: " + err); tutupScanner(); } }
         window.tutupScanner = async () => { document.getElementById('scanner-modal').classList.add('hidden'); if (html5QrCode) { try { await html5QrCode.stop(); html5QrCode.clear(); html5QrCode = null; } catch (e) { console.log("Kamera mati"); } } }
@@ -591,6 +618,56 @@
         window.changeSnakeDir = (dir) => { if(dir === "Left" && snakeDir !== "Right") snakeDir = "Left"; if(dir === "Up" && snakeDir !== "Down") snakeDir = "Up"; if(dir === "Right" && snakeDir !== "Left") snakeDir = "Right"; if(dir === "Down" && snakeDir !== "Up") snakeDir = "Down"; }
         function drawSnake() { sCtx.fillStyle = "#1e293b"; sCtx.fillRect(0, 0, 300, 300); for(let i = 0; i < snake.length; i++) { sCtx.fillStyle = (i === 0) ? "#4ade80" : "#22c55e"; sCtx.fillRect(snake[i].x, snake[i].y, box, box); sCtx.strokeStyle = "#1e293b"; sCtx.strokeRect(snake[i].x, snake[i].y, box, box); } sCtx.fillStyle = "red"; sCtx.fillRect(food.x, food.y, box, box); let snakeX = snake[0].x; let snakeY = snake[0].y; if(snakeDir == "Left") snakeX -= box; if(snakeDir == "Up") snakeY -= box; if(snakeDir == "Right") snakeX += box; if(snakeDir == "Down") snakeY += box; if(snakeX == food.x && snakeY == food.y) { let score = parseInt(document.getElementById('snake-score').innerText); score++; document.getElementById('snake-score').innerText = score; food = { x: Math.floor(Math.random()*15) * box, y: Math.floor(Math.random()*15) * box }; } else { snake.pop(); } let newHead = { x : snakeX, y : snakeY }; if(snakeX < 0 || snakeX > 280 || snakeY < 0 || snakeY > 280 || collision(newHead, snake)) { clearInterval(snakeGameLoop); document.getElementById('btn-snake-start').classList.remove('hidden'); document.getElementById('btn-snake-start').innerText = "ULANGI"; alert("GAME OVER! Skor: " + document.getElementById('snake-score').innerText); } snake.unshift(newHead); }
         function collision(head, array) { for(let i = 0; i < array.length; i++) { if(head.x == array[i].x && head.y == array[i].y) return true; } return false; }
+
+// --- FITUR WIDGET CUACA ---
+async function fetchWeather() {
+    try {
+        // 1. Ambil lokasi koordinat & kota pakai GeoJS (Gratis & Support HTTPS)
+        const locRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+        const locData = await locRes.json();
+        const lat = locData.latitude;
+        const lon = locData.longitude;
+        const city = locData.city || "Kota Tidak Diketahui";
+        
+        document.getElementById('weather-city').innerText = city;
+
+        // 2. Ambil data cuaca dari Open-Meteo berdasarkan koordinat tadi
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+        const weatherData = await weatherRes.json();
+        
+        const temp = Math.round(weatherData.current_weather.temperature);
+        const code = weatherData.current_weather.weathercode;
+        
+        document.getElementById('weather-temp').innerText = `${temp}°`;
+        
+        // 3. Ubah Icon WMO Code ke FontAwesome Icon yang udah ada di template lu
+        let icon = "fa-cloud-sun";
+        let desc = "Cerah Berawan";
+        
+        if (code === 0) { icon = "fa-sun text-yellow-500"; desc = "Cerah"; }
+        else if (code >= 1 && code <= 3) { icon = "fa-cloud-sun"; desc = "Berawan"; }
+        else if (code >= 45 && code <= 48) { icon = "fa-smog"; desc = "Berkabut"; }
+        else if (code >= 51 && code <= 67) { icon = "fa-cloud-rain text-blue-500"; desc = "Hujan Ringan"; }
+        else if (code >= 71 && code <= 77) { icon = "fa-snowflake text-sky-300"; desc = "Salju"; }
+        else if (code >= 80 && code <= 82) { icon = "fa-cloud-showers-heavy text-slate-700"; desc = "Hujan Deras"; }
+        else if (code >= 95 && code <= 99) { icon = "fa-cloud-bolt text-purple-600"; desc = "Badai Petir"; }
+        
+        document.getElementById('weather-icon').className = `fa-solid ${icon} text-xl`;
+        document.getElementById('weather-desc').innerText = desc;
+        
+    } catch (error) {
+        console.error("Gagal memuat cuaca:", error);
+        document.getElementById('weather-city').innerText = "Gagal memuat";
+        document.getElementById('weather-desc').innerText = "Cek koneksi internet";
+    }
+}
+
+// Jalankan otomatis saat web dibuka
+document.addEventListener('DOMContentLoaded', () => {
+    fetchWeather();
+    // Taruh interval biar cuaca update tiap 30 menit
+    setInterval(fetchWeather, 30 * 60 * 1000); 
+});
     </script>
     <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); </script>
 </body>
