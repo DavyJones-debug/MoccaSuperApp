@@ -742,7 +742,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(getLocationAndWeather, 30 * 60 * 1000); 
 });
 
-<script>
 // --- FITUR KOTAK SARAN HR (UPDATE KE GOOGLE SHEETS) ---
 function kirimSaran() {
     const kategori = document.getElementById('saran-kategori').value;
@@ -784,7 +783,6 @@ function kirimSaran() {
             btn.innerHTML = oriText;
             btn.disabled = false;
         });
-}
     </script>
     <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); </script>
 </body>
