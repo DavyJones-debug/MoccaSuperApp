@@ -743,29 +743,48 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 <script>
-// --- FITUR KOTAK SARAN HR ---
+// --- FITUR KOTAK SARAN HR (UPDATE KE GOOGLE SHEETS) ---
 function kirimSaran() {
-        const kategori = document.getElementById('saran-kategori').value;
-        const isi = document.getElementById('saran-isi').value;
-        
-        if(!isi.trim()) {
-            alert("Opss! Isi saran tidak boleh kosong ya.");
-            return;
-        }
-        
-        const btn = document.getElementById('btn-kirim-saran');
-        const oriText = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENGIRIM...';
-        btn.disabled = true;
-        
-        setTimeout(() => {
+    const kategori = document.getElementById('saran-kategori').value;
+    const isi = document.getElementById('saran-isi').value;
+    
+    // Validasi kalau kosong
+    if(!isi.trim()) {
+        alert("Opss! Isi saran tidak boleh kosong ya.");
+        return;
+    }
+    
+    // Efek loading
+    const btn = document.getElementById('btn-kirim-saran');
+    const oriText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENGIRIM...';
+    btn.disabled = true;
+
+    // GANTI LINK DI BAWAH INI SAMA LINK DARI GOOGLE APPS SCRIPT LU:
+    const scriptURL = 'https://script.google.com/a/macros/mocca.studio/s/AKfycbxyi8DEADR1G4okCKaZsOUgz8hu9q_GkBHFfuuL1REAm2ZhOD2Np5bHrLeX57sVbfOkhQ/exec';
+    
+    // Siapkan data untuk dikirim
+    const formData = new FormData();
+    formData.append('kategori', kategori);
+    formData.append('isi', isi);
+
+    // Kirim ke Google Sheets
+    fetch(scriptURL, { method: 'POST', body: formData })
+        .then(response => {
             alert(`Yeay! Saran anonim kamu untuk kategori [${kategori}] berhasil terkirim ke HR.`);
             document.getElementById('saran-isi').value = '';
+            document.getElementById('saran-modal').classList.add('hidden');
+        })
+        .catch(error => {
+            console.error('Error!', error.message);
+            alert("Yah, gagal mengirim saran. Cek koneksi internetmu.");
+        })
+        .finally(() => {
+            // Kembalikan tombol seperti semula
             btn.innerHTML = oriText;
             btn.disabled = false;
-            document.getElementById('saran-modal').classList.add('hidden');
-        }, 1200);
-    }
+        });
+}
     </script>
     <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); </script>
 </body>
