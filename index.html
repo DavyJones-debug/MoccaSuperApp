@@ -744,33 +744,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- FITUR KOTAK SARAN HR ---
 function kirimSaran() {
-    const kategori = document.getElementById('saran-kategori').value;
-    const isi = document.getElementById('saran-isi').value;
-    
-    // Validasi kalau kosong
-    if(!isi.trim()) {
-        alert("Opss! Isi saran tidak boleh kosong ya.");
-        return;
-    }
-    
-    // Efek loading saat tombol ditekan
-    const btn = document.getElementById('btn-kirim-saran');
-    const oriText = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENGIRIM...';
-    btn.disabled = true;
-    
-    // Simulasi jeda jaringan / ngirim ke server
-    setTimeout(() => {
-        // Tampilkan notifikasi sukses
-        alert(`Yeay! Saran anonim kamu untuk kategori [${kategori}] berhasil terkirim ke HR. Terima kasih atas partisipasinya!`);
+        const kategori = document.getElementById('saran-kategori').value;
+        const isi = document.getElementById('saran-isi').value;
         
-        // Reset form dan tutup modal
-        document.getElementById('saran-isi').value = '';
-        btn.innerHTML = oriText;
-        btn.disabled = false;
-        document.getElementById('saran-modal').classList.add('hidden');
-    }, 1200);
-}
+        if(!isi.trim()) {
+            alert("Opss! Isi saran tidak boleh kosong ya.");
+            return;
+        }
+        
+        const btn = document.getElementById('btn-kirim-saran');
+        const oriText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENGIRIM...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+            alert(`Yeay! Saran anonim kamu untuk kategori [${kategori}] berhasil terkirim ke HR.`);
+            document.getElementById('saran-isi').value = '';
+            btn.innerHTML = oriText;
+            btn.disabled = false;
+            document.getElementById('saran-modal').classList.add('hidden');
+        }, 1200);
+    }
     </script>
     <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); </script>
 </body>
