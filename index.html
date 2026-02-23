@@ -175,34 +175,12 @@
                         <div onclick="bukaFlappy()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden"><div class="absolute inset-0 bg-sky-500/10 opacity-0 group-hover:opacity-100 transition"></div><i class="fa-solid fa-kiwi-bird text-2xl text-sky-500 group-hover:-translate-y-1 transition"></i><p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Flappy Mocca</p></div>
                         <div onclick="bukaWhackGame()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden"><div class="absolute inset-0 bg-green-500/10 opacity-0 group-hover:opacity-100 transition"></div><i class="fa-solid fa-hammer text-2xl text-green-500 group-hover:rotate-45 transition"></i><p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Pukul Bug</p></div>
                         <div onclick="bukaSnakeGame()" class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center gap-2 cursor-pointer hover:scale-105 transition hover:shadow-md group relative overflow-hidden"><div class="absolute inset-0 bg-teal-500/10 opacity-0 group-hover:opacity-100 transition"></div><i class="fa-solid fa-staff-snake text-2xl text-teal-500 group-hover:scale-110 transition"></i><p class="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">Ular Klasik</p></div>
-<div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-slate-700 mt-4 text-center">
-    <h3 class="font-black text-slate-800 dark:text-white mb-1">
-        <i class="fa-solid fa-border-all text-amber-500 mr-2"></i>Tic-Tac-Toe
-    </h3>
-    <p class="text-[10px] text-gray-500 mb-3 dark:text-gray-400">Main bentar nunggu jam pulang</p>
-    
-    <div class="flex justify-center mb-4">
-        <p id="ttt-status" class="bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all">
-            Giliran: X
-        </p>
+<button onclick="document.getElementById('ttt-modal').classList.remove('hidden')" class="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center gap-2 hover:bg-gray-50 dark:hover:bg-slate-700 transition active:scale-95">
+    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl shadow-inner">
+        <i class="fa-solid fa-border-all"></i>
     </div>
-
-    <div class="grid grid-cols-3 gap-2 max-w-[200px] mx-auto mb-4" id="ttt-board">
-        <button onclick="mainTTT(0)" id="ttt-0" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-        <button onclick="mainTTT(1)" id="ttt-1" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-        <button onclick="mainTTT(2)" id="ttt-2" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-        <button onclick="mainTTT(3)" id="ttt-3" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-        <button onclick="mainTTT(4)" id="ttt-4" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-        <button onclick="mainTTT(5)" id="ttt-5" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-        <button onclick="mainTTT(6)" id="ttt-6" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-        <button onclick="mainTTT(7)" id="ttt-7" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-        <button onclick="mainTTT(8)" id="ttt-8" class="h-16 bg-gray-50 dark:bg-slate-700/50 rounded-xl text-3xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner border border-gray-100 dark:border-slate-600"></button>
-    </div>
-
-    <button onclick="resetTTT()" class="text-xs bg-slate-800 dark:bg-slate-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-slate-700 transition w-full max-w-[200px] shadow-lg shadow-slate-200 dark:shadow-none active:scale-95">
-        <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Game
-    </button>
-</div>
+    <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300">Tic-Tac-Toe</span>
+</button>
                     </div>
                 </section>
                 <div class="h-20"></div>
@@ -281,6 +259,41 @@
     <div id="flappy-game-modal" class="hidden fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center"><div class="absolute top-4 right-4 z-10"><button onclick="document.getElementById('flappy-game-modal').classList.add('hidden'); cancelAnimationFrame(gameLoopId);" class="w-10 h-10 bg-white/20 text-white rounded-full backdrop-blur-md"><i class="fa-solid fa-xmark"></i></button></div><div class="absolute top-10 left-0 w-full text-center pointer-events-none z-10"><h2 class="game-font text-white text-3xl drop-shadow-md text-stroke">FLAPPY MOCCA</h2><p id="flappy-score-display" class="text-5xl font-black text-white drop-shadow-md mt-2">0</p><p id="flappy-start-msg" class="text-white text-sm animate-pulse mt-4 bg-black/50 inline-block px-3 py-1 rounded">Ketuk layar / Spasi untuk lompat</p></div><canvas id="flappyCanvas" class="w-full h-full max-w-md bg-sky-300 shadow-2xl"></canvas></div>
     <div id="whack-game-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[100] flex items-center justify-center p-4 fade-in"><div class="bg-white dark:bg-slate-800 rounded-3xl p-6 text-center max-w-sm w-full relative border-t-4 border-green-600 shadow-2xl"><button onclick="document.getElementById('whack-game-modal').classList.add('hidden'); clearInterval(whackTimerInterval); isWhackPlaying = false;" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button><h2 class="text-2xl font-black mb-1 dark:text-white fun-font text-green-600">PUKUL BUG!</h2><div class="flex justify-between items-center mb-4 bg-green-50 dark:bg-slate-900 p-2 rounded-lg"><div class="text-left"><span class="text-[10px] font-bold text-gray-400 uppercase">Skor</span><br><span id="whack-score" class="text-2xl font-black text-green-600">0</span></div><div class="text-right"><span class="text-[10px] font-bold text-gray-400 uppercase">Waktu</span><br><span id="whack-time" class="text-xl font-mono font-bold dark:text-white">15</span></div></div><div class="grid grid-cols-3 gap-2 mb-4 bg-green-800 p-2 rounded-xl border-4 border-green-900"><div class="hole"><div class="bug">🪲</div></div><div class="hole"><div class="bug">🪲</div></div><div class="hole"><div class="bug">🪲</div></div><div class="hole"><div class="bug">🪲</div></div><div class="hole"><div class="bug">🪲</div></div><div class="hole"><div class="bug">🪲</div></div><div class="hole"><div class="bug">🪲</div></div><div class="hole"><div class="bug">🪲</div></div><div class="hole"><div class="bug">🪲</div></div></div><button onclick="startWhackGame()" id="btn-whack-start" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg active:scale-95">MULAI BASMI!</button></div></div>
     <div id="snake-game-modal" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[100] flex flex-col items-center justify-center p-2 fade-in"><div class="w-full max-w-sm relative"><button onclick="document.getElementById('snake-game-modal').classList.add('hidden'); clearInterval(snakeGameLoop);" class="absolute -top-10 right-0 text-white hover:text-red-500"><i class="fa-solid fa-circle-xmark text-3xl"></i></button><div class="bg-slate-800 rounded-t-2xl p-4 flex justify-between items-center border-b border-slate-700"><h2 class="text-lg font-black text-white game-font text-green-400">ULAR MOCCA</h2><div class="text-white font-mono">Skor: <span id="snake-score">0</span></div></div><canvas id="snakeCanvas" width="300" height="300" class="bg-black w-full border-x-4 border-slate-700 shadow-2xl"></canvas><div class="bg-slate-800 rounded-b-2xl p-4 grid grid-cols-3 gap-2 pt-6 pb-8"><div></div><button onmousedown="changeSnakeDir('Up')" ontouchstart="changeSnakeDir('Up')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-up"></i></button><div></div><button onmousedown="changeSnakeDir('Left')" ontouchstart="changeSnakeDir('Left')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-left"></i></button><button onmousedown="changeSnakeDir('Down')" ontouchstart="changeSnakeDir('Down')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-down"></i></button><button onmousedown="changeSnakeDir('Right')" ontouchstart="changeSnakeDir('Right')" class="bg-slate-700 h-14 rounded-xl text-white active:bg-green-600 shadow-lg"><i class="fa-solid fa-arrow-right"></i></button></div><button id="btn-snake-start" onclick="initSnakeGame()" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white font-black py-3 px-6 rounded-full shadow-xl hover:bg-green-600 active:scale-95 z-10 border-4 border-white">MAIN</button></div></div>
+<div id="ttt-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 fade-in" onclick="document.getElementById('ttt-modal').classList.add('hidden')">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden relative border-t-4 border-blue-500" onclick="event.stopPropagation()">
+        
+        <div class="p-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900">
+            <h2 class="text-lg font-black text-slate-800 dark:text-white"><i class="fa-solid fa-border-all text-blue-500 mr-2"></i>Tic-Tac-Toe</h2>
+            <button onclick="document.getElementById('ttt-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <div class="p-6 text-center">
+            <div class="flex justify-center mb-5">
+                <p id="ttt-status" class="bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 px-5 py-2 rounded-full text-sm font-bold shadow-sm">
+                    Giliran: X
+                </p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 max-w-[240px] mx-auto mb-6">
+                <button onclick="mainTTT(0)" id="ttt-0" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+                <button onclick="mainTTT(1)" id="ttt-1" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+                <button onclick="mainTTT(2)" id="ttt-2" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+                <button onclick="mainTTT(3)" id="ttt-3" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+                <button onclick="mainTTT(4)" id="ttt-4" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+                <button onclick="mainTTT(5)" id="ttt-5" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+                <button onclick="mainTTT(6)" id="ttt-6" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+                <button onclick="mainTTT(7)" id="ttt-7" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+                <button onclick="mainTTT(8)" id="ttt-8" class="h-20 bg-gray-100 dark:bg-slate-700 rounded-2xl text-4xl font-black flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition shadow-inner"></button>
+            </div>
+
+            <button onclick="resetTTT()" class="w-full bg-slate-800 dark:bg-slate-600 text-white py-3.5 rounded-xl font-bold hover:bg-slate-700 transition shadow-lg active:scale-95">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Mulai Ulang
+            </button>
+        </div>
+    </div>
+</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -647,45 +660,40 @@
         function drawSnake() { sCtx.fillStyle = "#1e293b"; sCtx.fillRect(0, 0, 300, 300); for(let i = 0; i < snake.length; i++) { sCtx.fillStyle = (i === 0) ? "#4ade80" : "#22c55e"; sCtx.fillRect(snake[i].x, snake[i].y, box, box); sCtx.strokeStyle = "#1e293b"; sCtx.strokeRect(snake[i].x, snake[i].y, box, box); } sCtx.fillStyle = "red"; sCtx.fillRect(food.x, food.y, box, box); let snakeX = snake[0].x; let snakeY = snake[0].y; if(snakeDir == "Left") snakeX -= box; if(snakeDir == "Up") snakeY -= box; if(snakeDir == "Right") snakeX += box; if(snakeDir == "Down") snakeY += box; if(snakeX == food.x && snakeY == food.y) { let score = parseInt(document.getElementById('snake-score').innerText); score++; document.getElementById('snake-score').innerText = score; food = { x: Math.floor(Math.random()*15) * box, y: Math.floor(Math.random()*15) * box }; } else { snake.pop(); } let newHead = { x : snakeX, y : snakeY }; if(snakeX < 0 || snakeX > 280 || snakeY < 0 || snakeY > 280 || collision(newHead, snake)) { clearInterval(snakeGameLoop); document.getElementById('btn-snake-start').classList.remove('hidden'); document.getElementById('btn-snake-start').innerText = "ULANGI"; alert("GAME OVER! Skor: " + document.getElementById('snake-score').innerText); } snake.unshift(newHead); }
         function collision(head, array) { for(let i = 0; i < array.length; i++) { if(head.x == array[i].x && head.y == array[i].y) return true; } return false; }
 
-// --- FITUR GAME TIC-TAC-TOE ---
+// --- LOGIKA GAME TIC-TAC-TOE ---
 let tttBoard = ["", "", "", "", "", "", "", "", ""];
 let tttPlayer = "X";
 let tttActive = true;
 
-// Kombinasi angka buat ngecek siapa yang menang (baris, kolom, miring)
 const tttWinConditions = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], 
     [0, 3, 6], [1, 4, 7], [2, 5, 8], 
     [0, 4, 8], [2, 4, 6]             
 ];
 
-function mainTTT(index) {
-    // Kalau kotak udah diisi atau game udah kelar, cuekin kliknya
+// FUNGSI INI HARUS BISA DIPANGGIL SAMA HTML
+window.mainTTT = function(index) {
     if (tttBoard[index] !== "" || !tttActive) return;
 
-    // Isi array dan tampilkan ke layar
     tttBoard[index] = tttPlayer;
     let cell = document.getElementById(`ttt-${index}`);
     cell.innerText = tttPlayer;
     
-    // Warnain beda biar cakep (X = Biru, O = Merah)
     if (tttPlayer === "X") {
         cell.classList.add("text-blue-500", "dark:text-blue-400");
     } else {
         cell.classList.add("text-rose-500", "dark:text-rose-400");
     }
 
-    // Cek ada yang menang gak
     cekMenangTTT();
-}
+};
 
 function cekMenangTTT() {
     let won = false;
     for (let i = 0; i < tttWinConditions.length; i++) {
         const [a, b, c] = tttWinConditions[i];
         if (tttBoard[a] !== "" && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
-            won = true;
-            break;
+            won = true; break;
         }
     }
 
@@ -693,41 +701,37 @@ function cekMenangTTT() {
 
     if (won) {
         statusText.innerText = `Yeay! ${tttPlayer} Menang! 🎉`;
-        statusText.className = "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+        statusText.className = "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all";
         tttActive = false;
         return;
     }
 
-    // Cek kalau papannya udah penuh tapi gak ada yang menang (Seri)
     if (!tttBoard.includes("")) {
         statusText.innerText = "Yahh Seri! 🤝";
-        statusText.className = "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+        statusText.className = "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all";
         tttActive = false;
         return;
     }
 
-    // Ganti giliran main
     tttPlayer = tttPlayer === "X" ? "O" : "X";
     statusText.innerText = `Giliran: ${tttPlayer}`;
-    statusText.className = "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all";
 }
 
-function resetTTT() {
-    // Balikin semua ke kondisi awal
+window.resetTTT = function() {
     tttBoard = ["", "", "", "", "", "", "", "", ""];
     tttPlayer = "X";
     tttActive = true;
     
     const statusText = document.getElementById('ttt-status');
     statusText.innerText = "Giliran: X";
-    statusText.className = "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+    statusText.className = "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 px-5 py-2 rounded-full text-sm font-bold shadow-sm transition-all";
 
     for (let i = 0; i < 9; i++) {
         let cell = document.getElementById(`ttt-${i}`);
         cell.innerText = "";
         cell.classList.remove("text-blue-500", "dark:text-blue-400", "text-rose-500", "dark:text-rose-400");
     }
-}
+};
 
 // --- FITUR WIDGET CUACA BERDASARKAN GPS DEVICE ---
 
