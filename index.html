@@ -147,7 +147,9 @@
                     <div class="md:grid md:grid-cols-12 md:gap-8 md:items-start">
                         
                         <div class="md:col-span-5 bg-white/90 dark:bg-slate-800/80 rounded-3xl shadow-sm border border-amber-100 dark:border-slate-700 p-1 mb-8 md:mb-0 md:sticky md:top-4">
-                            <div id="camera-container" class="hidden relative rounded-2xl overflow-hidden bg-black aspect-[4/3]"><video id="video-preview" class="w-full h-full object-cover" autoplay playsinline></video></div>
+<button onclick="flipKamera()" id="btn-flip" class="absolute top-4 right-4 bg-slate-800/60 backdrop-blur-md text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-slate-700 transition active:scale-95 z-50">
+    <i class="fa-solid fa-camera-rotate"></i>
+</button>
                             <div class="p-4">
                                 <div class="grid grid-cols-1 gap-4">
                                     <div><label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-wider text-center">Energi Kamu Hari Ini?</label><div class="flex justify-between gap-2 bg-gray-50 dark:bg-slate-900 p-2 rounded-xl border border-gray-100 dark:border-slate-700"><button onclick="pilihMood('🔥')" id="mood-fire" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">🔥</button><button onclick="pilihMood('🙂')" id="mood-smile" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent selected">🙂</button><button onclick="pilihMood('😴')" id="mood-sleep" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">😴</button><button onclick="pilihMood('🤯')" id="mood-stress" class="mood-btn flex-1 py-2 rounded-lg text-lg hover:bg-white dark:hover:bg-slate-800 transition border border-transparent">🤯</button></div></div>
@@ -614,7 +616,53 @@
         // --- FUNGSI LAMA SEBELUMNYA TETAP AMAN (ABSEN DLL) ---
         window.aturForm = () => { const jenis = document.getElementById('jenis-absen').value; const selectStatus = document.getElementById('status-absen'); const boxStatus = document.getElementById('container-status'); const boxKet = document.getElementById('container-keterangan'); selectStatus.innerHTML = ""; if (jenis === 'Masuk') { boxStatus.classList.remove('hidden'); boxKet.classList.add('hidden'); selectStatus.innerHTML += `<option value="Hadir (WFO)">🏢 Hadir (WFO - Kantor)</option><option value="Hadir (WFH)">🏠 Hadir (WFH - Rumah)</option>`; } else if (jenis === 'Pulang') { boxStatus.classList.add('hidden'); boxKet.classList.add('hidden'); } else if (jenis === 'IzinSakit') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Sakit">🤒 Sakit</option><option value="Izin">⚠️ Izin</option>`; } else if (jenis === 'Cuti') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Cuti">🏖️ Cuti</option>`; } }
         function hitungJarak(lat1, lon1, lat2, lon2) { const R = 6371e3; const φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180; const Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180; const a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
-        window.bukaKamera = async () => { try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }); videoStream = stream; document.getElementById('video-preview').srcObject = stream; document.getElementById('camera-container').classList.remove('hidden'); document.getElementById('btn-open-camera').classList.add('hidden'); document.getElementById('btn-capture').classList.remove('hidden'); document.getElementById('gps-status').innerText = "Mencari GPS..."; if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((pos) => { currentLat = pos.coords.latitude; currentLong = pos.coords.longitude; const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG)); document.getElementById('gps-status').innerHTML = `<span class="text-slate-900 font-bold dark:text-slate-200">GPS Terkunci</span>`; const info = document.getElementById('jarak-status'); info.innerText = `${jarak}m dari kantor`; info.classList.remove('hidden'); info.className = (jarak > MAX_JARAK_METER) ? "text-[10px] font-bold bg-red-500 text-white rounded px-2 mt-1" : "text-[10px] font-bold bg-green-600 text-white rounded px-2 mt-1"; }); } } catch (err) { alert("Gagal kamera: " + err.message); } };
+// 1. Tambahin variabel buat nyimpen arah kamera (default: user/depan)
+let currentFacingMode = 'user';
+
+// 2. Ini fungsi bukaKamera lu yang udah dimodifikasi
+window.bukaKamera = async () => { 
+    try { 
+        // PENTING: Kalau kamera lagi nyala, matiin dulu biar bisa diganti arahnya
+        if (typeof videoStream !== 'undefined' && videoStream !== null) {
+            videoStream.getTracks().forEach(track => track.stop());
+        }
+
+        // Buka kamera sesuai dengan currentFacingMode
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode } }); 
+        videoStream = stream; 
+        document.getElementById('video-preview').srcObject = stream; 
+        
+        document.getElementById('camera-container').classList.remove('hidden'); 
+        document.getElementById('btn-open-camera').classList.add('hidden'); 
+        document.getElementById('btn-capture').classList.remove('hidden'); 
+        
+        // --- Bagian GPS lu (gak diubah, biar tetep aman) ---
+        document.getElementById('gps-status').innerText = "Mencari GPS..."; 
+        if (navigator.geolocation) { 
+            navigator.geolocation.getCurrentPosition((pos) => { 
+                currentLat = pos.coords.latitude; 
+                currentLong = pos.coords.longitude; 
+                const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG)); 
+                document.getElementById('gps-status').innerHTML = `<span class="text-slate-900 font-bold dark:text-slate-200">GPS Terkunci</span>`; 
+                const info = document.getElementById('jarak-status'); 
+                info.innerText = `${jarak}m dari kantor`; 
+                info.classList.remove('hidden'); 
+                info.className = (jarak > MAX_JARAK_METER) ? "text-[10px] font-bold bg-red-500 text-white rounded px-2 mt-1" : "text-[10px] font-bold bg-green-600 text-white rounded px-2 mt-1"; 
+            }); 
+        } 
+    } catch (err) { 
+        alert("Gagal kamera: " + err.message); 
+    } 
+};
+
+// 3. Tambahin fungsi baru ini khusus buat nge-flip kamera
+window.flipKamera = () => {
+    // Kalau sekarang 'user' (depan), ganti ke 'environment' (belakang). Gitu juga sebaliknya.
+    currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
+    
+    // Jalankan ulang kameranya biar langsung ganti arah
+    window.bukaKamera();
+};
         async function getAlamatLengkap(lat, long) { try { const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${long}&zoom=18&addressdetails=1`); const data = await response.json(); let alamat = data.display_name; if (alamat.length > 60) { alamat = alamat.substring(0, 60) + "..."; } return alamat; } catch (error) { return "Lokasi Terdeteksi"; } }
         window.jepretDanKirim = async () => { if (!videoStream || !currentLat) return alert("Tunggu GPS terkunci dulu ya!"); const jenis = document.getElementById('jenis-absen').value; let status = (jenis === 'Pulang') ? "Pulang" : document.getElementById('status-absen').value; const keterangan = document.getElementById('input-keterangan').value; if (jenis === 'Masuk' && status === 'Hadir (WFO)') { const jarak = hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG); if (jarak > MAX_JARAK_METER) return alert(`Kejauhan! (${Math.round(jarak)}m). Harap mendekat ke kantor.`); } if ((jenis === 'IzinSakit' || jenis === 'Cuti') && !keterangan.trim()) return alert("Wajib isi keterangan!"); const now = new Date(); if (jenis === 'Masuk') { if (now.getHours() > JAM_MASUK_KANTOR || (now.getHours() === JAM_MASUK_KANTOR && now.getMinutes() > MENIT_MASUK_KANTOR)) { status += " (TERLAMBAT)"; } } const btnCapture = document.getElementById('btn-capture'); const originalText = btnCapture.innerHTML; btnCapture.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> MELACAK ALAMAT...`; btnCapture.disabled = true; let alamatUser = "Lokasi Koordinat"; try { alamatUser = await getAlamatLengkap(currentLat, currentLong); } catch (e) { alamatUser = `${currentLat}, ${currentLong}`; } const video = document.getElementById('video-preview'); const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 480; const ctx = canvas.getContext('2d'); ctx.drawImage(video, 0, 0, canvas.width, canvas.height); ctx.fillStyle = "rgba(0, 0, 0, 0.7)"; ctx.fillRect(0, canvas.height - 100, canvas.width, 100); ctx.fillStyle = "white"; ctx.font = "bold 20px sans-serif"; ctx.fillText(`${userProfile.nama} • ${status}`, 20, canvas.height - 70); ctx.font = "14px sans-serif"; ctx.fillText(`📅 ${now.toLocaleString('id-ID')}`, 20, canvas.height - 45); ctx.font = "12px sans-serif"; ctx.fillStyle = "#fbbf24"; ctx.fillText(`📍 ${alamatUser}`, 20, canvas.height - 20); const fotoBase64 = canvas.toDataURL('image/jpeg', 0.8); videoStream.getTracks().forEach(t => t.stop()); document.getElementById('camera-container').classList.add('hidden'); document.getElementById('btn-open-camera').classList.remove('hidden'); document.getElementById('btn-capture').classList.add('hidden'); btnCapture.innerHTML = originalText; btnCapture.disabled = false; document.getElementById('input-keterangan').value = ""; try { await addDoc(collection(db, "absensi"), { uid: currentUser.uid, nama: userProfile.nama, divisi: userProfile.divisi, foto_profil: userProfile.photoURL, bukti_foto: fotoBase64, kategori: jenis, status: status, keterangan: keterangan, lokasi: alamatUser, koordinat: `${currentLat}, ${currentLong}`, waktu: now.toLocaleTimeString('id-ID'), tanggal: now.toLocaleDateString('id-ID'), timestamp: now, mood: selectedMood }); alert("Absen Berhasil! Mood: " + selectedMood); } catch (e) { alert("Error Database: " + e.message); } };
         window.loadRiwayatData = (filterTanggal = null) => { if (unsubscribeRiwayat) { unsubscribeRiwayat(); } const today = new Date().toLocaleDateString('id-ID'); let targetDate = today; if (filterTanggal) { const parts = filterTanggal.split('-'); const day = parseInt(parts[2]).toString(); const month = parseInt(parts[1]).toString(); const year = parts[0]; targetDate = `${day}/${month}/${year}`; } const label = document.getElementById('label-riwayat'); label.innerText = (targetDate === today) ? "Riwayat Hari Ini" : `Riwayat: ${targetDate}`; const q = query(collection(db, "absensi"), where("tanggal", "==", targetDate), orderBy("timestamp", "desc")); unsubscribeRiwayat = onSnapshot(q, (snapshot) => { allData = []; snapshot.forEach(doc => allData.push(doc.data())); renderTabel(); }); };
