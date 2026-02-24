@@ -627,33 +627,37 @@ window.currentFacingMode = 'user';
 
 window.bukaKamera = async () => { 
     try { 
-        // Matiin kamera yang lagi nyala (kalau ada) biar gak bentrok
-        if (typeof videoStream !== 'undefined' && videoStream !== null) {
-            videoStream.getTracks().forEach(track => track.stop());
+        const videoElement = document.getElementById('video-preview');
+
+        // PENTING: Bersihkan memori kamera lama sampai tuntas
+        if (window.videoStream) {
+            window.videoStream.getTracks().forEach(track => track.stop());
+            videoElement.srcObject = null; // Lepas video dari layar
+            
+            // Kasih jeda 0.2 detik biar HP punya waktu buat matiin hardware kameranya
+            await new Promise(resolve => setTimeout(resolve, 200));
         }
 
-        // Buka kamera dengan mode yang dipilih (depan/belakang)
+        // Buka kamera dengan lensa yang baru
         const stream = await navigator.mediaDevices.getUserMedia({ 
             video: { facingMode: window.currentFacingMode } 
         }); 
         
-        // Simpan stream-nya ke variabel global videoStream lu
         window.videoStream = stream; 
-        document.getElementById('video-preview').srcObject = stream; 
+        videoElement.srcObject = stream; 
         
         // Atur tombol & tampilan
         document.getElementById('camera-container').classList.remove('hidden'); 
         document.getElementById('btn-open-camera').classList.add('hidden'); 
         document.getElementById('btn-capture').classList.remove('hidden'); 
         
-        // Bagian GPS bawaan lu
+        // --- Bagian GPS (Tetap aman) ---
         document.getElementById('gps-status').innerText = "Mencari GPS..."; 
         if (navigator.geolocation) { 
             navigator.geolocation.getCurrentPosition((pos) => { 
                 currentLat = pos.coords.latitude; 
                 currentLong = pos.coords.longitude; 
                 
-                // Pastikan fungsi hitungJarak dan KANTOR_LAT/LONG udah ada di file lu
                 const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG)); 
                 document.getElementById('gps-status').innerHTML = `<span class="text-slate-900 font-bold dark:text-slate-200">GPS Terkunci</span>`; 
                 
@@ -664,10 +668,14 @@ window.bukaKamera = async () => {
             }); 
         } 
     } catch (err) { 
-        alert("Gagal kamera: " + err.message + ". Pastikan kamu udah ngasih izin kamera ya!"); 
+        alert("Gagal kamera: " + err.message + ". Pastikan HP kamu mendukung fitur ini ya!"); 
     } 
 };
 
+window.flipKamera = () => {
+    window.currentFacingMode = (window.currentFacingMode === 'user') ? 'environment' : 'user';
+    window.bukaKamera();
+};
 window.flipKamera = () => {
     // Balik mode dari depan ke belakang, atau sebaliknya
     window.currentFacingMode = (window.currentFacingMode === 'user') ? 'environment' : 'user';
