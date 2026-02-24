@@ -651,22 +651,31 @@ window.bukaKamera = async () => {
         document.getElementById('btn-open-camera').classList.add('hidden'); 
         document.getElementById('btn-capture').classList.remove('hidden'); 
         
-        // --- Bagian GPS (Tetap aman) ---
+// --- Bagian GPS (Udah Dibikin Global) ---
         document.getElementById('gps-status').innerText = "Mencari GPS..."; 
         if (navigator.geolocation) { 
             navigator.geolocation.getCurrentPosition((pos) => { 
+                // Tambahin window. di depannya biar fix nempel secara global
+                window.currentLat = pos.coords.latitude; 
+                window.currentLong = pos.coords.longitude; 
+                
+                // Variabel yang lama juga tetep kita isi buat jaga-jaga kalau dibutuhkan script lain
                 currentLat = pos.coords.latitude; 
                 currentLong = pos.coords.longitude; 
                 
-                const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG)); 
+                const jarak = Math.round(hitungJarak(window.currentLat, window.currentLong, KANTOR_LAT, KANTOR_LONG)); 
                 document.getElementById('gps-status').innerHTML = `<span class="text-slate-900 font-bold dark:text-slate-200">GPS Terkunci</span>`; 
                 
                 const info = document.getElementById('jarak-status'); 
                 info.innerText = `${jarak}m dari kantor`; 
                 info.classList.remove('hidden'); 
                 info.className = (jarak > MAX_JARAK_METER) ? "text-[10px] font-bold bg-red-500 text-white rounded px-2 mt-1" : "text-[10px] font-bold bg-green-600 text-white rounded px-2 mt-1"; 
-            }); 
-        } 
+            }, 
+            (err) => {
+                document.getElementById('gps-status').innerText = "GPS Gagal/Ditolak"; 
+            }, 
+            { enableHighAccuracy: true }); // Biar GPS-nya lebih akurat
+        }
     } catch (err) { 
         alert("Gagal kamera: " + err.message + ". Pastikan HP kamu mendukung fitur ini ya!"); 
     } 
