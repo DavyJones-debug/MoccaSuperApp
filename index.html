@@ -334,12 +334,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         const KANTOR_LAT = -7.988571; const KANTOR_LONG = 112.652931; const MAX_JARAK_METER = 100; const JAM_MASUK_KANTOR = 10; const MENIT_MASUK_KANTOR = 0; 
         const firebaseConfig = { apiKey: "AIzaSyAcBFC_vOSHyJP89gGvguKPJ60G2BOoIvg", authDomain: "moccasuperapp.firebaseapp.com", projectId: "moccasuperapp", storageBucket: "moccasuperapp.firebasestorage.app", messagingSenderId: "966529708566", appId: "1:966529708566:web:7f7bb39e7c6811e9c93b37", measurementId: "G-CLCMR26YV6" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app); const provider = new GoogleAuthProvider();
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app); const storage = getStorage(app); const auth = getAuth(app); const provider = new GoogleAuthProvider();
         
         const listKhodam = [
             { nama: "Macan Putih", desc: "Berwibawa dan berani mengambil risiko!" },
@@ -759,29 +760,43 @@ window.jepretDanKirim = async () => {
     btnCapture.disabled = false; 
     document.getElementById('input-keterangan').value = ""; 
     
-    try { 
-        await addDoc(collection(db, "absensi"), { 
-            uid: currentUser.uid, 
-            nama: userProfile.nama, 
-            divisi: userProfile.divisi, 
-            foto_profil: userProfile.photoURL, 
-            bukti_foto: fotoBase64, 
-            kategori: jenis, 
-            status: status, 
-            keterangan: keterangan, 
-            lokasi: alamatUser, 
-            // 5. Sesuaikan pas nyimpen ke database Firebase
-            koordinat: `${window.currentLat}, ${window.currentLong}`, 
-            waktu: now.toLocaleTimeString('id-ID'), 
-            tanggal: now.toLocaleDateString('id-ID'), 
-            timestamp: now, 
-            mood: selectedMood 
-        }); 
-        alert("Absen Berhasil! Mood: " + selectedMood); 
-    } catch (e) { 
-        alert("Error Database: " + e.message); 
-    } 
-};
+try {
+
+    // 🔥 1. Buat nama file unik
+    const fileName = `absensi/${currentUser.uid}_${Date.now()}.jpg`;
+
+    const storageRef = ref(storage, fileName);
+
+    // 🔥 2. Upload base64 ke Storage
+    await uploadString(storageRef, fotoBase64, 'data_url');
+
+    // 🔥 3. Ambil URL hasil upload
+    const fotoURL = await getDownloadURL(storageRef);
+
+
+    // 🔥 4. Baru simpan ke Firestore
+    await addDoc(collection(db, "absensi"), {
+        uid: currentUser.uid,
+        nama: userProfile.nama,
+        divisi: userProfile.divisi,
+        foto_profil: userProfile.photoURL,
+        bukti_foto: fotoURL, // ← sekarang URL, bukan base64
+        kategori: jenis,
+        status: status,
+        keterangan: keterangan,
+        lokasi: alamatUser,
+        koordinat: `${window.currentLat}, ${window.currentLong}`,
+        waktu: now.toLocaleTimeString('id-ID'),
+        tanggal: now.toLocaleDateString('id-ID'),
+        timestamp: serverTimestamp(),
+        mood: selectedMood
+    });
+
+    alert("Absen Berhasil! Mood: " + selectedMood);
+
+} catch (e) {
+    alert("Error Database: " + e.message);
+}
         window.loadRiwayatData = (filterTanggal = null) => { if (unsubscribeRiwayat) { unsubscribeRiwayat(); } const today = new Date().toLocaleDateString('id-ID'); let targetDate = today; if (filterTanggal) { const parts = filterTanggal.split('-'); const day = parseInt(parts[2]).toString(); const month = parseInt(parts[1]).toString(); const year = parts[0]; targetDate = `${day}/${month}/${year}`; } const label = document.getElementById('label-riwayat'); label.innerText = (targetDate === today) ? "Riwayat Hari Ini" : `Riwayat: ${targetDate}`; const q = query(collection(db, "absensi"), where("tanggal", "==", targetDate), orderBy("timestamp", "desc")); unsubscribeRiwayat = onSnapshot(q, (snapshot) => { allData = []; snapshot.forEach(doc => allData.push(doc.data())); renderTabel(); }); };
         window.gantiTanggalRiwayat = () => { const val = document.getElementById('input-filter-tanggal').value; if(val) loadRiwayatData(val); }; window.resetTanggalRiwayat = () => { document.getElementById('input-filter-tanggal').value = ""; loadRiwayatData(null); }; window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
         function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; let moodUI = data.mood ? `<span class="text-lg absolute top-0 right-0 -mt-2 -mr-2 bg-white dark:bg-slate-800 rounded-full shadow border dark:border-slate-600 p-1">${data.mood}</span>` : ""; container.innerHTML += `<div class="bg-white/90 dark:bg-slate-800/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 dark:border-slate-700 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white dark:ring-slate-600" onclick="bukaFoto('${data.bukti_foto}')">${moodUI}<div class="absolute -bottom-2 -right-2 bg-white dark:bg-slate-700 rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 dark:text-slate-200 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 dark:bg-slate-700 dark:text-slate-300 px-1.5 rounded border border-amber-100 dark:border-slate-600">${data.waktu}</span></div><p class="text-xs text-amber-600 dark:text-amber-400 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 dark:text-slate-400 mt-2 italic bg-amber-50/50 dark:bg-slate-900 p-2 rounded-lg border border-amber-100 dark:border-slate-600">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
