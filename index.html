@@ -381,6 +381,51 @@
             }, 5000);
         };
         // --- BATAS NOTIFIKASI ---
+// --- FITUR NOTIFIKASI VISUAL MENFESS (TOAST PINK) ---
+        window.tampilkanToastMenfess = (pesan) => {
+            const toast = document.createElement('div');
+            // Warna pink, ikon hati, dan agak diturunin dikit posisinya (top-24) biar ga numpuk kalau barengan sama notif cafe
+            toast.className = "fixed top-24 right-6 z-[9999] bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-4 rounded-2xl shadow-2xl shadow-pink-500/30 font-bold transform transition-all duration-300 translate-x-[150%] border-2 border-white/20 flex items-center gap-3";
+            toast.innerHTML = `<div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center animate-bounce"><i class="fa-solid fa-heart"></i></div> <span>${pesan}</span>`;
+            
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-[150%]'), 100);
+            setTimeout(() => {
+                toast.classList.add('translate-x-[150%]');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        };
+
+        // Suara notif pop ringan buat pesan
+        const notifSoundMenfess = new Audio('https://actions.google.com/sounds/v1/water/pop.ogg');
+        let unsubscribeNotifMenfess = null;
+
+        // Fungsi buat mantau Kotak Masuk (Private Menfess) secara Real-Time
+        window.initNotifMenfessPrivate = () => {
+            if(!currentUser || !currentUser.email) return;
+            
+            const q = query(collection(db, "menfess_private"), where("targetEmail", "==", currentUser.email));
+            let isInitialLoadMenfess = true; 
+            
+            if(unsubscribeNotifMenfess) unsubscribeNotifMenfess();
+            
+            unsubscribeNotifMenfess = onSnapshot(q, (snap) => {
+                if (!isInitialLoadMenfess) {
+                    snap.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            const msg = change.doc.data();
+                            notifSoundMenfess.play().catch(e => console.log("Auto-play diblokir"));
+                            
+                            // Cek apakah pengirim anonim atau pakai nama asli
+                            const pengirim = msg.isAnon ? "Seseorang Misterius 👻" : msg.pengirim;
+                            tampilkanToastMenfess(`Ada pesan rahasia dari ${pengirim}!`);
+                        }
+                    });
+                }
+                isInitialLoadMenfess = false;
+            });
+        };
+        // --- BATAS NOTIFIKASI MENFESS ---
 
         window.loginGoogle = () => {
             const btnText = document.getElementById('btn-login-text');
@@ -450,7 +495,12 @@
             try { renderHeader(); } catch(e){}
             try { if(userProfile.role === 'admin') { document.getElementById('btn-add-info').classList.remove('hidden'); document.getElementById('btn-scan-qr').classList.remove('hidden'); document.getElementById('btn-admin-panel').classList.remove('hidden'); document.getElementById('badge-admin').classList.remove('hidden'); loadDaftarKaryawan(); } } catch(e){}
             try { if(userProfile.role === 'admin' || userProfile.divisi === 'IT/Minebi' || userProfile.divisi === 'HR/Admin') { document.getElementById('btn-aset').classList.remove('hidden'); } } catch(e){}
-            try { aturForm(); } catch(e){} try { loadRiwayatData(); } catch(e){} try { loadPengumuman(); } catch(e){} 
+            try { aturForm(); } catch(e){} 
+            try { loadRiwayatData(); } catch(e){} 
+            try { loadPengumuman(); } catch(e){} 
+            
+            // ↓↓ TAMBAHIN BARIS INI ↓↓
+            try { initNotifMenfessPrivate(); } catch(e){} 
         }
 
         function renderHeader() { 
