@@ -362,6 +362,26 @@
         let currentMenfessTab = 'public';
         let listKaryawanMenfess = [];
 
+        // --- FITUR NOTIFIKASI VISUAL (TOAST) ---
+        window.tampilkanToastNotif = (pesan) => {
+            const toast = document.createElement('div');
+            // Styling pakai Tailwind: Melayang di kanan atas, warna orange, ada shadow
+            toast.className = "fixed top-6 right-6 z-[9999] bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-4 rounded-2xl shadow-2xl shadow-orange-500/30 font-bold transform transition-all duration-300 translate-x-[150%] border-2 border-white/20 flex items-center gap-3";
+            toast.innerHTML = `<div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center animate-bounce"><i class="fa-solid fa-bell-concierge"></i></div> <span>${pesan}</span>`;
+            
+            document.body.appendChild(toast);
+
+            // Animasi masuk layar
+            setTimeout(() => toast.classList.remove('translate-x-[150%]'), 100);
+
+            // Otomatis hilang setelah 5 detik
+            setTimeout(() => {
+                toast.classList.add('translate-x-[150%]');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        };
+        // --- BATAS NOTIFIKASI ---
+
         window.loginGoogle = () => {
             const btnText = document.getElementById('btn-login-text');
             if(btnText) btnText.innerText = "Memeriksa Google...";
@@ -615,7 +635,74 @@
         window.renderIsiKeranjang = () => { const list = document.getElementById('cart-items-list'); list.innerHTML = ""; cartCafe.forEach((item, index) => { const noteUI = item.note ? `<p class="text-[9px] text-gray-500 italic mt-0.5 border-l-2 border-orange-300 pl-1">"${item.note}"</p>` : ""; list.innerHTML += `<div class="flex items-center gap-3 bg-white dark:bg-slate-800 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 relative"><div class="w-10 h-10 bg-orange-50 dark:bg-slate-700 rounded-lg flex items-center justify-center text-xl">${item.emoji}</div><div class="flex-1 min-w-0"><h4 class="font-bold text-sm text-slate-800 dark:text-white leading-tight">${item.nama}</h4><p class="text-[10px] font-bold text-orange-500">Rp ${item.harga.toLocaleString('id-ID')} x ${item.qty}</p>${noteUI}</div><div class="font-black text-slate-800 dark:text-white text-sm">Rp ${(item.harga * item.qty).toLocaleString('id-ID')}</div><button onclick="hapusDariKeranjang(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-[10px] hover:bg-red-500 hover:text-white transition shadow-sm"><i class="fa-solid fa-xmark"></i></button></div>`; }); };
         window.hapusDariKeranjang = (index) => { cartCafe.splice(index, 1); updateKeranjangUI(); renderIsiKeranjang(); };
         window.kirimPesananCafe = async () => { if(cartCafe.length === 0) return alert("Keranjang kosong!"); let totalPesanan = 0; const itemsToSave = cartCafe.map(item => { totalPesanan += (item.harga * item.qty); return { nama: item.nama, qty: item.qty, note: item.note, harga_satuan: item.harga }; }); try { await addDoc(collection(db, "cafe_orders"), { pemesan: userProfile.nama, divisi: userProfile.divisi, uid: currentUser.uid, items: itemsToSave, total_harga: totalPesanan, status: "Menunggu Dibuat", waktu: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}), tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date() }); alert("Yey! Pesanan berhasil dikirim ke Pantry! ☕ Tunggu ya."); cartCafe = []; tutupCafe(); } catch(e) { alert("Gagal pesan: " + e.message); } };
-        window.loadLiveOrders = (onlyBadge = false) => { const q = query(collection(db, "cafe_orders"), orderBy("timestamp", "desc"), limit(100)); if(unsubscribeOrders) unsubscribeOrders(); unsubscribeOrders = onSnapshot(q, (snap) => { const list = document.getElementById('live-orders-list'); if(!onlyBadge) list.innerHTML = ""; let activeCount = 0; let omsetHariIni = 0; let pesananSelesai = 0; const today = new Date().toLocaleDateString('id-ID'); snap.forEach(docSnap => { const data = docSnap.data(); const id = docSnap.id; if(data.tanggal === today) { if(data.status === "Selesai") { pesananSelesai++; omsetHariIni += (data.total_harga || 0); } else { activeCount++; if(!onlyBadge) { let itemsHTML = ""; if(data.items) { data.items.forEach(item => { itemsHTML += `<p class="text-xs text-slate-700 dark:text-slate-300 border-b border-gray-50 dark:border-slate-700 py-1">- <span class="font-black text-orange-500">${item.qty}x</span> ${item.nama} ${item.note ? `<br><i class="text-[10px] text-orange-600 bg-orange-50 dark:bg-slate-900 px-1 rounded ml-3">Note: ${item.note}</i>` : ''}</p>`; }); } list.innerHTML += `<div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-orange-500 shadow-sm relative mb-3 fade-in"><div class="flex justify-between items-start mb-2 border-b border-gray-100 dark:border-slate-700 pb-2"><div><h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.pemesan}</h4><p class="text-[9px] text-gray-400 uppercase font-bold">${data.divisi || 'Karyawan'} • <i class="fa-regular fa-clock"></i> ${data.waktu}</p></div><div class="text-right"><span class="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[9px] font-black animate-pulse">Menunggu</span><p class="text-[10px] font-black text-orange-600 mt-1">Rp ${(data.total_harga || 0).toLocaleString('id-ID')}</p></div></div><div class="mb-4">${itemsHTML}</div><button onclick="selesaikanPesananCafe('${id}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-2.5 rounded-lg text-xs transition active:scale-95 shadow-md shadow-green-500/30"><i class="fa-solid fa-check mr-2"></i> TANDAI SELESAI</button></div>`; } } } }); if(!onlyBadge) { const elOmset = document.getElementById('cafe-omset'); const elSelesai = document.getElementById('cafe-count-selesai'); if(elOmset) elOmset.innerText = 'Rp ' + omsetHariIni.toLocaleString('id-ID'); if(elSelesai) elSelesai.innerText = pesananSelesai; if(activeCount === 0) { list.innerHTML = `<div class="text-center text-gray-400 italic text-xs py-10"><i class="fa-solid fa-mug-hot text-3xl mb-2 text-gray-300"></i><br>Dapur bersih! Belum ada antrean pesanan. 👍</div>`; } } const badge = document.getElementById('order-badge'); if(badge) { if(activeCount > 0) { badge.innerText = activeCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } } }); };
+// Siapin audionya (saya pakai URL suara beep pendek bawaan Google biar langsung jalan)
+// Nanti URL ini bisa kamu ganti misal jadi: new Audio('suara-dapur.mp3')
+const notifSoundCafe = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+
+window.loadLiveOrders = (onlyBadge = false) => { 
+    const q = query(collection(db, "cafe_orders"), orderBy("timestamp", "desc"), limit(100)); 
+    if(unsubscribeOrders) unsubscribeOrders(); 
+
+    // Penanda biar pas web pertama dibuka, suaranya nggak bunyi beruntun
+    let isInitialLoadCafe = true; 
+
+    unsubscribeOrders = onSnapshot(q, (snap) => { 
+        const list = document.getElementById('live-orders-list'); 
+        if(!onlyBadge) list.innerHTML = ""; 
+        let activeCount = 0; let omsetHariIni = 0; let pesananSelesai = 0; 
+        const today = new Date().toLocaleDateString('id-ID'); 
+
+        // --- INI LOGIKA NOTIFIKASI BARUNYA ---
+        if (!isInitialLoadCafe) {
+            snap.docChanges().forEach((change) => {
+                // Kalau ada data baru (added) dan statusnya bukan selesai
+                if (change.type === "added") {
+                    const newOrder = change.doc.data();
+                    if (newOrder.tanggal === today && newOrder.status !== "Selesai") {
+                        // 1. Play suara notif (catch buat jaga-jaga kalau diblokir browser)
+                        notifSoundCafe.play().catch(e => console.log("Auto-play diblokir browser"));
+                        // 2. Munculin Pop-up
+                        tampilkanToastNotif(`Orderan baru dari ${newOrder.pemesan}!`);
+                    }
+                }
+            });
+        }
+        isInitialLoadCafe = false; // Matikan penanda setelah load pertama selesai
+        // --- BATAS LOGIKA NOTIFIKASI ---
+
+        // (Ini kode asli bawaan script kamu buat ngerender list HTML-nya)
+        snap.forEach(docSnap => { 
+            const data = docSnap.data(); 
+            const id = docSnap.id; 
+            if(data.tanggal === today) { 
+                if(data.status === "Selesai") { 
+                    pesananSelesai++; omsetHariIni += (data.total_harga || 0); 
+                } else { 
+                    activeCount++; 
+                    if(!onlyBadge) { 
+                        let itemsHTML = ""; 
+                        if(data.items) { 
+                            data.items.forEach(item => { itemsHTML += `<p class="text-xs text-slate-700 dark:text-slate-300 border-b border-gray-50 dark:border-slate-700 py-1">- <span class="font-black text-orange-500">${item.qty}x</span> ${item.nama} ${item.note ? `<br><i class="text-[10px] text-orange-600 bg-orange-50 dark:bg-slate-900 px-1 rounded ml-3">Note: ${item.note}</i>` : ''}</p>`; }); 
+                        } 
+                        list.innerHTML += `<div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-orange-500 shadow-sm relative mb-3 fade-in"><div class="flex justify-between items-start mb-2 border-b border-gray-100 dark:border-slate-700 pb-2"><div><h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.pemesan}</h4><p class="text-[9px] text-gray-400 uppercase font-bold">${data.divisi || 'Karyawan'} • <i class="fa-regular fa-clock"></i> ${data.waktu}</p></div><div class="text-right"><span class="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[9px] font-black animate-pulse">Menunggu</span><p class="text-[10px] font-black text-orange-600 mt-1">Rp ${(data.total_harga || 0).toLocaleString('id-ID')}</p></div></div><div class="mb-4">${itemsHTML}</div><button onclick="selesaikanPesananCafe('${id}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-2.5 rounded-lg text-xs transition active:scale-95 shadow-md shadow-green-500/30"><i class="fa-solid fa-check mr-2"></i> TANDAI SELESAI</button></div>`; 
+                    } 
+                } 
+            } 
+        }); 
+        if(!onlyBadge) { 
+            const elOmset = document.getElementById('cafe-omset'); 
+            const elSelesai = document.getElementById('cafe-count-selesai'); 
+            if(elOmset) elOmset.innerText = 'Rp ' + omsetHariIni.toLocaleString('id-ID'); 
+            if(elSelesai) elSelesai.innerText = pesananSelesai; 
+            if(activeCount === 0) { list.innerHTML = `<div class="text-center text-gray-400 italic text-xs py-10"><i class="fa-solid fa-mug-hot text-3xl mb-2 text-gray-300"></i><br>Dapur bersih! Belum ada antrean pesanan. 👍</div>`; } 
+        } 
+        const badge = document.getElementById('order-badge'); 
+        if(badge) { 
+            if(activeCount > 0) { badge.innerText = activeCount; badge.classList.remove('hidden'); } 
+            else { badge.classList.add('hidden'); } 
+        } 
+    }); 
+};
         window.selesaikanPesananCafe = async (id) => { if(!confirm("Pesanan ini sudah selesai dibuat?")) return; try { await updateDoc(doc(db, "cafe_orders", id), { status: "Selesai" }); } catch(e) { alert("Error: " + e.message); } };
         window.downloadRekapCafe = async () => { const today = new Date().toLocaleDateString('id-ID'); const q = query(collection(db, "cafe_orders"), where("tanggal", "==", today)); try { const snap = await getDocs(q); if(snap.empty) return alert("Belum ada pesanan hari ini."); let csv = "data:text/csv;charset=utf-8,Waktu,Pemesan,Divisi,Status,Total Harga (Rp),Detail Pesanan\n"; snap.forEach(d => { const data = d.data(); let detail = "Tidak ada detail"; if(data.items) { detail = data.items.map(i => `${i.qty}x ${i.nama} ${i.note ? '('+i.note+')' : ''}`).join(" | "); } csv += `${data.waktu},"${data.pemesan}","${data.divisi}","${data.status}",${data.total_harga},"${detail}"\n`; }); const link = document.createElement("a"); link.href = encodeURI(csv); link.download = `Rekap_Cafe_Mocca_${today.replace(/\//g, "-")}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link); } catch(e) { alert("Gagal Export: " + e.message); } };
 
