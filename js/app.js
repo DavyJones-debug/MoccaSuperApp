@@ -335,7 +335,20 @@
         window.hapusQuest = async (id) => { if(!confirm("Hapus target ini?")) return; const today = new Date().toLocaleDateString('id-ID').replace(/\//g, '-'); await deleteDoc(doc(db, `daily_quests/${today}/${currentUser.uid}`, id)); };
 
         // --- FUNGSI CAFE ---
-        window.bukaCafe = () => { document.getElementById('cafe-modal').classList.remove('hidden'); switchCafeView('menu'); if(userProfile.role === 'admin' || userProfile.divisi === 'Cafe/Kitchen' || userProfile.divisi === 'HR/Admin') { document.getElementById('btn-manage-cafe').classList.remove('hidden'); document.getElementById('btn-live-orders').classList.remove('hidden'); loadLiveOrders(true); } loadMenuCafeDariDatabase(); updateKeranjangUI(); };
+window.bukaCafe = () => { 
+    document.getElementById('cafe-modal').classList.remove('hidden'); 
+    switchCafeView('menu'); 
+    
+    // PENTING: Lonceng notif dimunculin buat SEMUA USER biar mereka bisa ngecek pesanan mereka sendiri
+    document.getElementById('btn-live-orders').classList.remove('hidden'); 
+    loadLiveOrders(true); 
+    
+    // Tapi ikon Gear (Manage) cuma buat Admin/Dapur
+    if(userProfile.role === 'admin' || userProfile.divisi === 'Cafe/Kitchen' || userProfile.divisi === 'HR/Admin') { 
+        document.getElementById('btn-manage-cafe').classList.remove('hidden'); 
+    } 
+    loadMenuCafeDariDatabase(); updateKeranjangUI(); 
+};
         window.tutupCafe = () => { document.getElementById('cafe-modal').classList.add('hidden'); };
         window.switchCafeView = (view) => { document.getElementById('cafe-view-menu').classList.add('hidden'); document.getElementById('cafe-view-cart').classList.add('hidden'); document.getElementById('cafe-view-manage').classList.add('hidden'); document.getElementById('cafe-view-orders').classList.add('hidden'); document.getElementById('cart-floating-bar').classList.add('hidden'); if(view === 'menu') { document.getElementById('cafe-view-menu').classList.remove('hidden'); if(cartCafe.length > 0) document.getElementById('cart-floating-bar').classList.remove('hidden'); } else if(view === 'cart') { document.getElementById('cafe-view-cart').classList.remove('hidden'); renderIsiKeranjang(); } else if(view === 'manage') { document.getElementById('cafe-view-manage').classList.remove('hidden'); } else if(view === 'orders') { document.getElementById('cafe-view-orders').classList.remove('hidden'); loadLiveOrders(false); } };
         window.loadMenuCafeDariDatabase = () => { const q = query(collection(db, "cafe_menus"), orderBy("nama", "asc")); onSnapshot(q, (snap) => { const list = document.getElementById('menu-cafe-list'); const listManage = document.getElementById('manage-cafe-list'); list.innerHTML = ""; listManage.innerHTML = ""; if(snap.empty) { list.innerHTML = `<div class="col-span-2 text-center text-xs text-gray-400 py-4">Menu belum ditambahkan.</div>`; return; } snap.forEach(doc => { const d = doc.data(); const id = doc.id; const isHabis = d.isHabis || false; const cardStyle = isHabis ? "opacity-50 grayscale" : "cursor-pointer hover:bg-orange-50 dark:hover:bg-slate-800 transition active:scale-95"; const clickEvent = isHabis ? "" : `onclick="bukaPopupItem('${id}', '${d.nama}', ${d.harga}, '${d.emoji}')"`; const labelHarga = isHabis ? `<span class="text-red-500 font-black tracking-widest uppercase">HABIS</span>` : `Rp ${d.harga.toLocaleString('id-ID')}`; list.innerHTML += `<div ${clickEvent} class="bg-gray-50 dark:bg-slate-900 p-3 rounded-xl border border-gray-200 dark:border-slate-700 text-center flex flex-col justify-between h-full ${cardStyle}"><div><div class="text-4xl mb-2">${d.emoji}</div><h4 class="font-bold text-xs text-slate-700 dark:text-white leading-tight mb-1">${d.nama}</h4></div><p class="text-[10px] text-orange-500 font-bold bg-orange-100 dark:bg-orange-900/30 rounded py-1 mt-2">${labelHarga}</p></div>`; const btnHabisTxt = isHabis ? "Tersedia" : "Habis"; const btnHabisClass = isHabis ? "text-green-500 bg-green-50 hover:bg-green-100" : "text-orange-500 bg-orange-50 hover:bg-orange-100"; listManage.innerHTML += `<div class="flex justify-between items-center bg-gray-50 dark:bg-slate-900 p-2 rounded-lg border border-gray-200 dark:border-slate-700 mb-2"><div class="flex items-center gap-3"><span class="text-2xl ${isHabis ? 'grayscale opacity-50' : ''}">${d.emoji}</span><div><p class="text-xs font-bold text-slate-700 dark:text-white ${isHabis ? 'line-through opacity-50' : ''}">${d.nama}</p><p class="text-[10px] text-orange-500 font-bold">Rp ${d.harga.toLocaleString('id-ID')}</p></div></div><div class="flex gap-1"><button onclick="toggleMenuHabis('${id}', ${isHabis})" class="${btnHabisClass} px-2 py-1.5 rounded-lg text-[9px] font-bold transition">${btnHabisTxt}</button><button onclick="hapusMenuCafe('${id}', '${d.nama}')" class="text-red-500 hover:text-red-600 px-2 py-1.5 bg-red-50 rounded-lg transition"><i class="fa-solid fa-trash"></i></button></div></div>`; }); }); };
@@ -354,12 +367,16 @@
 // Nanti URL ini bisa kamu ganti misal jadi: new Audio('suara-dapur.mp3')
 const notifSoundCafe = new Audio('KitchenNCafe - notification.mp3');
 
+const notifSoundCafe = new Audio('KitchenNCafe - notification.mp3'); // Sesuaikan dengan link audio kamu
+
 window.loadLiveOrders = (onlyBadge = false) => { 
     const q = query(collection(db, "cafe_orders"), orderBy("timestamp", "desc"), limit(100)); 
     if(unsubscribeOrders) unsubscribeOrders(); 
 
-    // Penanda biar pas web pertama dibuka, suaranya nggak bunyi beruntun
     let isInitialLoadCafe = true; 
+    
+    // Cek siapa yang lagi buka: Dapur atau User Biasa?
+    const isAdminKitchen = userProfile.role === 'admin' || userProfile.divisi === 'Cafe/Kitchen' || userProfile.divisi === 'HR/Admin';
 
     unsubscribeOrders = onSnapshot(q, (snap) => { 
         const list = document.getElementById('live-orders-list'); 
@@ -367,28 +384,28 @@ window.loadLiveOrders = (onlyBadge = false) => {
         let activeCount = 0; let omsetHariIni = 0; let pesananSelesai = 0; 
         const today = new Date().toLocaleDateString('id-ID'); 
 
-        // --- INI LOGIKA NOTIFIKASI BARUNYA ---
-        if (!isInitialLoadCafe) {
+        // Notifikasi pop-up cuma bunyi buat Admin/Dapur
+        if (!isInitialLoadCafe && isAdminKitchen) {
             snap.docChanges().forEach((change) => {
-                // Kalau ada data baru (added) dan statusnya bukan selesai
                 if (change.type === "added") {
                     const newOrder = change.doc.data();
                     if (newOrder.tanggal === today && newOrder.status !== "Selesai") {
-                        // 1. Play suara notif (catch buat jaga-jaga kalau diblokir browser)
                         notifSoundCafe.play().catch(e => console.log("Auto-play diblokir browser"));
-                        // 2. Munculin Pop-up
                         tampilkanToastNotif(`Orderan baru dari ${newOrder.pemesan}!`);
                     }
                 }
             });
         }
-        isInitialLoadCafe = false; // Matikan penanda setelah load pertama selesai
-        // --- BATAS LOGIKA NOTIFIKASI ---
+        isInitialLoadCafe = false; 
 
-        // (Ini kode asli bawaan script kamu buat ngerender list HTML-nya)
+        // Proses ngerender daftar pesanan
         snap.forEach(docSnap => { 
             const data = docSnap.data(); 
             const id = docSnap.id; 
+            
+            // Kalo yang buka user biasa, dia cuma bisa liat pesanannya sendiri
+            if (!isAdminKitchen && data.uid !== currentUser.uid) return;
+
             if(data.tanggal === today) { 
                 if(data.status === "Selesai") { 
                     pesananSelesai++; omsetHariIni += (data.total_harga || 0); 
@@ -399,17 +416,39 @@ window.loadLiveOrders = (onlyBadge = false) => {
                         if(data.items) { 
                             data.items.forEach(item => { itemsHTML += `<p class="text-xs text-slate-700 dark:text-slate-300 border-b border-gray-50 dark:border-slate-700 py-1">- <span class="font-black text-orange-500">${item.qty}x</span> ${item.nama} ${item.note ? `<br><i class="text-[10px] text-orange-600 bg-orange-50 dark:bg-slate-900 px-1 rounded ml-3">Note: ${item.note}</i>` : ''}</p>`; }); 
                         } 
-                        list.innerHTML += `<div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-orange-500 shadow-sm relative mb-3 fade-in"><div class="flex justify-between items-start mb-2 border-b border-gray-100 dark:border-slate-700 pb-2"><div><h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.pemesan}</h4><p class="text-[9px] text-gray-400 uppercase font-bold">${data.divisi || 'Karyawan'} • <i class="fa-regular fa-clock"></i> ${data.waktu}</p></div><div class="text-right"><span class="bg-orange-100 text-orange-600 px-2 py-0.5 rounded text-[9px] font-black animate-pulse">Menunggu</span><p class="text-[10px] font-black text-orange-600 mt-1">Rp ${(data.total_harga || 0).toLocaleString('id-ID')}</p></div></div><div class="mb-4">${itemsHTML}</div><button onclick="selesaikanPesananCafe('${id}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-2.5 rounded-lg text-xs transition active:scale-95 shadow-md shadow-green-500/30"><i class="fa-solid fa-check mr-2"></i> TANDAI SELESAI</button></div>`; 
+                        
+// LOGIKA TOMBOL BATAL/SELESAI
+let actionButtons = "";
+// Cek apakah ini user Kitchen/Admin
+if (userProfile.role === 'admin' || userProfile.divisi === 'Cafe/Kitchen') {
+    actionButtons = `<button onclick="selesaikanPesananCafe('${id}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-2.5 rounded-lg text-xs transition active:scale-95 shadow-md shadow-green-500/30"><i class="fa-solid fa-check mr-2"></i> TANDAI SELESAI</button>`;
+} 
+// Kalau user biasa DAN statusnya masih 'Menunggu Dibuat'
+else if (data.status === "Menunggu Dibuat" && data.uid === currentUser.uid) {
+    actionButtons = `<button onclick="batalkanPesananCafe('${id}')" class="w-full bg-red-100 hover:bg-red-200 text-red-600 font-black py-2.5 rounded-lg text-xs transition active:scale-95 border border-red-200"><i class="fa-solid fa-xmark mr-2"></i> BATALKAN PESANAN</button>`;
+}
+// Kalau Kitchen lagi bikin atau pesanan udah dibatalkan (untuk user biasa)
+else if (data.uid === currentUser.uid) {
+    actionButtons = `<div class="text-center text-[10px] font-bold py-2 rounded-lg border ${data.status === 'Dibatalkan' ? 'bg-red-50 text-red-500 border-red-100' : 'bg-orange-50 text-orange-500 border-orange-100'}">${data.status === 'Dibatalkan' ? '❌ Pesanan Dibatalkan' : '<i class="fa-solid fa-fire-burner mr-1"></i> Sedang diproses dapur...'}</div>`;
+}
+
+// Render HTML
+list.innerHTML += `<div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 ${data.status === 'Dibatalkan' ? 'border-red-500 opacity-70' : 'border-orange-500'} shadow-sm relative mb-3 fade-in"><div class="flex justify-between items-start mb-2 border-b border-gray-100 dark:border-slate-700 pb-2"><div><h4 class="font-bold text-sm text-slate-800 dark:text-white">${data.pemesan}</h4><p class="text-[9px] text-gray-400 uppercase font-bold">${data.divisi || 'Karyawan'} • <i class="fa-regular fa-clock"></i> ${data.waktu}</p></div><div class="text-right"><span class="${data.status === 'Dibatalkan' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'} px-2 py-0.5 rounded text-[9px] font-black">${data.status}</span><p class="text-[10px] font-black ${data.status === 'Dibatalkan' ? 'text-red-600 line-through' : 'text-orange-600'} mt-1">Rp ${(data.total_harga || 0).toLocaleString('id-ID')}</p></div></div><div class="mb-4">${itemsHTML}</div>${actionButtons}</div>`; 
                     } 
                 } 
             } 
         }); 
+        
         if(!onlyBadge) { 
             const elOmset = document.getElementById('cafe-omset'); 
             const elSelesai = document.getElementById('cafe-count-selesai'); 
             if(elOmset) elOmset.innerText = 'Rp ' + omsetHariIni.toLocaleString('id-ID'); 
             if(elSelesai) elSelesai.innerText = pesananSelesai; 
-            if(activeCount === 0) { list.innerHTML = `<div class="text-center text-gray-400 italic text-xs py-10"><i class="fa-solid fa-mug-hot text-3xl mb-2 text-gray-300"></i><br>Dapur bersih! Belum ada antrean pesanan. 👍</div>`; } 
+            
+            // Pesan kosong yang disesuaikan
+            if(activeCount === 0) { 
+                list.innerHTML = `<div class="text-center text-gray-400 italic text-xs py-10"><i class="fa-solid fa-mug-hot text-3xl mb-2 text-gray-300"></i><br>${isAdminKitchen ? 'Dapur bersih! Belum ada pesanan masuk.' : 'Kamu belum pesan apapun hari ini.'} 👍</div>`; 
+            } 
         } 
         const badge = document.getElementById('order-badge'); 
         if(badge) { 
@@ -419,6 +458,16 @@ window.loadLiveOrders = (onlyBadge = false) => {
     }); 
 };
         window.selesaikanPesananCafe = async (id) => { if(!confirm("Pesanan ini sudah selesai dibuat?")) return; try { await updateDoc(doc(db, "cafe_orders", id), { status: "Selesai" }); } catch(e) { alert("Error: " + e.message); } };
+window.batalkanPesananCafe = async (id) => { 
+    if(!confirm("Yakin mau membatalkan pesanan ini?")) return; 
+    try { 
+        // Mengubah status jadi 'Dibatalkan' biar riwayatnya tetep ada
+        await updateDoc(doc(db, "cafe_orders", id), { status: "Dibatalkan" }); 
+        alert("Pesanan berhasil dibatalkan."); 
+    } catch(e) { 
+        alert("Gagal membatalkan: " + e.message); 
+    } 
+};
         window.downloadRekapCafe = async () => { const today = new Date().toLocaleDateString('id-ID'); const q = query(collection(db, "cafe_orders"), where("tanggal", "==", today)); try { const snap = await getDocs(q); if(snap.empty) return alert("Belum ada pesanan hari ini."); let csv = "data:text/csv;charset=utf-8,Waktu,Pemesan,Divisi,Status,Total Harga (Rp),Detail Pesanan\n"; snap.forEach(d => { const data = d.data(); let detail = "Tidak ada detail"; if(data.items) { detail = data.items.map(i => `${i.qty}x ${i.nama} ${i.note ? '('+i.note+')' : ''}`).join(" | "); } csv += `${data.waktu},"${data.pemesan}","${data.divisi}","${data.status}",${data.total_harga},"${detail}"\n`; }); const link = document.createElement("a"); link.href = encodeURI(csv); link.download = `Rekap_Cafe_Mocca_${today.replace(/\//g, "-")}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link); } catch(e) { alert("Gagal Export: " + e.message); } };
 
         // --- FUNGSI LAMA SEBELUMNYA TETAP AMAN (ABSEN DLL) ---
@@ -628,3 +677,34 @@ window.jepretDanKirim = async () => {
         window.prosesKhodam = () => { const nama = document.getElementById('input-nama-khodam').value; if(!nama) return alert("Isi nama dulu dong!"); const btn = document.getElementById('btn-check-khodam'); btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> MENERAWANG...`; btn.disabled = true; setTimeout(() => { const acak = Math.floor(Math.random() * listKhodam.length); const hasil = listKhodam[acak]; document.getElementById('khodam-result').innerText = hasil.nama; document.getElementById('khodam-desc').innerText = `"${hasil.desc}"`; document.getElementById('khodam-result-box').classList.remove('hidden'); document.getElementById('khodam-result-box').classList.add('element-shake'); btn.classList.add('hidden'); btn.innerHTML = `<i class="fa-solid fa-eye mr-2"></i> TERAWANG SEKARANG`; btn.disabled = false; setTimeout(() => document.getElementById('khodam-result-box').classList.remove('element-shake'), 500); setTimeout(() => { btn.innerHTML = "MAIN LAGI?"; btn.classList.remove('hidden'); }, 3000); }, 2000); };
         
         window.bukaLeaderboard = async () => { document.getElementById('leaderboard-modal').classList.remove('hidden'); const list = document.getElementById('leaderboard-list'); list.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-spinner fa-spin text-3xl text-amber-500"></i><p class="text-xs text-gray-400 mt-2">Mencari yang paling rajin...</p></div>`; const today = new Date().toLocaleDateString('id-ID'); try { const q = query( collection(db, "absensi"), where("tanggal", "==", today), where("kategori", "==", "Masuk"), orderBy("timestamp", "asc"), limit(10) ); const snap = await getDocs(q); list.innerHTML = ""; if (snap.empty) { list.innerHTML = `<div class="text-center py-10 text-gray-400 italic">Belum ada yang absen hari ini.<br>Jadilah yang pertama! 🚀</div>`; return; } let rank = 1; snap.forEach(doc => { const data = doc.data(); let rankStyle = "bg-white dark:bg-slate-700/50 border-gray-100 dark:border-slate-700"; let trophy = `<span class="font-black text-gray-300 w-8 text-center text-lg italic">#${rank}</span>`; let textName = "text-slate-700 dark:text-slate-200"; if(rank === 1) { rankStyle = "bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/40 dark:to-amber-900/40 border-amber-300 shadow-md transform scale-105"; trophy = "<span class='text-2xl w-8 text-center'>🥇</span>"; textName = "text-amber-700 dark:text-amber-400"; } else if(rank === 2) { rankStyle = "bg-gray-100 dark:bg-slate-700 border-gray-300"; trophy = "<span class='text-xl w-8 text-center'>🥈</span>"; } else if(rank === 3) { rankStyle = "bg-orange-50 dark:bg-orange-900/20 border-orange-200"; trophy = "<span class='text-xl w-8 text-center'>🥉</span>"; } list.innerHTML += ` <div class="flex items-center gap-3 p-3 mb-2 rounded-xl border ${rankStyle} transition hover:scale-[1.02]"> ${trophy} <img src="${data.foto_profil || 'icon.png'}" class="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-slate-600 shadow-sm"> <div class="flex-1 min-w-0"> <h4 class="font-bold text-sm ${textName} truncate leading-tight">${data.nama}</h4> <div class="flex items-center gap-2 mt-0.5"> <span class="text-[10px] font-mono bg-slate-900 text-white px-1.5 rounded">${data.waktu}</span> <span class="text-[9px] text-gray-500 dark:text-gray-400 truncate">${data.divisi}</span> </div> </div> </div>`; rank++; }); } catch (e) { list.innerHTML = `<div class="p-4 bg-red-100 text-red-600 text-xs rounded-xl border border-red-200"><p class="font-bold mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Index Firebase diperlukan</p></div>`; } };
+
+// Fungsi Download ID Card
+window.downloadIDCard = (event) => {
+    const cardElement = document.querySelector('.id-card');
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Proses...`;
+    
+    // Convert tampilan HTML jadi gambar resolusi tinggi (scale: 3)
+    html2canvas(cardElement, { scale: 3, backgroundColor: null }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `ID_Card_${userProfile.nama.replace(/\s+/g, '_')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.innerHTML = originalText;
+    }).catch(err => {
+        alert("Yah, gagal mendownload ID Card!");
+        btn.innerHTML = originalText;
+    });
+};
+
+// Fungsi Batalkan Pesanan Cafe
+window.batalkanPesananCafe = async (id) => { 
+    if(!confirm("Yakin mau membatalkan pesanan ini?")) return; 
+    try { 
+        await deleteDoc(doc(db, "cafe_orders", id)); 
+        alert("Pesanan berhasil dibatalkan!"); 
+    } catch(e) { 
+        alert("Gagal membatalkan: " + e.message); 
+    } 
+};
