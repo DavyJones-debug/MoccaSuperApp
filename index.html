@@ -397,7 +397,7 @@
         };
 
         // Suara notif pop ringan buat pesan
-        const notifSoundMenfess = new Audio('https://actions.google.com/sounds/v1/water/pop.ogg');
+        const notifSoundMenfess = new Audio('Menfess - notification.mp3');
         let unsubscribeNotifMenfess = null;
 
         // Fungsi buat mantau Kotak Masuk (Private Menfess) secara Real-Time
@@ -687,7 +687,7 @@
         window.kirimPesananCafe = async () => { if(cartCafe.length === 0) return alert("Keranjang kosong!"); let totalPesanan = 0; const itemsToSave = cartCafe.map(item => { totalPesanan += (item.harga * item.qty); return { nama: item.nama, qty: item.qty, note: item.note, harga_satuan: item.harga }; }); try { await addDoc(collection(db, "cafe_orders"), { pemesan: userProfile.nama, divisi: userProfile.divisi, uid: currentUser.uid, items: itemsToSave, total_harga: totalPesanan, status: "Menunggu Dibuat", waktu: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}), tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date() }); alert("Yey! Pesanan berhasil dikirim ke Pantry! ☕ Tunggu ya."); cartCafe = []; tutupCafe(); } catch(e) { alert("Gagal pesan: " + e.message); } };
 // Siapin audionya (saya pakai URL suara beep pendek bawaan Google biar langsung jalan)
 // Nanti URL ini bisa kamu ganti misal jadi: new Audio('suara-dapur.mp3')
-const notifSoundCafe = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+const notifSoundCafe = new Audio('KitchenNCafe - notification.mp3');
 
 window.loadLiveOrders = (onlyBadge = false) => { 
     const q = query(collection(db, "cafe_orders"), orderBy("timestamp", "desc"), limit(100)); 
