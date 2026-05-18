@@ -2,7 +2,7 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, where, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const KANTOR_LAT = -7.988571; const KANTOR_LONG = 112.652931; const MAX_JARAK_METER = 100; const JAM_MASUK_KANTOR = 10; const MENIT_MASUK_KANTOR = 0; 
+        const KANTOR_LAT = -7.988571; const KANTOR_LONG = 112.652931; const MAX_JARAK_METER = 100; const JAM_MASUK_KANTOR = 09; const MENIT_MASUK_KANTOR = 0; 
         const firebaseConfig = { apiKey: "AIzaSyAcBFC_vOSHyJP89gGvguKPJ60G2BOoIvg", authDomain: "moccasuperapp.firebaseapp.com", projectId: "moccasuperapp", storageBucket: "moccasuperapp.firebasestorage.app", messagingSenderId: "966529708566", appId: "1:966529708566:web:7f7bb39e7c6811e9c93b37", measurementId: "G-CLCMR26YV6" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app); const provider = new GoogleAuthProvider();
         
